@@ -1,21 +1,17 @@
-import { StatusBar } from 'expo-status-bar';
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import AppLoading from 'expo-app-loading'
+import { useFonts } from 'expo-font'
+import React from 'react'
+import Routes from './src/Routes'
 
-export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
+export default () => {
+  const [fontsLoaded] = useFonts({
+    'Poppins-regular': require('./src/assets/fonts/Poppins-Regular.ttf'),
+    'Poppins-bold': require('./src/assets/fonts/Poppins-Bold.ttf'),
+  })
+
+  if (!fontsLoaded) {
+    return <AppLoading />
+  } else {
+    return <Routes />
+  }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
