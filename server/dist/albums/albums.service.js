@@ -21,27 +21,37 @@ let AlbumsService = class AlbumsService {
     constructor(albumModel) {
         this.albumModel = albumModel;
     }
-    getMyAlbums() {
-        return this.albumModel.find({});
+    getMyAlbums(userId) {
+        return this.albumModel.find({ owner: userId });
     }
-    getAlbumById(id) {
-        return this.albumModel.findById(id);
+    async getAlbumById(id, userId) {
+        const album = await this.albumModel.findOne({ _id: id, owner: userId });
+        if (!album) {
+            throw new common_1.HttpException('Album Not Found!', 404);
+        }
+        return album;
     }
-    async createNewAlbum(data, owner) {
-        const album = new this.albumModel(Object.assign(Object.assign({}, data), { owner }));
+    async createNewAlbum(data, userId) {
+        const album = new this.albumModel(Object.assign(Object.assign({}, data), { owner: userId }));
         await album.save();
         return album;
     }
-    async updateAlbum(id, data) {
-        const album = await this.albumModel.findById(id);
+    async updateAlbum(id, data, userId) {
+        const album = await this.albumModel.findOne({ _id: id, owner: userId });
+        if (!album) {
+            throw new common_1.HttpException('Album Not Found!', 404);
+        }
         Object.keys(data).forEach((e) => {
             album[e] = data[e];
         });
         await album.save();
         return album;
     }
-    async deleteAlbum(id) {
-        const album = await this.albumModel.findById(id);
+    async deleteAlbum(id, userId) {
+        const album = await this.albumModel.findOne({ _id: id, owner: userId });
+        if (!album) {
+            throw new common_1.HttpException('Album Not Found!', 404);
+        }
         await album.delete();
         return album;
     }

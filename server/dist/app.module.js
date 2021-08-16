@@ -10,8 +10,9 @@ exports.AppModule = void 0;
 const common_1 = require("@nestjs/common");
 const config_1 = require("@nestjs/config");
 const mongoose_1 = require("@nestjs/mongoose");
-const auth_module_1 = require("./auth/auth.module");
 const albums_module_1 = require("./albums/albums.module");
+const auth_module_1 = require("./auth/auth.module");
+const middleware_module_1 = require("./middleware/middleware.module");
 const users_module_1 = require("./users/users.module");
 let AppModule = class AppModule {
 };
@@ -19,10 +20,16 @@ AppModule = __decorate([
     common_1.Module({
         imports: [
             config_1.ConfigModule.forRoot(),
-            mongoose_1.MongooseModule.forRoot(process.env.MONGO_URL),
+            mongoose_1.MongooseModule.forRoot(process.env.MONGO_URL, {
+                useNewUrlParser: true,
+                useCreateIndex: true,
+                useUnifiedTopology: true,
+                useFindAndModify: false,
+            }),
             auth_module_1.AuthModule,
             albums_module_1.AlbumsModule,
             users_module_1.UsersModule,
+            middleware_module_1.MiddlewareModule,
         ],
     })
 ], AppModule);

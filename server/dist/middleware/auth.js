@@ -8,27 +8,30 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.AlbumSchema = exports.Album = void 0;
-const mongoose_1 = require("@nestjs/mongoose");
-const mongoose = require("mongoose");
-let Album = class Album {
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
 };
-__decorate([
-    mongoose_1.Prop({ required: true }),
-    __metadata("design:type", String)
-], Album.prototype, "name", void 0);
-__decorate([
-    mongoose_1.Prop({ required: true, unique: true }),
-    __metadata("design:type", String)
-], Album.prototype, "description", void 0);
-__decorate([
-    mongoose_1.Prop({ type: mongoose.Types.ObjectId, ref: 'User', required: true }),
-    __metadata("design:type", Object)
-], Album.prototype, "owner", void 0);
-Album = __decorate([
-    mongoose_1.Schema({ timestamps: true })
-], Album);
-exports.Album = Album;
-exports.AlbumSchema = mongoose_1.SchemaFactory.createForClass(Album);
-//# sourceMappingURL=Album.schema.js.map
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.AuthMiddleware = void 0;
+const common_1 = require("@nestjs/common");
+const jwt_1 = require("@nestjs/jwt");
+const mongoose_1 = require("@nestjs/mongoose");
+const mongoose_2 = require("mongoose");
+const User_schema_1 = require("../models/User.schema");
+let AuthMiddleware = class AuthMiddleware {
+    constructor(userModel, jwtService) {
+        this.userModel = userModel;
+        this.jwtService = jwtService;
+    }
+    use(req, res, next) {
+        next();
+    }
+};
+AuthMiddleware = __decorate([
+    common_1.Injectable(),
+    __param(0, mongoose_1.InjectModel(User_schema_1.User.name)),
+    __metadata("design:paramtypes", [mongoose_2.Model,
+        jwt_1.JwtService])
+], AuthMiddleware);
+exports.AuthMiddleware = AuthMiddleware;
+//# sourceMappingURL=auth.js.map

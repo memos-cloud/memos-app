@@ -21,55 +21,60 @@ let AlbumsController = class AlbumsController {
     constructor(albumService) {
         this.albumService = albumService;
     }
-    myAlbums() {
-        return this.albumService.getMyAlbums();
+    myAlbums({ userId }) {
+        return this.albumService.getMyAlbums(userId);
     }
-    albumById(id) {
-        return this.albumService.getAlbumById(id);
+    albumById({ userId }, id) {
+        return this.albumService.getAlbumById(id, userId);
     }
-    async createAlbum(data) {
-        return this.albumService.createNewAlbum(data, '611979de2473c640e0b1ea3c');
+    async createAlbum({ userId }, data) {
+        return this.albumService.createNewAlbum(data, userId);
     }
-    updateAlbum(id, data) {
-        return this.albumService.updateAlbum(id, data);
+    updateAlbum({ userId }, id, data) {
+        return this.albumService.updateAlbum(id, data, userId);
     }
-    deleteAlbum(id) {
-        return this.albumService.deleteAlbum(id);
+    deleteAlbum({ userId }, id) {
+        return this.albumService.deleteAlbum(id, userId);
     }
 };
 __decorate([
     common_1.Get(),
+    __param(0, common_1.Req()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
+    __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", void 0)
 ], AlbumsController.prototype, "myAlbums", null);
 __decorate([
     common_1.Get(':id'),
-    __param(0, common_1.Param('id')),
+    __param(0, common_1.Req()),
+    __param(1, common_1.Param('id')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [Object, String]),
     __metadata("design:returntype", void 0)
 ], AlbumsController.prototype, "albumById", null);
 __decorate([
     common_1.Post(),
-    __param(0, common_1.Body()),
+    __param(0, common_1.Req()),
+    __param(1, common_1.Body()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [albums_dto_1.CreateOrUpdateAlbumDto]),
+    __metadata("design:paramtypes", [Object, albums_dto_1.CreateOrUpdateAlbumDto]),
     __metadata("design:returntype", Promise)
 ], AlbumsController.prototype, "createAlbum", null);
 __decorate([
     common_1.Put(':id'),
-    __param(0, common_1.Param('id')),
-    __param(1, common_1.Body()),
+    __param(0, common_1.Req()),
+    __param(1, common_1.Param('id')),
+    __param(2, common_1.Body()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, albums_dto_1.CreateOrUpdateAlbumDto]),
+    __metadata("design:paramtypes", [Object, String, albums_dto_1.CreateOrUpdateAlbumDto]),
     __metadata("design:returntype", void 0)
 ], AlbumsController.prototype, "updateAlbum", null);
 __decorate([
     common_1.Delete(':id'),
-    __param(0, common_1.Param('id')),
+    __param(0, common_1.Req()),
+    __param(1, common_1.Param('id')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [Object, String]),
     __metadata("design:returntype", void 0)
 ], AlbumsController.prototype, "deleteAlbum", null);
 AlbumsController = __decorate([

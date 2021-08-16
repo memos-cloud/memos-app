@@ -1,5 +1,15 @@
-import { Controller, Delete, Get, Param, Post, Put, Body } from '@nestjs/common'
+import {
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+  Body,
+  Req,
+} from '@nestjs/common'
 import { Album } from 'src/models/Album.schema'
+import { Request } from 'supertest'
 import { AlbumsService } from './albums.service'
 import { CreateOrUpdateAlbumDto } from './dto/albums.dto'
 
@@ -8,27 +18,34 @@ export class AlbumsController {
   constructor(private readonly albumService: AlbumsService) {}
 
   @Get()
-  myAlbums() {
-    return this.albumService.getMyAlbums()
+  myAlbums(@Req() { userId }: any) {
+    return this.albumService.getMyAlbums(userId)
   }
 
   @Get(':id')
-  albumById(@Param('id') id: string) {
-    return this.albumService.getAlbumById(id)
+  albumById(@Req() { userId }: any, @Param('id') id: string) {
+    return this.albumService.getAlbumById(id, userId)
   }
 
   @Post()
-  async createAlbum(@Body() data: CreateOrUpdateAlbumDto): Promise<Album> {
-    return this.albumService.createNewAlbum(data, '611979de2473c640e0b1ea3c')
+  async createAlbum(
+    @Req() { userId }: any,
+    @Body() data: CreateOrUpdateAlbumDto,
+  ): Promise<Album> {
+    return this.albumService.createNewAlbum(data, userId)
   }
 
   @Put(':id')
-  updateAlbum(@Param('id') id: string, @Body() data: CreateOrUpdateAlbumDto) {
-    return this.albumService.updateAlbum(id, data)
+  updateAlbum(
+    @Req() { userId }: any,
+    @Param('id') id: string,
+    @Body() data: CreateOrUpdateAlbumDto,
+  ) {
+    return this.albumService.updateAlbum(id, data, userId)
   }
 
   @Delete(':id')
-  deleteAlbum(@Param('id') id: string) {
-    return this.albumService.deleteAlbum(id)
+  deleteAlbum(@Req() { userId }: any, @Param('id') id: string) {
+    return this.albumService.deleteAlbum(id, userId)
   }
 }
