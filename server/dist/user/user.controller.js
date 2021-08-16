@@ -9,25 +9,21 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.UserSchema = exports.User = void 0;
-const mongoose_1 = require("@nestjs/mongoose");
-let User = class User {
+exports.UsersController = void 0;
+const common_1 = require("@nestjs/common");
+let UsersController = class UsersController {
+    getProfile() {
+        return 'MyProfile';
+    }
 };
 __decorate([
-    mongoose_1.Prop({ required: true }),
-    __metadata("design:type", String)
-], User.prototype, "name", void 0);
-__decorate([
-    mongoose_1.Prop({ required: true, unique: true }),
-    __metadata("design:type", String)
-], User.prototype, "email", void 0);
-__decorate([
-    mongoose_1.Prop({ required: true }),
-    __metadata("design:type", String)
-], User.prototype, "profilePic", void 0);
-User = __decorate([
-    mongoose_1.Schema({ timestamps: true })
-], User);
-exports.User = User;
-exports.UserSchema = mongoose_1.SchemaFactory.createForClass(User);
-//# sourceMappingURL=User.schema.js.map
+    common_1.Get(),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], UsersController.prototype, "getProfile", null);
+UsersController = __decorate([
+    common_1.Controller('users')
+], UsersController);
+exports.UsersController = UsersController;
+//# sourceMappingURL=user.controller.js.map

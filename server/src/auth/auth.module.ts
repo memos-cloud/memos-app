@@ -1,10 +1,11 @@
-import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
-import { JwtModule } from '@nestjs/jwt';
-import { MongooseModule } from '@nestjs/mongoose';
-import { User, UserSchema } from 'src/models/User.schema';
-import { AuthController } from './auth.controller';
-import { AuthService } from './auth.service';
+import { Module } from '@nestjs/common'
+import { ConfigModule } from '@nestjs/config'
+import { JwtModule } from '@nestjs/jwt'
+import { MongooseModule } from '@nestjs/mongoose'
+import { User, UserSchema } from 'src/models/User.schema'
+import { AuthController } from './auth.controller'
+import { AuthService } from './auth.service'
+import { GoogleStrategy } from './google.strategy'
 
 @Module({
   imports: [
@@ -16,6 +17,6 @@ import { AuthService } from './auth.service';
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService],
+  providers: [AuthService, GoogleStrategy],
 })
 export class AuthModule {}

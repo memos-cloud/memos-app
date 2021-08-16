@@ -6,25 +6,22 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.AppModule = void 0;
+exports.AlbumsModule = void 0;
 const common_1 = require("@nestjs/common");
-const config_1 = require("@nestjs/config");
 const mongoose_1 = require("@nestjs/mongoose");
-const auth_module_1 = require("./auth/auth.module");
-const albums_module_1 = require("./albums/albums.module");
-const users_module_1 = require("./users/users.module");
-let AppModule = class AppModule {
+const Album_schema_1 = require("../models/Album.schema");
+const albums_controller_1 = require("./albums.controller");
+const albums_service_1 = require("./albums.service");
+let AlbumsModule = class AlbumsModule {
 };
-AppModule = __decorate([
+AlbumsModule = __decorate([
     common_1.Module({
         imports: [
-            config_1.ConfigModule.forRoot(),
-            mongoose_1.MongooseModule.forRoot(process.env.MONGO_URL),
-            auth_module_1.AuthModule,
-            albums_module_1.AlbumsModule,
-            users_module_1.UsersModule,
+            mongoose_1.MongooseModule.forFeature([{ name: Album_schema_1.Album.name, schema: Album_schema_1.AlbumSchema }]),
         ],
+        controllers: [albums_controller_1.AlbumsController],
+        providers: [albums_service_1.AlbumsService],
     })
-], AppModule);
-exports.AppModule = AppModule;
-//# sourceMappingURL=app.module.js.map
+], AlbumsModule);
+exports.AlbumsModule = AlbumsModule;
+//# sourceMappingURL=albums.module.js.map

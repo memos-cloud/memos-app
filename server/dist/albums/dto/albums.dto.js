@@ -9,25 +9,17 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.UserSchema = exports.User = void 0;
-const mongoose_1 = require("@nestjs/mongoose");
-let User = class User {
-};
+exports.CreateOrUpdateAlbumDto = void 0;
+const class_validator_1 = require("class-validator");
+class CreateOrUpdateAlbumDto {
+}
 __decorate([
-    mongoose_1.Prop({ required: true }),
+    class_validator_1.IsString(),
     __metadata("design:type", String)
-], User.prototype, "name", void 0);
+], CreateOrUpdateAlbumDto.prototype, "name", void 0);
 __decorate([
-    mongoose_1.Prop({ required: true, unique: true }),
+    class_validator_1.IsString(),
     __metadata("design:type", String)
-], User.prototype, "email", void 0);
-__decorate([
-    mongoose_1.Prop({ required: true }),
-    __metadata("design:type", String)
-], User.prototype, "profilePic", void 0);
-User = __decorate([
-    mongoose_1.Schema({ timestamps: true })
-], User);
-exports.User = User;
-exports.UserSchema = mongoose_1.SchemaFactory.createForClass(User);
-//# sourceMappingURL=User.schema.js.map
+], CreateOrUpdateAlbumDto.prototype, "description", void 0);
+exports.CreateOrUpdateAlbumDto = CreateOrUpdateAlbumDto;
+//# sourceMappingURL=albums.dto.js.map
