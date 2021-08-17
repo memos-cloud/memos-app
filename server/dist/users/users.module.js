@@ -9,6 +9,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.UsersModule = void 0;
 const common_1 = require("@nestjs/common");
 const mongoose_1 = require("@nestjs/mongoose");
+const auth_middleware_1 = require("../middleware/auth.middleware");
 const User_schema_1 = require("../models/User.schema");
 const user_controller_1 = require("./user.controller");
 const users_service_1 = require("./users.service");

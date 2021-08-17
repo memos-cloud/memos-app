@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 import * as mongoose from 'mongoose'
 import { Document } from 'mongoose'
+import { File } from './File.schema'
 import { User } from './User.schema'
 
 export type AlbumDocument = Album & Document

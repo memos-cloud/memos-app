@@ -1,14 +1,13 @@
 import { Injectable } from '@nestjs/common'
+import { InjectModel } from '@nestjs/mongoose'
+import { Model } from 'mongoose'
 import { User } from 'src/models/User.schema'
 
 @Injectable()
 export class UsersService {
-  getUserProfile(): User {
-    return {
-      _id: '2',
-      name: 'Yassin',
-      email: 'yassin@gmail.com',
-      profilePic: '/profilePic ',
-    }
+  constructor(@InjectModel(User.name) private userModel: Model<User>) {}
+
+  getUserProfile(userId: string) {
+    return this.userModel.findById(userId)
   }
 }

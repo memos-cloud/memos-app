@@ -1,13 +1,9 @@
-import { Controller, Get } from '@nestjs/common';
-import { User } from 'src/models/User.schema';
-import { UsersService } from './users.service';
+import { Controller, Get, Req } from '@nestjs/common'
 
 @Controller('me')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
-
   @Get()
-  getProfile(): User {
-    return this.usersService.getUserProfile();
+  getProfile(@Req() { user }: any) {
+    return user
   }
 }

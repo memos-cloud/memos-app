@@ -3,6 +3,7 @@ import { JwtModule } from '@nestjs/jwt'
 import { MongooseModule } from '@nestjs/mongoose'
 import { AlbumsController } from 'src/albums/albums.controller'
 import { User, UserSchema } from 'src/models/User.schema'
+import { UsersController } from 'src/users/user.controller'
 import { AuthMiddleware } from './auth.middleware'
 
 @Module({
@@ -17,6 +18,6 @@ import { AuthMiddleware } from './auth.middleware'
 })
 export class MiddlewareModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(AuthMiddleware).forRoutes(AlbumsController)
+    consumer.apply(AuthMiddleware).forRoutes(AlbumsController, UsersController)
   }
 }

@@ -37,6 +37,7 @@ let AuthMiddleware = class AuthMiddleware {
             }
             ;
             req.userId = user.id;
+            req.user = user;
         }
         catch (error) {
             throw new common_1.HttpException('Access Token is Inavlid!', 400);

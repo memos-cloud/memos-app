@@ -9,7 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.CreateOrUpdateAlbumDto = void 0;
+exports.DeleteAlbumFilesDto = exports.CreateOrUpdateAlbumDto = void 0;
 const class_validator_1 = require("class-validator");
 class CreateOrUpdateAlbumDto {
 }
@@ -22,4 +22,12 @@ __decorate([
     __metadata("design:type", String)
 ], CreateOrUpdateAlbumDto.prototype, "description", void 0);
 exports.CreateOrUpdateAlbumDto = CreateOrUpdateAlbumDto;
+class DeleteAlbumFilesDto {
+}
+__decorate([
+    class_validator_1.IsArray(),
+    class_validator_1.IsString({ each: true }),
+    __metadata("design:type", Array)
+], DeleteAlbumFilesDto.prototype, "filesIds", void 0);
+exports.DeleteAlbumFilesDto = DeleteAlbumFilesDto;
 //# sourceMappingURL=albums.dto.js.map

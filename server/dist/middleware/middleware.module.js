@@ -12,10 +12,11 @@ const jwt_1 = require("@nestjs/jwt");
 const mongoose_1 = require("@nestjs/mongoose");
 const albums_controller_1 = require("../albums/albums.controller");
 const User_schema_1 = require("../models/User.schema");
+const user_controller_1 = require("../users/user.controller");
 const auth_middleware_1 = require("./auth.middleware");
 let MiddlewareModule = class MiddlewareModule {
     configure(consumer) {
-        consumer.apply(auth_middleware_1.AuthMiddleware).forRoutes(albums_controller_1.AlbumsController);
+        consumer.apply(auth_middleware_1.AuthMiddleware).forRoutes(albums_controller_1.AlbumsController, user_controller_1.UsersController);
     }
 };
 MiddlewareModule = __decorate([

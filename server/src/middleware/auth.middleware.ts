@@ -29,6 +29,7 @@ export class AuthMiddleware implements NestMiddleware {
       }
 
       ;(req as any).userId = user.id
+      ;(req as any).user = user
     } catch (error) {
       throw new HttpException('Access Token is Inavlid!', 400)
     }

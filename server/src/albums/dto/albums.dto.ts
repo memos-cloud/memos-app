@@ -1,4 +1,4 @@
-import { IsString } from 'class-validator'
+import { IsArray, IsDefined, IsString } from 'class-validator'
 
 export class CreateOrUpdateAlbumDto {
   @IsString()
@@ -6,4 +6,10 @@ export class CreateOrUpdateAlbumDto {
 
   @IsString()
   description: string
+}
+
+export class DeleteAlbumFilesDto {
+  @IsArray()
+  @IsString({ each: true })
+  filesIds: string[]
 }
