@@ -12,6 +12,7 @@
     "incremental": true,
     "skipLibCheck": true,
     "declaration": true,
-    "moduleResolution": "node"
+    "moduleResolution": "node",
+    "types": ["node"]
   }
 }
