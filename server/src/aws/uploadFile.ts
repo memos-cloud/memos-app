@@ -1,6 +1,6 @@
 import { S3 } from 'aws-sdk'
 import { s3Bucket } from './config/s3Bucket'
-import { bucketName } from './constants/BucketName'
+import bucketName from './constants/bucketName'
 
 interface uploadFileArgs {
   fileName: string

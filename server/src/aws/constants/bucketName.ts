@@ -1,1 +1,1 @@
-export const bucketName = 'react-native-memos'
+export default 'react-native-memos'

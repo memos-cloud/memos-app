@@ -1,7 +1,7 @@
 import * as dotenv from 'dotenv'
 dotenv.config()
 import * as AWS from 'aws-sdk'
-import { bucketName } from '../constants/BucketName'
+import bucketName from '../constants/bucketName'
 
 const setupBucket = ({ bucketName }: { bucketName: string }) => {
   const env = (envVar: string) => {
