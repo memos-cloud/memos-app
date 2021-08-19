@@ -5,6 +5,7 @@ import { AlbumsModule } from './albums/albums.module'
 import { AuthModule } from './auth/auth.module'
 import { MiddlewareModule } from './middleware/middleware.module'
 import { UsersModule } from './users/users.module'
+import { PoliciesController } from './policies/policies.controller';
 
 @Module({
   imports: [
@@ -20,5 +21,6 @@ import { UsersModule } from './users/users.module'
     UsersModule,
     MiddlewareModule,
   ],
+  controllers: [PoliciesController],
 })
 export class AppModule {}
