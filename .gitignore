@@ -15,7 +15,7 @@ web-build/
 
 
 # compiled output
-/dist
+dist
 /node_modules
 
 # Logs

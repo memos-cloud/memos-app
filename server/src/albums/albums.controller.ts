@@ -15,7 +15,11 @@ import { FilesInterceptor } from '@nestjs/platform-express'
 import { Album } from 'src/models/Album.schema'
 import { pagination } from 'src/shared/pagination'
 import { AlbumsService } from './albums.service'
-import { CreateOrUpdateAlbumDto, DeleteAlbumFilesDto } from './dto/albums.dto'
+import {
+  CreateAlbumDto,
+  DeleteAlbumFilesDto,
+  UpdateAlbumDto,
+} from './dto/albums.dto'
 
 @Controller('albums')
 export class AlbumsController {
@@ -35,7 +39,7 @@ export class AlbumsController {
   @Post()
   async createAlbum(
     @Req() { userId }: any,
-    @Body() data: CreateOrUpdateAlbumDto,
+    @Body() data: CreateAlbumDto,
   ): Promise<Album> {
     return this.albumService.createNewAlbum(data, userId)
   }
@@ -44,14 +48,19 @@ export class AlbumsController {
   updateAlbum(
     @Req() { userId }: any,
     @Param('id') id: string,
-    @Body() data: CreateOrUpdateAlbumDto,
+    @Body() data: UpdateAlbumDto,
   ) {
     return this.albumService.updateAlbum(id, data, userId)
   }
 
   @Delete(':id')
-  deleteAlbum(@Req() { userId }: any, @Param('id') id: string) {
-    return this.albumService.deleteAlbum(id, userId)
+  async deleteAlbum(@Req() req: any, @Param('id') id: string) {
+    return {
+      ok: true,
+      deletedCount: (
+        await this.albumService.deleteAlbum(id, req.userId, req.user)
+      ).deletedCount,
+    }
   }
 
   @Post(':id/upload')
@@ -59,7 +68,7 @@ export class AlbumsController {
   uploadFiles(
     @Req() req: any,
     @Param('id') id: string,
-    @UploadedFiles() files: Array<Express.Multer.File>,
+    @UploadedFiles() files: Array<any>,
   ) {
     files.map((file) => {
       const type = file.mimetype.split('/')[0]

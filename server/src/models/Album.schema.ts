@@ -18,6 +18,9 @@ export class Album {
 
   @Prop({ type: mongoose.Types.ObjectId, ref: 'User', required: true })
   owner: User | string
+
+  @Prop({ type: mongoose.Types.ObjectId, ref: 'File' })
+  AlbumFileId: File | string
 }
 
 export const AlbumSchema = SchemaFactory.createForClass(Album)

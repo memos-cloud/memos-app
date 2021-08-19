@@ -14,6 +14,9 @@ export class File {
   key: string
 
   @Prop({ required: true })
+  mimetype: string
+
+  @Prop({ required: true })
   size: number
 
   @Prop({ type: mongoose.Types.ObjectId, ref: 'Album', required: true })
