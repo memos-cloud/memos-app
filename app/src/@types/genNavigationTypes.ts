@@ -1,8 +1,8 @@
 import { RouteProp } from '@react-navigation/native'
 import { StackNavigationProp } from '@react-navigation/stack'
-import { RootStackParamList } from './RootStackParamList'
+import { AuthStackParamList } from './AuthStackParamList'
 
-export interface NavProps<Screen extends keyof RootStackParamList> {
-  route: RouteProp<RootStackParamList, Screen>
-  navigation: StackNavigationProp<RootStackParamList, Screen>
+export interface NavProps<Screen extends keyof AuthStackParamList> {
+  route: RouteProp<AuthStackParamList, Screen>
+  navigation: StackNavigationProp<AuthStackParamList, Screen>
 }

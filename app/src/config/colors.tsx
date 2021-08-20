@@ -1,5 +1,6 @@
 export const colors = {
-  primary: '#fc5c65',
-  secondary: '#4ecdc4',
-  black: '#000',
+  primary: '#FF4C29',
+  secondary: '#181818',
+  black: '#0F0F0F',
+  white: '#ffffff',
 }
