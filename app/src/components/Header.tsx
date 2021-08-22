@@ -14,10 +14,12 @@ export const MyHeader: FC<Props> = ({ title }) => {
     <SafeAreaView style={{ backgroundColor: colors.secondary }}>
       <View style={styles.parent}>
         <MyText size='md'>{title}</MyText>
-        <Image
-          source={require('../assets/Images/Logo.png')}
-          style={{ width: 22, height: 22 * 1.6 }}
-        />
+        <View style={styles.imgParent}>
+          <Image
+            source={require('../assets/Images/Logo.png')}
+            style={styles.img}
+          />
+        </View>
         <Profile />
       </View>
     </SafeAreaView>
@@ -32,5 +34,18 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     backgroundColor: colors.secondary,
     flexDirection: 'row',
+  },
+  img: {
+    width: 22,
+    height: 22 * 1.6,
+  },
+  imgParent: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 })

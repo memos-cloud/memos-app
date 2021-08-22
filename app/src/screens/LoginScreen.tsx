@@ -1,12 +1,26 @@
-import React from 'react'
-import { ImageBackground, StyleSheet, View } from 'react-native'
+import { LinearGradient } from 'expo-linear-gradient'
+import * as WebBrowser from 'expo-web-browser'
+import React, { FC } from 'react'
+import { ImageBackground, Platform, StyleSheet, View } from 'react-native'
+import { AuthNavProps } from '../@types/NavProps'
 import Container from '../components/Container'
 import { MyButton } from '../components/MyButton'
-import { colors } from '../config/colors'
-import { LinearGradient } from 'expo-linear-gradient'
 import { MyText } from '../components/MyText'
+import { colors } from '../config/colors'
+import * as Linking from 'expo-linking'
 
-export function LoginScreen() {
+const linearGradient = ['#0F0F0F', 'rgba(15, 15, 15, 0.2)']
+
+export const LoginScreen: FC<AuthNavProps<'Login'>> = () => {
+  console.log(Linking.makeUrl())
+  const ContinueWithGoogleHandler = async () => {
+    if (Platform.OS === 'android') {
+      await WebBrowser.openBrowserAsync(`http://192.168.1.5:3000/google`, {
+        showInRecents: true,
+      })
+    }
+  }
+
   return (
     <ImageBackground
       style={styles.backgroundImage}
@@ -16,7 +30,7 @@ export function LoginScreen() {
         style={{ flex: 1 }}
         start={[0, 0]}
         end={[1, 1]}
-        colors={['#0F0F0F', 'rgba(15, 15, 15, 0.2)']}
+        colors={linearGradient}
       >
         <Container
           customStyles={{
@@ -34,7 +48,7 @@ export function LoginScreen() {
               bg={colors.google}
               text='Continue With Google'
               icon={require('../assets/Images/google.png')}
-              onPress={() => {}}
+              onPress={ContinueWithGoogleHandler}
             />
             <MyButton
               customStyles={styles.loginBtn}
@@ -56,7 +70,7 @@ const styles = StyleSheet.create({
     borderLeftColor: 'rgba(255, 77, 41, 0.8)',
     borderLeftWidth: 4,
     paddingLeft: 20,
-    marginTop: 30,
+    marginTop: '30%',
   },
   loginBtn: {
     width: '100%',

@@ -4,8 +4,6 @@ import { Model } from 'mongoose'
 import { User, UserDocument } from 'src/models/User.schema'
 import { JwtService } from '@nestjs/jwt'
 import { Response } from 'express'
-import { Request } from 'express'
-import { AnyAaaaRecord } from 'dns'
 
 @Injectable()
 export class AuthService {
@@ -20,28 +18,25 @@ export class AuthService {
 
     const userExists = await this.userModel.findOne({ email: req.user.email })
 
+    let User: UserDocument
+
     if (!userExists) {
       const user = new this.userModel({
         name: `${req.user.firstName} ${req.user.lastName}`,
         email: req.user.email,
         profilePic: req.user.picture,
       })
-
+      User = user
       await user.save()
-      res.redirect(
-        `${
-          process.env.NODE_ENV === 'production'
-            ? `memosrn://`
-            : `exp:${
-                process.env.SERVER_URL!.replace('http:', '').split(':')[0]
-              }/--/`
-        }tokens2/${this.jwtService.sign({ id: user.id })}`,
-      )
     } else {
-      return {
-        userExists,
-        token: this.jwtService.sign({ id: userExists.id }),
-      }
+      User = userExists
     }
+    const url = `${
+      process.env.NODE_ENV === 'production'
+        ? `exp://192.168.1.5:19000/--/`
+        : `exp://192.168.1.5:19000/--/`
+    }SaveToken/${this.jwtService.sign({ id: User.id })}`
+
+    res.redirect(url)
   }
 }

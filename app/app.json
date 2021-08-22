@@ -16,7 +16,9 @@
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "bundleIdentifier": "com.yassineldeeb.memos",
       "supportsTablet": true,
@@ -33,6 +35,7 @@
     },
     "web": {
       "favicon": "./src/assets/images/favicon.png"
-    }
+    },
+    "githubUrl": "https://github.com/YassinEldeeb/memos-app"
   }
 }

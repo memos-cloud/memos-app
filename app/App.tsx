@@ -1,8 +1,12 @@
+import { StoreProvider } from 'easy-peasy'
 import AppLoading from 'expo-app-loading'
 import { useFonts } from 'expo-font'
 import { StatusBar } from 'expo-status-bar'
 import React from 'react'
+import { color } from 'react-native-reanimated'
+import { colors } from './src/config/colors'
 import Routes from './src/Routes'
+import { store } from './src/state-management/store'
 
 export default () => {
   const [fontsLoaded] = useFonts({
@@ -14,10 +18,14 @@ export default () => {
     return (
       <>
         <AppLoading />
-        <StatusBar animated={true} style='light' />
+        <StatusBar animated={true} backgroundColor={colors.secondary} />
       </>
     )
   }
 
-  return <Routes />
+  return (
+    <StoreProvider store={store}>
+      <Routes />
+    </StoreProvider>
+  )
 }
