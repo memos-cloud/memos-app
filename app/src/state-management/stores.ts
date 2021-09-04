@@ -6,6 +6,7 @@ import { createAsyncStoragePersistor } from 'react-query/createAsyncStoragePersi
 import { persistQueryClient } from 'react-query/persistQueryClient-experimental'
 import { getProfile } from '../api/getProfile'
 import { colors } from '../config/colors'
+import { themes } from '../config/themes'
 import { StoreModel } from './@types/store'
 
 // React Query
@@ -35,15 +36,24 @@ persistQueryClient({
 // Easy Peasy
 const store = createStore<StoreModel>({
   accessToken: null,
+  profile: null,
   theme: colors,
   changeTheme: action((state, theme) => {
-    switch (theme) {
-      case 'purble':
-        state.theme = {
-          ...state.theme,
-          primary: '#7B29FF',
-        }
-        break
+    const selectedTheme = themes.find((e) => Object.keys(e)[0] === theme)
+
+    state.theme = {
+      ...state.theme,
+      primary: (selectedTheme as any)[Object.keys(selectedTheme!)[0]],
+    }
+  }),
+  saveTheme: thunk(async (actions, theme) => {
+    await AsyncStorage.setItem('theme', JSON.stringify(theme))
+  }),
+  getTheme: thunk(async (actions) => {
+    const theme = await AsyncStorage.getItem('theme')
+    if (theme) {
+      const themeColor = Object.keys(JSON.parse(theme))[0] as any
+      actions.changeTheme(themeColor)
     }
   }),
   LoginAction: action((state, payload) => {
@@ -54,8 +64,10 @@ const store = createStore<StoreModel>({
     actions.LoginAction(accessToken)
 
     const profile = await getProfile(accessToken!)
-    console.log('FROM STORE', profile)
-    await queryClient.setQueryData('profile', profile)
+    actions.setProfile(profile)
+  }),
+  setProfile: action((state, profile) => {
+    state.profile = profile
   }),
   LogoutAction: action((state) => {
     state.accessToken = null

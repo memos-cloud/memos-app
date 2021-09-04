@@ -3,7 +3,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { FlatList, RefreshControl, ScrollView, StyleSheet } from 'react-native'
 import { useQuery, useQueryClient } from 'react-query'
 import { HomeNavProps } from '../@types/NavProps'
-import { useStoreActions } from '../@types/typedHooks'
+import { useStoreActions, useStoreState } from '../@types/typedHooks'
 import { getAlbums } from '../api/getAlbums'
 import Album from '../components/Album'
 import { Center } from '../components/Center'
@@ -12,7 +12,6 @@ import { MyButton } from '../components/MyButton'
 import { MyText } from '../components/MyText'
 import { NoAlbums } from '../components/NoAlbums'
 import { RefreshControlComponent } from '../components/RefreshControl'
-import { colors } from '../config/colors'
 
 const AlbumsScreen = ({ navigation }: HomeNavProps<'Albums'>) => {
   const queryClient = useQueryClient()
@@ -37,7 +36,7 @@ const AlbumsScreen = ({ navigation }: HomeNavProps<'Albums'>) => {
 
   useScrollToTop(flatListRef)
 
-  const changeTheme = useStoreActions((state) => state.changeTheme)
+  const colors = useStoreState((state) => state.theme)
 
   return (
     <Container customStyles={{ padding: 0 }}>
@@ -87,11 +86,7 @@ const AlbumsScreen = ({ navigation }: HomeNavProps<'Albums'>) => {
               <MyText customStyles={{ marginTop: 25 }}>
                 You don’t have any Albums
               </MyText>
-              <MyButton
-                text='Change Theme'
-                bg={colors.primary}
-                onPress={() => changeTheme('purble')}
-              />
+
               <MyButton
                 customStyles={{
                   borderRadius: 8,

@@ -1,6 +1,6 @@
 import React from 'react'
 import { TouchableOpacity } from 'react-native'
-import { colors } from '../config/colors'
+import { useStoreState } from '../@types/typedHooks'
 import { AddIcon } from './AddIcon'
 import { MyText } from './MyText'
 
@@ -11,6 +11,8 @@ export const AddFiles = ({
   width: number
   addFilesHandler: any
 }) => {
+  const colors = useStoreState((state) => state.theme)
+
   return (
     <TouchableOpacity
       style={{

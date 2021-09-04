@@ -4,7 +4,7 @@ import { LinearGradient } from 'expo-linear-gradient'
 import React, { FC, memo } from 'react'
 import { StyleSheet, TouchableOpacity, View } from 'react-native'
 import { HomeStackParamList } from '../@types/StackParamList'
-import { colors } from '../config/colors'
+import { useStoreState } from '../@types/typedHooks'
 import { MyText } from './MyText'
 import { SmoothFastImage } from './SmoothFastImage'
 
@@ -38,10 +38,12 @@ const Album: FC<Props> = ({
     ? ['rgba(15, 15, 15, 0)', 'rgba(15, 15, 15, 0.8)']
     : ['rgba(15, 15, 15, 0)', 'rgba(15, 15, 15, 0)']
 
+  const colors = useStoreState((state) => state.theme)
+
   return (
     <TouchableOpacity
       style={[styles.touchable, styles.parent]}
-      activeOpacity={0.4}
+      activeOpacity={colors.activeOpacity}
       onPress={() => {
         if (navigation) navigation.navigate('AlbumFiles', { id })
       }}
@@ -53,7 +55,13 @@ const Album: FC<Props> = ({
       >
         <View style={styles.parent}>
           <SmoothFastImage
-            style={[styles.albumCover, styles.parent]}
+            style={[
+              styles.albumCover,
+              styles.parent,
+              {
+                borderColor: colors.borderColor,
+              },
+            ]}
             source={{ uri: albumCover?.fileURL }}
             resizeMode='cover'
           />
@@ -68,11 +76,15 @@ const Album: FC<Props> = ({
                 numberOfLines={1}
                 customStyles={{
                   maxWidth: '40%',
+                  color: colors.white,
                 }}
               >
                 {name}
               </MyText>
-              <MyText size='xs' customStyles={{ opacity: 0.57 }}>
+              <MyText
+                size='xs'
+                customStyles={{ opacity: 0.57, color: colors.white }}
+              >
                 {format(parseISO(createdAt), 'p yyyy-MM-dd')}
               </MyText>
             </View>
@@ -109,7 +121,6 @@ const styles = StyleSheet.create({
     height: 200,
     borderRadius: 15,
     overflow: 'hidden',
-    borderColor: colors.borderColor,
     borderWidth: 1.5,
     position: 'absolute',
     left: 0,

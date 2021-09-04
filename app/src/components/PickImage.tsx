@@ -12,9 +12,8 @@ import {
 } from 'react-native'
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler'
 import { Fonts } from '../@types/fonts'
-import { colors } from '../config/colors'
+import { useStoreState } from '../@types/typedHooks'
 import { MyText } from './MyText'
-import FastImage, { FastImageProps } from 'react-native-fast-image'
 import { SmoothFastImage } from './SmoothFastImage'
 
 function formattedTime(seconds: number) {
@@ -44,6 +43,8 @@ const PickImage: FC<Props> = ({
   selected,
   selectHandler,
 }) => {
+  const colors = useStoreState((state) => state.theme)
+
   return (
     <TouchableWithoutFeedback
       onPress={() => selectHandler(item.id)}
@@ -67,7 +68,12 @@ const PickImage: FC<Props> = ({
       <View
         style={
           !!(selected.findIndex((e) => e === item.id) + 1)
-            ? styles.selectionOverlay
+            ? [
+                styles.selectionOverlay,
+                {
+                  borderColor: colors.white,
+                },
+              ]
             : {}
         }
       >
@@ -137,7 +143,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
     borderWidth: 2,
-    borderColor: colors.white,
     borderRadius: 15,
   },
 })

@@ -1,25 +1,16 @@
-import React, { FC, memo, useCallback, useEffect, useState } from 'react'
-import {
-  Dimensions,
-  Image,
-  RefreshControl,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-} from 'react-native'
+import React, { FC, memo, useCallback, useState } from 'react'
+import { Dimensions, Image, StyleSheet, View } from 'react-native'
 import { FlatList } from 'react-native-gesture-handler'
 import { useQuery, useQueryClient } from 'react-query'
 import { HomeNavProps } from '../@types/NavProps'
+import { useStoreState } from '../@types/typedHooks'
 import { getAlbumById } from '../api/getAlbumById'
 import { getAlbumFiles } from '../api/getAlbumFiles'
 import { AddFiles } from '../components/AddFiles'
-import { AddIcon } from '../components/AddIcon'
 import AlbumFile from '../components/AlbumFile'
 import Container from '../components/Container'
-import { MyHeader } from '../components/Header'
 import { MyText } from '../components/MyText'
 import { RefreshControlComponent } from '../components/RefreshControl'
-import { colors } from '../config/colors'
 
 interface AlbumFilesCoverProps {
   fileURL: string
@@ -89,6 +80,7 @@ const AlbumFilesScreen = ({
       deviceAlbumId: 'kmdsam7138d1@E!2ioejwjdauds',
     })
   }
+  const colors = useStoreState((state) => state.theme)
 
   return (
     <Container customStyles={{ padding: 0 }}>

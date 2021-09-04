@@ -7,8 +7,8 @@ import { FlatList } from 'react-native'
 import { useQueryClient } from 'react-query'
 import { v4 as uuidv4 } from 'uuid'
 import { HomeStackParamList } from '../@types/StackParamList'
+import { useStoreState } from '../@types/typedHooks'
 import { uploadAssets } from '../api/uploadAssets'
-import { colors } from '../config/colors'
 import { PickImage } from './PickImage'
 import { UploadHeader } from './UploadHeader'
 
@@ -80,7 +80,7 @@ const AssetsFlatList = ({
     })
 
     // Set new Album Cover
-    const albums = queryClient.getQueryData('albums') as any
+    const albums = (queryClient.getQueryData('albums') as any).data
     const newAlbums = albums.map((albumData: any) => {
       if (albumId === albumData.album.id) {
         const photoAssets = assets.filter(
@@ -135,6 +135,8 @@ const AssetsFlatList = ({
       ),
     })
   }, [albumTitle, selected.length])
+
+  const colors = useStoreState((state) => state.theme)
 
   return (
     <FlatList

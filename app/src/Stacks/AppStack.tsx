@@ -9,19 +9,22 @@ import { HomeFilledIcon } from '../components/HomeFilled'
 import { HomeOutlineIcon } from '../components/HomeOutline'
 import { SettingsFilledIcon } from '../components/SettingsFilled'
 import { SettingsOutlineIcon } from '../components/SettingsOutline'
-import { colors } from '../config/colors'
 import SettingsScreen from '../screens/SettingsScreen'
 import { AlbumsStack } from './AlbumsStack'
 import { Dimensions } from 'react-native'
 import { IconWrapper } from '../components/IconWrapper'
 import * as SplashScreen from 'expo-splash-screen'
 import { useEffect } from 'react'
+import { useStoreState } from '../@types/typedHooks'
+import { useQueryClient } from 'react-query'
 
 const Tab = createBottomTabNavigator<AppStackParamList>()
 
 const tabWidth = Dimensions.get('screen').width / 2
 
 export const AppStack = () => {
+  const colors = useStoreState((state) => state.theme)
+
   const MyTheme = {
     dark: true,
     colors: {
@@ -91,19 +94,31 @@ export const AppStack = () => {
 
           tabBarActiveTintColor: colors.primary,
           tabBarInactiveTintColor: colors.white,
-          headerShown: false,
         })}
       >
-        <Tab.Screen name='Home' component={AlbumsStack} />
+        <Tab.Screen
+          options={{
+            headerShown: false,
+          }}
+          name='Home'
+          component={AlbumsStack}
+        />
         <Tab.Screen
           name='Settings'
           options={{
-            header: ({ route: { name }, navigation }) => (
-              <MyHeader
-                title={name === 'SaveToken' ? '' : name}
-                navigation={navigation}
-              />
-            ),
+            header: ({
+              route: { name },
+              navigation,
+              options: { headerRight },
+            }) =>
+              name !== 'AddFiles' ? (
+                <MyHeader
+                  title={name}
+                  back={undefined}
+                  navigation={navigation}
+                  headerRight={headerRight}
+                />
+              ) : null,
           }}
           component={SettingsScreen}
         />

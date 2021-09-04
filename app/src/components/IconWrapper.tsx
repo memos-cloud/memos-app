@@ -2,7 +2,7 @@ import React from 'react'
 import { FC } from 'react'
 import { GestureResponderEvent, View, ViewStyle } from 'react-native'
 import Ripple from 'react-native-material-ripple'
-import { colors } from '../config/colors'
+import { useStoreState } from '../@types/typedHooks'
 
 interface Props {
   tabWidth: number
@@ -16,6 +16,8 @@ export const IconWrapper: FC<Props> = ({
   onPress,
   style,
 }) => {
+  const colors = useStoreState((state) => state.theme)
+
   return (
     <Ripple
       onPress={onPress}

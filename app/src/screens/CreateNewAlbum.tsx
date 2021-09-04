@@ -13,11 +13,11 @@ import Animated, {
 } from 'react-native-reanimated'
 import { useQueryClient } from 'react-query'
 import { HomeNavProps } from '../@types/NavProps'
+import { useStoreState } from '../@types/typedHooks'
 import { createAlbum } from '../api/createAlbum'
 import Container from '../components/Container'
 import Input from '../components/Input'
 import { MyButton } from '../components/MyButton'
-import { colors } from '../config/colors'
 import { useKeyboardHeight } from '../Hooks/useKeyboardHeight'
 
 export const CreateNewAlbumScreen: FC<HomeNavProps<'NewAlbum'>> = ({
@@ -25,6 +25,8 @@ export const CreateNewAlbumScreen: FC<HomeNavProps<'NewAlbum'>> = ({
 }) => {
   const queryClient = useQueryClient()
   const [loading, setLoading] = useState(false)
+
+  const colors = useStoreState((state) => state.theme)
 
   useEffect(() => {
     navigation.setOptions({

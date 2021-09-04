@@ -1,16 +1,20 @@
 import React, { FC } from 'react'
 import { RefreshControl } from 'react-native'
-import { colors } from '../config/colors'
+import { useStoreState } from '../@types/typedHooks'
 
 interface Props {
   refreshing: boolean
   onRefresh: () => void
 }
 
-export const RefreshControlComponent: FC<Props> = (data) => (
-  <RefreshControl
-    {...data}
-    colors={[colors.primary]}
-    progressBackgroundColor={colors.secondary}
-  />
-)
+export const RefreshControlComponent: FC<Props> = (data) => {
+  const colors = useStoreState((state) => state.theme)
+
+  return (
+    <RefreshControl
+      {...data}
+      colors={[colors.primary]}
+      progressBackgroundColor={colors.secondary}
+    />
+  )
+}

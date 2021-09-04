@@ -1,7 +1,7 @@
 import React from 'react'
 import { memo } from 'react'
 import { Image, TouchableOpacity, View } from 'react-native'
-import { colors } from '../config/colors'
+import { useStoreState } from '../@types/typedHooks'
 import { MyText } from './MyText'
 
 interface Props {
@@ -22,49 +22,53 @@ interface Props {
   setAlbums: any
 }
 
-const AlbumRenderItem = ({ item, setAlbums }: Props) => (
-  <TouchableOpacity
-    onPress={setAlbums}
-    activeOpacity={colors.activeOpacity}
-    style={{
-      width: '100%',
-      flexDirection: 'row',
-      marginBottom: 10,
-      alignItems: 'center',
-      paddingHorizontal: 20,
-    }}
-  >
-    <Image
+const AlbumRenderItem = ({ item, setAlbums }: Props) => {
+  const colors = useStoreState((state) => state.theme)
+
+  return (
+    <TouchableOpacity
+      onPress={setAlbums}
+      activeOpacity={colors.activeOpacity}
       style={{
-        width: 65,
-        height: 65,
-        borderRadius: 8,
-        backgroundColor: item.albumCover ? 'transparent' : colors.secondary,
-      }}
-      source={
-        !item.albumCover
-          ? require('../assets/Images/no_photo.png')
-          : {
-              uri: item.albumCover.uri,
-            }
-      }
-    />
-    <View
-      style={{
-        paddingLeft: 15,
+        width: '100%',
+        flexDirection: 'row',
+        marginBottom: 10,
+        alignItems: 'center',
+        paddingHorizontal: 20,
       }}
     >
-      <MyText>{item.title}</MyText>
-      <MyText
-        numberOfLines={1}
-        size='xs'
-        customStyles={{ color: '#808080', maxWidth: '90%' }}
+      <Image
+        style={{
+          width: 65,
+          height: 65,
+          borderRadius: 8,
+          backgroundColor: item.albumCover ? 'transparent' : colors.secondary,
+        }}
+        source={
+          !item.albumCover
+            ? require('../assets/Images/no_photo.png')
+            : {
+                uri: item.albumCover.uri,
+              }
+        }
+      />
+      <View
+        style={{
+          paddingLeft: 15,
+        }}
       >
-        {item.assetCount}
-      </MyText>
-    </View>
-  </TouchableOpacity>
-)
+        <MyText>{item.title}</MyText>
+        <MyText
+          numberOfLines={1}
+          size='xs'
+          customStyles={{ color: '#808080', maxWidth: '90%' }}
+        >
+          {item.assetCount}
+        </MyText>
+      </View>
+    </TouchableOpacity>
+  )
+}
 
 const memoised = memo(AlbumRenderItem, (prev, next) => {
   if (

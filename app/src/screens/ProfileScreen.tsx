@@ -1,20 +1,17 @@
+import { format, parseISO } from 'date-fns'
 import React from 'react'
 import { Dimensions, StyleSheet, TouchableOpacity, View } from 'react-native'
-import { useQueryClient } from 'react-query'
+import { useStoreActions, useStoreState } from '../@types/typedHooks'
 import Container from '../components/Container'
+import { LogoutIcon } from '../components/LogoutIcon'
 import { MyText } from '../components/MyText'
 import { SmoothFastImage } from '../components/SmoothFastImage'
-import { colors } from '../config/colors'
-import { parseISO, format } from 'date-fns'
-import { useStoreActions } from '../@types/typedHooks'
-import { LogoutIcon } from '../components/LogoutIcon'
 
 const profilePicSize = 150
 const progressBarWidth = Dimensions.get('screen').width - 40
 
 export const ProfileScreen = () => {
-  const queryClient = useQueryClient()
-  const profileData = queryClient.getQueryData('profile') as any
+  const profileData = useStoreState((state) => state.profile)
 
   const profilePic = profileData.profilePic.replace(
     /=s.*?-c/,
@@ -24,13 +21,20 @@ export const ProfileScreen = () => {
 
   const Logout = useStoreActions((state) => state.Logout)
 
+  const colors = useStoreState((state) => state.theme)
+
   return (
     <Container customStyles={{ paddingVertical: 25, paddingHorizontal: 20 }}>
       <View style={styles.info}>
         <SmoothFastImage
           resizeMode='contain'
           source={{ uri: profilePic }}
-          style={styles.profilePic}
+          style={[
+            styles.profilePic,
+            {
+              borderColor: colors.borderColor,
+            },
+          ]}
         />
         <View style={[styles.info, { marginTop: 10 }]}>
           <MyText size='lg'>{profileData.name}</MyText>
@@ -62,7 +66,14 @@ export const ProfileScreen = () => {
             <MyText size='md' customStyles={{ marginBottom: 8 }}>
               Usage:
             </MyText>
-            <View style={styles.badge}>
+            <View
+              style={[
+                styles.badge,
+                {
+                  backgroundColor: colors.primary,
+                },
+              ]}
+            >
               <MyText
                 size='2xs'
                 customStyles={{
@@ -73,11 +84,19 @@ export const ProfileScreen = () => {
               </MyText>
             </View>
           </View>
-          <View style={[styles.progress]}>
+          <View
+            style={[
+              styles.progress,
+              {
+                backgroundColor: colors.primary,
+              },
+            ]}
+          >
             <View
               style={[
                 styles.progressGrey,
                 {
+                  backgroundColor: colors.secondary,
                   transform: [
                     {
                       translateX: Math.round(
@@ -130,12 +149,10 @@ const styles = StyleSheet.create({
     width: profilePicSize,
     height: profilePicSize,
     borderRadius: 16,
-    borderColor: colors.borderColor,
     borderWidth: 3,
   },
   progressGrey: {
     width: '100%',
-    backgroundColor: colors.secondary,
     height: 30,
     position: 'absolute',
     top: 0,
@@ -146,7 +163,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   progress: {
-    backgroundColor: colors.primary,
     width: '100%',
     height: 25,
     borderRadius: 100,
@@ -158,7 +174,6 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: colors.primary,
     paddingHorizontal: 9,
     paddingVertical: 1.5,
     transform: [{ translateY: -5 }],

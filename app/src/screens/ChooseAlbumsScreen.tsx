@@ -3,9 +3,9 @@ import React from 'react'
 import { FlatList } from 'react-native'
 import { useQuery } from 'react-query'
 import { HomeNavProps } from '../@types/NavProps'
+import { useStoreState } from '../@types/typedHooks'
 import { AlbumRenderItem } from '../components/ChooseAlbum'
 import Container from '../components/Container'
-import { colors } from '../config/colors'
 import { constantlyAskingForFilesPermission } from '../utils/getFilesPermision'
 import { resizeImage } from '../utils/resizeImage'
 
@@ -78,6 +78,8 @@ export const ChooseAlbumsScreen = ({
         albumId: params.albumId,
       })
   }
+  const colors = useStoreState((state) => state.theme)
+
   return (
     <Container
       customStyles={{

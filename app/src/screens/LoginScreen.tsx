@@ -4,10 +4,10 @@ import * as WebBrowser from 'expo-web-browser'
 import React, { FC, useEffect, useState } from 'react'
 import { ImageBackground, Platform, StyleSheet, View } from 'react-native'
 import { AuthNavProps } from '../@types/NavProps'
+import { useStoreState } from '../@types/typedHooks'
 import Container from '../components/Container'
 import { MyButton } from '../components/MyButton'
 import { MyText } from '../components/MyText'
-import { colors } from '../config/colors'
 import { serverURL } from '../constants/serverURL'
 
 const linearGradient = ['#0F0F0F', 'rgba(15, 15, 15, 0.2)']
@@ -28,6 +28,8 @@ export const LoginScreen: FC<AuthNavProps<'Login'>> = () => {
 
     if (imageLoaded) removeSplashScreen()
   }, [imageLoaded])
+
+  const colors = useStoreState((state) => state.theme)
 
   return (
     <ImageBackground

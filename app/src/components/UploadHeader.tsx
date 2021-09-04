@@ -3,7 +3,7 @@ import { FC } from 'react'
 import { Dimensions, View } from 'react-native'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { colors } from '../config/colors'
+import { useStoreState } from '../@types/typedHooks'
 import { ArrowIcon } from './Arrow'
 import { DropDownArrow } from './DropDownArrow'
 import { MyText } from './MyText'
@@ -24,6 +24,8 @@ export const UploadHeader: FC<Props> = memo(
     disableChoosingAlbums,
     uploadAssetsHandler,
   }) => {
+    const colors = useStoreState((state) => state.theme)
+
     return (
       <SafeAreaView style={{ backgroundColor: colors.secondary }}>
         <View

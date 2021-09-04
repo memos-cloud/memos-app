@@ -2,7 +2,7 @@ import React, { FC, memo } from 'react'
 import { StyleSheet, TouchableOpacity, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useQueryClient } from 'react-query'
-import { colors } from '../config/colors'
+import { useStoreState } from '../@types/typedHooks'
 import { ArrowIcon } from './Arrow'
 import { Logo } from './Logo'
 import { MyText } from './MyText'
@@ -17,14 +17,24 @@ interface Props {
     | undefined
   navigation: any
   headerRight?: any
-  profilePic: string
+  profilePic?: string
 }
 
 export const MyHeader: FC<Props> = memo(
   ({ title, back, navigation, headerRight: HeaderRight, profilePic }) => {
+    const colors = useStoreState((state) => state.theme)
+
     return (
       <SafeAreaView style={{ backgroundColor: colors.secondary }}>
-        <View style={styles.parent}>
+        <View
+          style={[
+            styles.parent,
+            {
+              backgroundColor: colors.secondary,
+              borderBottomColor: colors.borderColor,
+            },
+          ]}
+        >
           {back && (
             <View
               style={{
@@ -62,10 +72,18 @@ export const MyHeader: FC<Props> = memo(
             </View>
           )}
           {back && HeaderRight && <HeaderRight />}
-          {!back && (
+          {!back && profilePic && (
             <Profile
               profilePic={profilePic}
               goToProfile={() => navigation.navigate('ProfileScreen')}
+            />
+          )}
+          {!back && !profilePic && (
+            <View
+              style={{
+                width: 37,
+                height: 37,
+              }}
             />
           )}
         </View>
@@ -80,9 +98,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: 20,
     paddingVertical: 11,
-    backgroundColor: colors.secondary,
     flexDirection: 'row',
-    borderBottomColor: colors.borderColor,
     borderBottomWidth: 1,
   },
   imgParent: {

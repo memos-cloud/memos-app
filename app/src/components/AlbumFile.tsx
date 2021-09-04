@@ -1,6 +1,6 @@
 import React, { FC, memo } from 'react'
 import { View } from 'react-native'
-import { colors } from '../config/colors'
+import { useStoreState } from '../@types/typedHooks'
 import { SmoothFastImage } from './SmoothFastImage'
 
 interface Props {
@@ -9,6 +9,8 @@ interface Props {
 }
 
 const AlbumFile: FC<Props> = ({ item, width }) => {
+  const colors = useStoreState((state) => state.theme)
+
   return item.fileURL !== 'empty' ? (
     <SmoothFastImage
       source={{ uri: item.fileURL }}

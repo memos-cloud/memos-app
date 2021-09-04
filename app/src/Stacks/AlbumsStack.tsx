@@ -7,10 +7,12 @@ import {
   StackCardInterpolationProps,
   StackCardStyleInterpolator,
 } from '@react-navigation/stack/lib/typescript/src/types'
-import React from 'react'
+import React, { useState } from 'react'
+import { useEffect } from 'react'
 import { View } from 'react-native'
 import { useQueryClient } from 'react-query'
 import { HomeStackParamList } from '../@types/StackParamList'
+import { useStoreState } from '../@types/typedHooks'
 import { MyHeader } from '../components/Header'
 import { colors } from '../config/colors'
 import AlbumFilesScreen from '../screens/AlbumFilesScreen'
@@ -21,6 +23,11 @@ import PickImages from '../screens/PickImagesScreen'
 import { ProfileScreen } from '../screens/ProfileScreen'
 
 const Stack = createStackNavigator<HomeStackParamList>()
+
+function useForceUpdate() {
+  const [value, setValue] = useState(0) // integer state
+  return () => setValue((value) => value + 1) // update the state to force render
+}
 
 export const AlbumsStack = () => {
   const CustomScreenTransition: {
@@ -73,9 +80,8 @@ export const AlbumsStack = () => {
     },
   } as any
 
-  const queryClient = useQueryClient()
-  const profile = queryClient.getQueryData('profile') as any
-  console.log(profile)
+  const profile = useStoreState((state) => state.profile)
+
   return (
     <View style={{ flex: 1, backgroundColor: colors.black }}>
       <Stack.Navigator initialRouteName='Albums'>

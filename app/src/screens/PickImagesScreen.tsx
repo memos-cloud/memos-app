@@ -5,9 +5,9 @@ import 'react-native-get-random-values'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useQuery, useQueryClient } from 'react-query'
 import { HomeNavProps } from '../@types/NavProps'
+import { useStoreState } from '../@types/typedHooks'
 import { AssetsList } from '../components/AssetsList'
 import Container from '../components/Container'
-import { colors } from '../config/colors'
 import { constantlyAskingForFilesPermission } from '../utils/getFilesPermision'
 import { getVideoThumbnail } from '../utils/getVideoThumbnail'
 import { resizeImage } from '../utils/resizeImage'
@@ -63,6 +63,7 @@ const PickImages = ({
       staleTime: 0,
     }
   )
+  const colors = useStoreState((state) => state.theme)
 
   return (
     <Container customStyles={{ padding: 0 }}>

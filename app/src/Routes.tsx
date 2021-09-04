@@ -13,6 +13,7 @@ function Routes() {
   const [loading, setLoading] = useState(true)
   const accessToken = useStoreState((state) => state.accessToken)
   const Login = useStoreActions((state) => state.Login)
+  const getTheme = useStoreActions((state) => state.getTheme)
 
   useEffect(() => {
     const checkLoggedInUser = async () => {
@@ -24,6 +25,7 @@ function Routes() {
 
         if (!expired) {
           Login(accessTokenExists)
+          await getTheme()
         }
       }
       setLoading(false)

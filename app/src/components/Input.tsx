@@ -1,7 +1,7 @@
 import React from 'react'
 import { StyleSheet, View, TextInput } from 'react-native'
 import { Fonts } from '../@types/fonts'
-import { colors } from '../config/colors'
+import { useStoreState } from '../@types/typedHooks'
 import { MyText } from './MyText'
 
 interface Props {
@@ -19,6 +19,8 @@ export default function Input({
   label,
   placeholder,
 }: Props) {
+  const colors = useStoreState((state) => state.theme)
+
   return (
     <View style={styles.parent}>
       <MyText size='md' customStyles={styles.label}>
@@ -27,7 +29,13 @@ export default function Input({
       <TextInput
         placeholderTextColor={'rgba(255, 255, 255, 0.5)'}
         placeholder={placeholder}
-        style={styles.input}
+        style={[
+          styles.input,
+          {
+            borderColor: colors.white,
+            color: colors.white,
+          },
+        ]}
         onChangeText={onChangeText}
         onBlur={onBlur}
         value={value}
@@ -42,11 +50,9 @@ const styles = StyleSheet.create({
   },
   input: {
     borderWidth: 1.5,
-    borderColor: colors.white,
     borderRadius: 9,
     paddingVertical: 10,
     paddingHorizontal: 10 * 1.5,
-    color: colors.white,
     fontFamily: Fonts['Poppins-regular'],
     justifyContent: 'center',
     alignItems: 'center',

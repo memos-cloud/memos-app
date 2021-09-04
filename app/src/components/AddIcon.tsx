@@ -1,8 +1,10 @@
 import React from 'react'
 import Svg, { ClipPath, Defs, G, Path, Rect } from 'react-native-svg'
-import { colors } from '../config/colors'
+import { useStoreState } from '../@types/typedHooks'
 
 export const AddIcon = ({ width }: { width: number }) => {
+  const colors = useStoreState((state) => state.theme)
+
   return (
     <Svg width={width} height={width} viewBox='0 0 21 21' fill='none'>
       <G clip-path='url(#clip0)'>

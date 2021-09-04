@@ -1,4 +1,5 @@
 import { Action, Thunk } from 'easy-peasy'
+import { themes } from '../../config/themes'
 
 type accessToken = null | string
 
@@ -14,12 +15,14 @@ interface Theme {
   activeOpacity: number
 }
 
-type themes = 'orange' | 'purble' | 'pink' | 'pin2' | 'green' | 'blue'
-
 export interface StoreModel {
   accessToken: accessToken
+  profile: any
+  setProfile: Action<StoreModel, any>
   theme: Theme
   changeTheme: Action<StoreModel, themes>
+  saveTheme: Thunk<StoreModel, any>
+  getTheme: Thunk<StoreModel>
   Login: Thunk<StoreModel, accessToken>
   Logout: Thunk<StoreModel>
   LogoutAction: Action<StoreModel>
