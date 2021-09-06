@@ -8,6 +8,7 @@ import {
   StackCardStyleInterpolator,
 } from '@react-navigation/stack/lib/typescript/src/types'
 import React, { useState } from 'react'
+import { FC } from 'react'
 import { useEffect } from 'react'
 import { View } from 'react-native'
 import { useQueryClient } from 'react-query'
@@ -16,20 +17,20 @@ import { useStoreState } from '../@types/typedHooks'
 import { MyHeader } from '../components/Header'
 import { colors } from '../config/colors'
 import AlbumFilesScreen from '../screens/AlbumFilesScreen'
+import { ConfirmationModalScreen } from '../screens/ConfirmationModalScreen'
 import AlbumsScreen from '../screens/AlbumsScreen'
 import { ChooseAlbumsScreen } from '../screens/ChooseAlbumsScreen'
 import { CreateNewAlbumScreen } from '../screens/CreateNewAlbum'
+import { EditAlbumScreen } from '../screens/EditAlbumScreen'
 import PickImages from '../screens/PickImagesScreen'
 import { ProfileScreen } from '../screens/ProfileScreen'
+import { AssetsPreviewScreen } from '../screens/AssetsPreviewScreen'
 
 const Stack = createStackNavigator<HomeStackParamList>()
 
-function useForceUpdate() {
-  const [value, setValue] = useState(0) // integer state
-  return () => setValue((value) => value + 1) // update the state to force render
-}
+interface Props {}
 
-export const AlbumsStack = () => {
+export const AlbumsStack: FC<Props> = () => {
   const CustomScreenTransition: {
     cardStyleInterpolator: StackCardStyleInterpolator
   } = {
@@ -80,8 +81,6 @@ export const AlbumsStack = () => {
     },
   } as any
 
-  const profile = useStoreState((state) => state.profile)
-
   return (
     <View style={{ flex: 1, backgroundColor: colors.black }}>
       <Stack.Navigator initialRouteName='Albums'>
@@ -100,14 +99,15 @@ export const AlbumsStack = () => {
                   back={back}
                   navigation={navigation}
                   headerRight={headerRight}
-                  profilePic={profile?.profilePic}
                 />
               ) : null,
             ...CustomScreenTransition,
           }}
         >
           <Stack.Screen name='ProfileScreen' component={ProfileScreen} />
-          <Stack.Screen name='Albums' component={AlbumsScreen} />
+          <Stack.Screen name='Albums'>
+            {(props) => <AlbumsScreen {...props} />}
+          </Stack.Screen>
           <Stack.Screen name='AlbumFiles' component={AlbumFilesScreen} />
           <Stack.Screen name='NewAlbum' component={CreateNewAlbumScreen} />
           <Stack.Screen
@@ -115,6 +115,7 @@ export const AlbumsStack = () => {
             name='AddFiles'
             component={PickImages}
           />
+          <Stack.Screen name='EditAlbum' component={EditAlbumScreen} />
         </Stack.Group>
         <Stack.Group
           screenOptions={{
@@ -124,7 +125,6 @@ export const AlbumsStack = () => {
                 back={back}
                 navigation={navigation}
                 headerRight={headerRight}
-                profilePic={profile?.profilePic}
               />
             ),
             presentation: 'modal',
@@ -134,6 +134,19 @@ export const AlbumsStack = () => {
             options={{ title: 'Choose Album' }}
             name='ChooseAlbumsScreen'
             component={ChooseAlbumsScreen}
+          />
+        </Stack.Group>
+        <Stack.Group
+          screenOptions={{
+            headerShown: false,
+            presentation: 'transparentModal',
+          }}
+        >
+          <Stack.Screen name='AssetsPreview' component={AssetsPreviewScreen} />
+
+          <Stack.Screen
+            name='ConfirmationModal'
+            component={ConfirmationModalScreen}
           />
         </Stack.Group>
       </Stack.Navigator>

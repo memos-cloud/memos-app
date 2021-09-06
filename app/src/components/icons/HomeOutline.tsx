@@ -1,6 +1,6 @@
 import React from 'react'
 import { Svg, G, Path, Defs, ClipPath, Rect } from 'react-native-svg'
-import { useStoreState } from '../@types/typedHooks'
+import { useStoreState } from '../../@types/typedHooks'
 
 export const HomeOutlineIcon = () => {
   const colors = useStoreState((state) => state.theme)

@@ -1,14 +1,14 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { NavigationContainer } from '@react-navigation/native'
 import { StatusBar } from 'expo-status-bar'
-import React from 'react'
+import React, { useCallback, useMemo, useRef, useState } from 'react'
 import { Fonts } from '../@types/fonts'
 import { AppStackParamList } from '../@types/StackParamList'
 import { MyHeader } from '../components/Header'
-import { HomeFilledIcon } from '../components/HomeFilled'
-import { HomeOutlineIcon } from '../components/HomeOutline'
-import { SettingsFilledIcon } from '../components/SettingsFilled'
-import { SettingsOutlineIcon } from '../components/SettingsOutline'
+import { HomeFilledIcon } from '../components/icons/HomeFilled'
+import { HomeOutlineIcon } from '../components/icons/HomeOutline'
+import { SettingsFilledIcon } from '../components/icons/SettingsFilled'
+import { SettingsOutlineIcon } from '../components/icons/SettingsOutline'
 import SettingsScreen from '../screens/SettingsScreen'
 import { AlbumsStack } from './AlbumsStack'
 import { Dimensions } from 'react-native'
@@ -16,7 +16,15 @@ import { IconWrapper } from '../components/IconWrapper'
 import * as SplashScreen from 'expo-splash-screen'
 import { useEffect } from 'react'
 import { useStoreState } from '../@types/typedHooks'
-import { useQueryClient } from 'react-query'
+import BottomSheet from '@gorhom/bottom-sheet'
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from 'react-native-reanimated'
+import { View } from 'react-native'
+import { MyText } from '../components/MyText'
+import { createStackNavigator } from '@react-navigation/stack'
 
 const Tab = createBottomTabNavigator<AppStackParamList>()
 
@@ -101,8 +109,9 @@ export const AppStack = () => {
             headerShown: false,
           }}
           name='Home'
-          component={AlbumsStack}
-        />
+        >
+          {(props) => <AlbumsStack {...props} />}
+        </Tab.Screen>
         <Tab.Screen
           name='Settings'
           options={{

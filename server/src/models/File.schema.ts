@@ -19,6 +19,9 @@ export class File {
   @Prop({ required: true })
   size: number
 
+  @Prop({ required: true })
+  deviceFileUrl: string
+
   @Prop({ type: mongoose.Types.ObjectId, ref: 'Album', required: true })
   albumId: Album | string
 

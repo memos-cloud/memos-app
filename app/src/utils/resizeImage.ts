@@ -24,7 +24,7 @@ export const resizeImage = async (
   const manipResult = await ImageManipulator.manipulateAsync(
     image.uri,
     options,
-    { compress: 1 }
+    { compress: 1, format: ImageManipulator.SaveFormat.JPEG }
   )
 
   return { ...image, originalURI: image.uri, uri: manipResult.uri }

@@ -1,24 +1,27 @@
+import * as Constants from 'expo-constants'
 import * as MediaLibrary from 'expo-media-library'
-import React, { useState } from 'react'
+import React from 'react'
 import { ActivityIndicator, Dimensions, StyleSheet } from 'react-native'
+import 'react-native-console-time-polyfill'
 import 'react-native-get-random-values'
-import { SafeAreaView } from 'react-native-safe-area-context'
 import { useQuery, useQueryClient } from 'react-query'
 import { HomeNavProps } from '../@types/NavProps'
 import { useStoreState } from '../@types/typedHooks'
 import { AssetsList } from '../components/AssetsList'
 import Container from '../components/Container'
-import { constantlyAskingForFilesPermission } from '../utils/getFilesPermision'
-import { getVideoThumbnail } from '../utils/getVideoThumbnail'
-import { resizeImage } from '../utils/resizeImage'
+import { askingForFilesPermission } from '../utils/getFilesPermision'
 
 const widthAndHeight = (Dimensions.get('window').width - 10 * 4) / 3
 
 const getAssets = async ({ albumId }: { albumId: string }) => {
-  await constantlyAskingForFilesPermission()
+  const granted = await askingForFilesPermission()
+
+  if (!granted) {
+    return
+  }
   try {
     const options: MediaLibrary.AssetsOptions = {
-      first: 50,
+      first: 100,
       sortBy: 'default',
       mediaType: [MediaLibrary.MediaType.video, MediaLibrary.MediaType.photo],
     }
@@ -27,21 +30,7 @@ const getAssets = async ({ albumId }: { albumId: string }) => {
 
     const data = await MediaLibrary.getAssetsAsync(options)
 
-    const optimizPromises = data.assets.map((asset) => {
-      if (asset.mediaType === 'photo') {
-        return resizeImage(asset, {
-          width: widthAndHeight,
-        })
-      } else if (asset.mediaType === 'video') {
-        return getVideoThumbnail(asset, {
-          width: widthAndHeight,
-        })
-      }
-    })
-
-    const optimized = await Promise.all(optimizPromises)
-
-    return optimized
+    return data.assets
   } catch (error) {
     console.log(error)
   }
@@ -69,7 +58,9 @@ const PickImages = ({
     <Container customStyles={{ padding: 0 }}>
       {assetsLoading && (
         <ActivityIndicator
-          style={{ padding: 12 }}
+          style={{
+            padding: assets ? 12 : 35,
+          }}
           size='small'
           color={colors.primary}
         />
@@ -86,7 +77,6 @@ const PickImages = ({
           goBack={() => navigation.goBack()}
           navigation={navigation}
           assets={assets}
-          // getAssets={() => getAssets()}
           widthAndHeight={widthAndHeight}
         />
       )}

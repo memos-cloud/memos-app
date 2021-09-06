@@ -6,12 +6,14 @@ import { HomeNavProps } from '../@types/NavProps'
 import { useStoreState } from '../@types/typedHooks'
 import { AlbumRenderItem } from '../components/ChooseAlbum'
 import Container from '../components/Container'
-import { constantlyAskingForFilesPermission } from '../utils/getFilesPermision'
+import { askingForFilesPermission } from '../utils/getFilesPermision'
 import { resizeImage } from '../utils/resizeImage'
 
 const getDeviceAlbums = async () => {
-  await constantlyAskingForFilesPermission()
-
+  const granted = await askingForFilesPermission()
+  if (!granted) {
+    return
+  }
   const albums = (await MediaLibrary.getAlbumsAsync()).sort(
     (a, b) => b.assetCount - a.assetCount
   )
@@ -23,7 +25,7 @@ const getDeviceAlbums = async () => {
   const allAlbums = {
     id: 'kmdsam7138d1@E!2ioejwjdauds',
     assetCount: firstAsset.totalCount,
-    albumCover: await resizeImage(firstAsset.assets[0], { width: 65 }),
+    albumCover: firstAsset.assets[0],
     endTime: 999999999,
     startTime: 2132131,
     title: 'All Photos',
@@ -43,20 +45,7 @@ const getDeviceAlbums = async () => {
   })
   const newAlbums = await Promise.all(albumsWithCovers)
 
-  const optimizPromises = newAlbums.map(async (asset) => {
-    if (asset.albumCover?.mediaType === 'photo') {
-      return {
-        ...asset,
-        albumCover: await resizeImage(asset.albumCover, {
-          width: 65,
-        }),
-      }
-    }
-    return asset
-  })
-  const optimized = await Promise.all(optimizPromises)
-
-  return [allAlbums, ...optimized]
+  return [allAlbums, ...newAlbums]
 }
 
 export const ChooseAlbumsScreen = ({

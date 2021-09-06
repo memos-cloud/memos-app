@@ -3,7 +3,7 @@ import { StyleSheet, TouchableOpacity, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useQueryClient } from 'react-query'
 import { useStoreState } from '../@types/typedHooks'
-import { ArrowIcon } from './Arrow'
+import { ArrowIcon } from './icons/Arrow'
 import { Logo } from './Logo'
 import { MyText } from './MyText'
 import { Profile } from './Profile'
@@ -17,12 +17,12 @@ interface Props {
     | undefined
   navigation: any
   headerRight?: any
-  profilePic?: string
 }
 
 export const MyHeader: FC<Props> = memo(
-  ({ title, back, navigation, headerRight: HeaderRight, profilePic }) => {
+  ({ title, back, navigation, headerRight: HeaderRight }) => {
     const colors = useStoreState((state) => state.theme)
+    const profile = useStoreState((state) => state.profile)
 
     return (
       <SafeAreaView style={{ backgroundColor: colors.secondary }}>
@@ -49,7 +49,13 @@ export const MyHeader: FC<Props> = memo(
                   paddingLeft: 5,
                 }}
                 activeOpacity={colors.activeOpacity}
-                onPress={() => navigation.goBack()}
+                onPress={() => {
+                  if (back.title !== 'NewAlbum') {
+                    navigation.goBack()
+                  } else {
+                    navigation.navigate('Albums')
+                  }
+                }}
               >
                 <ArrowIcon width={21} />
               </TouchableOpacity>
@@ -72,13 +78,13 @@ export const MyHeader: FC<Props> = memo(
             </View>
           )}
           {back && HeaderRight && <HeaderRight />}
-          {!back && profilePic && (
+          {!back && profile && (
             <Profile
-              profilePic={profilePic}
+              profilePic={profile?.profilePic}
               goToProfile={() => navigation.navigate('ProfileScreen')}
             />
           )}
-          {!back && !profilePic && (
+          {!back && !profile && (
             <View
               style={{
                 width: 37,

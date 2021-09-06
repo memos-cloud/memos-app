@@ -1,30 +1,34 @@
 import React, { FC, memo } from 'react'
 import { View } from 'react-native'
+import { TouchableWithoutFeedback } from 'react-native-gesture-handler'
 import { useStoreState } from '../@types/typedHooks'
 import { SmoothFastImage } from './SmoothFastImage'
 
 interface Props {
   item: any
   width: number
+  previewHandler: () => void
 }
 
-const AlbumFile: FC<Props> = ({ item, width }) => {
+const AlbumFile: FC<Props> = ({ item, width, previewHandler }) => {
   const colors = useStoreState((state) => state.theme)
 
   return item.fileURL !== 'empty' ? (
-    <SmoothFastImage
-      source={{ uri: item.fileURL }}
-      resizeMode='cover'
-      style={{
-        width: width,
-        height: width,
-        borderRadius: 10,
-        marginBottom: 7,
-        borderColor: colors.borderColor,
-        borderWidth: 1.5,
-      }}
-      id={item.id}
-    />
+    <TouchableWithoutFeedback onPress={previewHandler}>
+      <SmoothFastImage
+        source={{ uri: item.fileURL }}
+        resizeMode='cover'
+        style={{
+          width: width,
+          height: width,
+          borderRadius: 10,
+          marginBottom: 7,
+          borderColor: colors.borderColor,
+          borderWidth: 1.5,
+        }}
+        id={item.id}
+      />
+    </TouchableWithoutFeedback>
   ) : (
     <View
       style={{

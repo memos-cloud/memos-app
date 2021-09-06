@@ -1,6 +1,6 @@
 import React from 'react'
 import { ClipPath, Defs, G, Path, Rect, Svg } from 'react-native-svg'
-import { useStoreState } from '../@types/typedHooks'
+import { useStoreState } from '../../@types/typedHooks'
 
 export const SettingsFilledIcon = () => {
   const colors = useStoreState((state) => state.theme)

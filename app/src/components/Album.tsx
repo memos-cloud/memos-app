@@ -24,7 +24,7 @@ interface Props {
       createdAt: string
     }
   }
-  navigation?: StackNavigationProp<HomeStackParamList, 'Albums'>
+  navigation: StackNavigationProp<HomeStackParamList, 'Albums'>
 }
 
 const Album: FC<Props> = ({

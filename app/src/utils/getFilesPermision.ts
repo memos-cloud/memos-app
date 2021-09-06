@@ -15,9 +15,6 @@ export const getFilesAccessPermission = async () => {
   return true
 }
 
-export const constantlyAskingForFilesPermission = async () => {
-  let permisionGranted = await getFilesAccessPermission()
-  while (!permisionGranted) {
-    permisionGranted = await getFilesAccessPermission()
-  }
+export const askingForFilesPermission = () => {
+  return getFilesAccessPermission()
 }

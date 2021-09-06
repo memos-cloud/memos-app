@@ -199,8 +199,6 @@ export class AlbumsService {
       throw new HttpException('Album Not Found!', 404)
     }
 
-    const findObject: FilterQuery<File> = { albumId: id }
-
     await album.delete()
 
     return album
@@ -211,6 +209,7 @@ export class AlbumsService {
     files: Array<any>,
     userId: string,
     user: UserDocument,
+    deviceFileUrl: string,
   ) {
     const album = await this.albumModel.findOne({ _id: id, owner: userId })
 
@@ -235,6 +234,7 @@ export class AlbumsService {
         owner: string
         size: number
         mimetype: string
+        deviceFileUrl: string
       }[] = []
 
       const promises = files.map(async (file) => {
@@ -249,6 +249,7 @@ export class AlbumsService {
           owner: userId,
           size: file.size / 1048576,
           mimetype: file.mimetype,
+          deviceFileUrl,
         })
 
         return uploadFile({
@@ -264,7 +265,10 @@ export class AlbumsService {
       return albumFiles
     }
 
+    console.log('Start Uploading...')
     const albumFiles = await uploadAlbumFiles()
+    console.log(albumFiles)
+
     await this.fileModel.insertMany(albumFiles)
 
     user.usage = parseFloat((user.usage + filesSize).toFixed(1))

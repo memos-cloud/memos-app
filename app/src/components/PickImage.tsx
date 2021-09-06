@@ -2,14 +2,7 @@ import { addSeconds, format } from 'date-fns'
 import * as MediaLibrary from 'expo-media-library'
 import _ from 'lodash'
 import React, { FC, memo } from 'react'
-import {
-  Image,
-  ImageSourcePropType,
-  ImageStyle,
-  StyleProp,
-  StyleSheet,
-  View,
-} from 'react-native'
+import { StyleSheet, View } from 'react-native'
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler'
 import { Fonts } from '../@types/fonts'
 import { useStoreState } from '../@types/typedHooks'
@@ -28,15 +21,6 @@ interface Props {
   selectHandler: any
 }
 
-const CustomImage = React.memo(
-  ({ source, style }: { source: any; style: any; id: string }) => {
-    return <SmoothFastImage resizeMode='cover' style={style} source={source} />
-  },
-  (prev, next) => {
-    return prev.id === next.id
-  }
-)
-
 const PickImage: FC<Props> = ({
   item,
   widthAndHeight,
@@ -53,12 +37,13 @@ const PickImage: FC<Props> = ({
         height: widthAndHeight,
         borderRadius: 15,
         overflow: 'hidden',
-        marginBottom: 10,
+        marginTop: 10,
       }}
     >
-      <CustomImage
+      <SmoothFastImage
         id={item.id}
         source={{ uri: item.uri }}
+        resizeMode='cover'
         style={{
           width: widthAndHeight,
           height: widthAndHeight,
@@ -126,7 +111,8 @@ const styles = StyleSheet.create({
     padding: 6,
     paddingVertical: 3,
     marginRight: 12 - 2,
-    marginBottom: 12,
+    marginBottom: 12 - 2,
+    marginTop: 12,
     position: 'absolute',
     bottom: 0,
     right: 0,

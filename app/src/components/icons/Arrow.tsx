@@ -1,6 +1,6 @@
 import React from 'react'
 import { Path, Svg } from 'react-native-svg'
-import { useStoreState } from '../@types/typedHooks'
+import { useStoreState } from '../../@types/typedHooks'
 
 export const ArrowIcon = ({ width }: { width: number }) => {
   const colors = useStoreState((state) => state.theme)

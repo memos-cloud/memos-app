@@ -2,7 +2,6 @@ import { StackNavigationProp } from '@react-navigation/stack'
 import * as MediaLibrary from 'expo-media-library'
 import _ from 'lodash'
 import React, { memo, useEffect, useState } from 'react'
-import { useRef } from 'react'
 import { FlatList } from 'react-native'
 import { useQueryClient } from 'react-query'
 import { v4 as uuidv4 } from 'uuid'
@@ -59,7 +58,6 @@ const AssetsFlatList = ({
       return [...selected, id]
     })
   }
-
   const renderItem = ({ item }: { item: any }) => (
     <PickImage
       item={item}
@@ -74,13 +72,13 @@ const AssetsFlatList = ({
     selected.map((id, index) => {
       const asset: any = assets.find((asset) => asset?.id === id)
       newFiles.push(asset)
-      uploadAssets(albumId, asset.originalURI, {
-        notification: !index,
-      })
+
+      uploadAssets(albumId, asset.uri)
     })
 
     // Set new Album Cover
-    const albums = (queryClient.getQueryData('albums') as any).data
+    const albums = queryClient.getQueryData('albums') as any
+
     const newAlbums = albums.map((albumData: any) => {
       if (albumId === albumData.album.id) {
         const photoAssets = assets.filter(
@@ -110,7 +108,7 @@ const AssetsFlatList = ({
         return {
           id: uuidv4(),
           mimetype: asset.mimetype === 'photo' ? 'image/png' : 'video/mp3',
-          fileURL: asset.originalURI,
+          fileURL: asset.uri,
           createdAt: new Date(),
         }
       }),
@@ -140,7 +138,6 @@ const AssetsFlatList = ({
 
   return (
     <FlatList
-      removeClippedSubviews={true}
       contentContainerStyle={{
         minHeight: '100%',
       }}
@@ -150,11 +147,10 @@ const AssetsFlatList = ({
         index,
       })}
       initialNumToRender={20}
-      style={{ backgroundColor: colors.black, flex: 1 }}
+      style={{ backgroundColor: colors.borderColor, flex: 1 }}
       columnWrapperStyle={{
         justifyContent: 'space-between',
         paddingHorizontal: 10,
-        backgroundColor: colors.borderColor,
       }}
       numColumns={3}
       renderItem={renderItem}

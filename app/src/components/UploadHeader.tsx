@@ -4,8 +4,8 @@ import { Dimensions, View } from 'react-native'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useStoreState } from '../@types/typedHooks'
-import { ArrowIcon } from './Arrow'
-import { DropDownArrow } from './DropDownArrow'
+import { ArrowIcon } from './icons/Arrow'
+import { DropDownArrow } from './icons/DropDownArrow'
 import { MyText } from './MyText'
 
 interface Props {
@@ -27,7 +27,13 @@ export const UploadHeader: FC<Props> = memo(
     const colors = useStoreState((state) => state.theme)
 
     return (
-      <SafeAreaView style={{ backgroundColor: colors.secondary }}>
+      <SafeAreaView
+        style={{
+          backgroundColor: colors.secondary,
+          borderWidth: 1,
+          borderBottomColor: colors.borderColor,
+        }}
+      >
         <View
           style={{
             justifyContent: 'space-between',
@@ -92,25 +98,24 @@ export const UploadHeader: FC<Props> = memo(
             </TouchableOpacity>
           </View>
           <TouchableOpacity
+            disabled={!disableChoosingAlbums}
             onPress={uploadAssetsHandler}
             style={{
               paddingRight: 20,
             }}
             activeOpacity={colors.activeOpacity}
           >
-            <MyText customStyles={{ color: colors.primary }}>Upload</MyText>
+            <MyText
+              customStyles={{
+                color: colors.primary,
+                opacity: !disableChoosingAlbums ? 0.6 : 1,
+              }}
+            >
+              Upload
+            </MyText>
           </TouchableOpacity>
         </View>
       </SafeAreaView>
     )
-  },
-  (prev, next) => {
-    if (
-      prev.albumTitle !== next.albumTitle ||
-      prev.disableChoosingAlbums !== next.disableChoosingAlbums
-    ) {
-      return false
-    }
-    return true
   }
 )

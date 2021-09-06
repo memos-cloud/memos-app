@@ -39,12 +39,18 @@ const store = createStore<StoreModel>({
   profile: null,
   theme: colors,
   changeTheme: action((state, theme) => {
-    const selectedTheme = themes.find((e) => Object.keys(e)[0] === theme)
+    const colors: any[] = []
+    themes
+      .map((theme) => theme.colors)
+      .map((type) => type.map((color) => colors.push(color)))
 
-    state.theme = {
-      ...state.theme,
-      primary: (selectedTheme as any)[Object.keys(selectedTheme!)[0]],
-    }
+    const selectedTheme = colors.find((e: any) => Object.keys(e)[0] === theme)
+
+    if (selectedTheme)
+      state.theme = {
+        ...state.theme,
+        primary: (selectedTheme as any)[Object.keys(selectedTheme!)[0]],
+      }
   }),
   saveTheme: thunk(async (actions, theme) => {
     await AsyncStorage.setItem('theme', JSON.stringify(theme))

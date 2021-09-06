@@ -1,7 +1,7 @@
 import React from 'react'
 import { TouchableOpacity } from 'react-native'
 import { useStoreState } from '../@types/typedHooks'
-import { AddIcon } from './AddIcon'
+import { AddIcon } from './icons/AddIcon'
 import { MyText } from './MyText'
 
 export const AddFiles = ({

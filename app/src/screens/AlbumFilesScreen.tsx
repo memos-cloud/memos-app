@@ -1,5 +1,5 @@
 import React, { FC, memo, useCallback, useState } from 'react'
-import { Dimensions, Image, StyleSheet, View } from 'react-native'
+import { Dimensions, StyleSheet, View } from 'react-native'
 import { FlatList } from 'react-native-gesture-handler'
 import { useQuery, useQueryClient } from 'react-query'
 import { HomeNavProps } from '../@types/NavProps'
@@ -11,6 +11,7 @@ import AlbumFile from '../components/AlbumFile'
 import Container from '../components/Container'
 import { MyText } from '../components/MyText'
 import { RefreshControlComponent } from '../components/RefreshControl'
+import { SmoothFastImage } from '../components/SmoothFastImage'
 
 interface AlbumFilesCoverProps {
   fileURL: string
@@ -22,9 +23,10 @@ const fileWidth = Dimensions.get('screen').width / 4 - 7 * 2
 const AlbumFilesCover: FC<AlbumFilesCoverProps> = memo(
   ({ fileURL }) => {
     return (
-      <Image
+      <SmoothFastImage
+        resizeMode='cover'
         style={[styles.albumCover, styles.parent]}
-        source={{ uri: fileURL }}
+        source={{ uri: fileURL, priority: 'high' }}
       />
     )
   },
@@ -101,8 +103,8 @@ const AlbumFilesScreen = ({
                 }}
               >
                 <AlbumFilesCover
-                  Key={albumData.albumCover?.key}
-                  fileURL={albumData.albumCover?.fileURL}
+                  Key={albumData?.albumCover?.id}
+                  fileURL={albumData?.albumCover?.fileURL}
                 />
               </View>
               <View
@@ -144,11 +146,22 @@ const AlbumFilesScreen = ({
             paddingTop: 0,
             paddingBottom: 0,
           }}
-          renderItem={({ item }) => {
+          renderItem={({ item, index }) => {
             if (item.placeholder) {
               return <MemoizedAlbumFile addFilesHandler={addFilesHandler} />
             }
-            return <AlbumFile item={item} width={fileWidth} />
+            return (
+              <AlbumFile
+                previewHandler={() =>
+                  navigation.navigate('AssetsPreview', {
+                    albumId: route.params.id,
+                    index,
+                  })
+                }
+                item={item}
+                width={fileWidth}
+              />
+            )
           }}
           data={
             (data || []).length % 4

@@ -48,6 +48,9 @@ lerna-debug.log*
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
+my-upload-key.keystore
+gradle.properties
+google-services.json
 
 app/android/.gradle
 */**/build

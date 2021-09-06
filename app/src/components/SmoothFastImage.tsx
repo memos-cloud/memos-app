@@ -1,5 +1,6 @@
 import _ from 'lodash'
-import React, { FC, memo } from 'react'
+import React, { FC, memo, useState } from 'react'
+import { useEffect } from 'react'
 import { ImageStyle, StyleProp } from 'react-native'
 import FastImage, { ResizeMode, Source } from 'react-native-fast-image'
 import Animated, {
@@ -13,25 +14,37 @@ interface Props {
   style: StyleProp<ImageStyle>
   source: number | Source
   id?: string
+  loadFirst?: number | Source
+  transitionDuration?: number
 }
 
 export const SmoothFastImage: FC<Props> = memo(
-  ({ resizeMode, source, style }) => {
+  ({ resizeMode, source, style, loadFirst, transitionDuration }) => {
     const imageTransition = useSharedValue(0)
 
     const animatedStyles = useAnimatedStyle(() => {
       return { opacity: imageTransition.value }
     })
 
+    const [imgSource, setImgSource] = useState(loadFirst ? loadFirst : source)
+
+    useEffect(() => {
+      setImgSource(loadFirst ? loadFirst : source)
+    }, [source])
+
+    const imgTransitionDuration =
+      transitionDuration !== undefined ? transitionDuration : 150
+
     return (
       <Animated.View style={[animatedStyles]}>
         <FastImage
-          source={source}
+          source={imgSource}
+          onError={() => setImgSource(source)}
           resizeMode={resizeMode}
           style={style as any}
           onLoadEnd={() =>
             (imageTransition.value = withTiming(1, {
-              duration: 150,
+              duration: imgTransitionDuration,
             }))
           }
         />
@@ -42,6 +55,6 @@ export const SmoothFastImage: FC<Props> = memo(
     if (prev.id) {
       return prev.id === next.id
     }
-    return _.isEqual(prev.source, next.source)
+    return (prev.source as any).uri === (next.source as any).uri
   }
 )

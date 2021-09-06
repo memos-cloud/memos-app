@@ -1,6 +1,19 @@
+import BottomSheet from '@gorhom/bottom-sheet'
 import { useScrollToTop } from '@react-navigation/native'
-import React, { useCallback, useEffect, useRef, useState } from 'react'
-import { FlatList, RefreshControl, ScrollView, StyleSheet } from 'react-native'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { FC } from 'react'
+import {
+  FlatList,
+  RefreshControl,
+  ScrollView,
+  StyleSheet,
+  View,
+} from 'react-native'
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from 'react-native-reanimated'
 import { useQuery, useQueryClient } from 'react-query'
 import { HomeNavProps } from '../@types/NavProps'
 import { useStoreActions, useStoreState } from '../@types/typedHooks'
@@ -13,7 +26,9 @@ import { MyText } from '../components/MyText'
 import { NoAlbums } from '../components/NoAlbums'
 import { RefreshControlComponent } from '../components/RefreshControl'
 
-const AlbumsScreen = ({ navigation }: HomeNavProps<'Albums'>) => {
+interface Props extends HomeNavProps<'Albums'> {}
+
+const AlbumsScreen = ({ navigation }: Props) => {
   const queryClient = useQueryClient()
   const [refreshing, setRefreshing] = useState(false)
   const { data, isLoading, error } = useQuery('albums', getAlbums)
@@ -39,8 +54,12 @@ const AlbumsScreen = ({ navigation }: HomeNavProps<'Albums'>) => {
   const colors = useStoreState((state) => state.theme)
 
   return (
-    <Container customStyles={{ padding: 0 }}>
-      {data?.length ? (
+    <Container
+      customStyles={{
+        padding: 0,
+      }}
+    >
+      {!data || data?.length ? (
         <FlatList
           ref={flatListRef}
           refreshControl={
@@ -64,7 +83,7 @@ const AlbumsScreen = ({ navigation }: HomeNavProps<'Albums'>) => {
             />
           }
           contentContainerStyle={{ padding: 8, paddingTop: 0 }}
-          data={data}
+          data={data || []}
           renderItem={({ item }) => (
             <Album navigation={navigation} data={item} />
           )}

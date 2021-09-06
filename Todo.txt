@@ -1,0 +1,4 @@
+1- Uploading Assets require DeviceAssetURL.
+2- Load asset from device firstly then fallback to server URL if fails.
+3- pinch to zoom on images.
+4- custom video player.

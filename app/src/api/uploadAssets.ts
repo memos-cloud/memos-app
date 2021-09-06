@@ -5,11 +5,7 @@ import Upload, {
 import { serverURL } from '../constants/serverURL'
 import { store } from '../state-management/stores'
 
-export const uploadAssets = (
-  albumId: string,
-  filePath: string,
-  { notification }: { notification: boolean }
-) => {
+export const uploadAssets = (albumId: string, filePath: string) => {
   const accessToken = store.getState().accessToken
 
   const uploadOptions: UploadOptions | MultipartUploadOptions = {
@@ -21,22 +17,21 @@ export const uploadAssets = (
     method: 'POST',
     type: 'multipart',
     field: 'Files',
-    headers: { Authorization: `Bearer ${accessToken}` },
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      devicefileurl: filePath,
+    },
     // Below are options only supported on Android
     notification: {
-      enabled: notification,
+      enabled: true,
       onProgressTitle: 'Syncing',
       onProgressMessage: 'Syncing Files With The Cloud...',
       onCompleteTitle: 'Files Are Synced With The Cloud',
       onErrorTitle: "Couldn't Sync your files with the Cloud.",
       onCompleteMessage: 'Files uploaded Successfuly',
-      autoClear: true,
       enableRingTone: true,
     },
   }
-
-  console.log(filePath)
-
   return Upload.startUpload(uploadOptions)
     .then((uploadId) => {
       console.log('Upload started')

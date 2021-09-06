@@ -7,6 +7,9 @@ export type UserDocument = User & Document
 export class User {
   _id: string
 
+  @Prop({ required: true, unique: true })
+  deviceId: string
+
   @Prop({ required: true })
   name: string
 

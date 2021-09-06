@@ -1,16 +1,19 @@
 import { format, parseISO } from 'date-fns'
 import React from 'react'
 import { Dimensions, StyleSheet, TouchableOpacity, View } from 'react-native'
-import { useStoreActions, useStoreState } from '../@types/typedHooks'
+import { HomeNavProps } from '../@types/NavProps'
+import { useStoreState } from '../@types/typedHooks'
 import Container from '../components/Container'
-import { LogoutIcon } from '../components/LogoutIcon'
+import { LogoutIcon } from '../components/icons/LogoutIcon'
 import { MyText } from '../components/MyText'
 import { SmoothFastImage } from '../components/SmoothFastImage'
 
 const profilePicSize = 150
 const progressBarWidth = Dimensions.get('screen').width - 40
 
-export const ProfileScreen = () => {
+export const ProfileScreen = ({
+  navigation,
+}: HomeNavProps<'ProfileScreen'>) => {
   const profileData = useStoreState((state) => state.profile)
 
   const profilePic = profileData.profilePic.replace(
@@ -19,9 +22,14 @@ export const ProfileScreen = () => {
   )
   const usagePercentage = Math.round((profileData.usage / 250) * 100)
 
-  const Logout = useStoreActions((state) => state.Logout)
-
   const colors = useStoreState((state) => state.theme)
+
+  const logoutHandler = () => {
+    navigation.navigate('ConfirmationModal', {
+      title: 'Are you sure you want to Logout?',
+      actionType: 'logout',
+    })
+  }
 
   return (
     <Container customStyles={{ paddingVertical: 25, paddingHorizontal: 20 }}>
@@ -112,7 +120,7 @@ export const ProfileScreen = () => {
       </View>
       <View style={styles.logout}>
         <TouchableOpacity
-          onPress={() => Logout()}
+          onPress={logoutHandler}
           activeOpacity={colors.activeOpacity}
           style={styles.logoutContainer}
         >

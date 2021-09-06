@@ -1,4 +1,4 @@
-package com.yassineldeeb.memos;
+package com.yassineldeeb.memosapp;
 import android.content.res.Configuration;
 import android.content.Intent;
 
