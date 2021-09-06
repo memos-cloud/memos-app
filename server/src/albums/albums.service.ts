@@ -265,9 +265,7 @@ export class AlbumsService {
       return albumFiles
     }
 
-    console.log('Start Uploading...')
     const albumFiles = await uploadAlbumFiles()
-    console.log(albumFiles)
 
     await this.fileModel.insertMany(albumFiles)
 

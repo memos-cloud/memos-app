@@ -12,7 +12,7 @@ const SaveTokenScreen: FC<AuthNavProps<'SaveToken'>> = ({
     if (params && params.token) {
       const token = params.token
       const parsedToken = token.endsWith('#') ? token.slice(0, -1) : token
-
+      console.log(parsedToken)
       Login(parsedToken)
     }
   }, [params])
