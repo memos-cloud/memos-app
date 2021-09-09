@@ -63,7 +63,10 @@ export class AuthService {
 
     const token = this.jwtService.sign({ id: User.id })
 
-    const url = `memos-rn://SaveToken/${token}`
+    const url =
+      process.env.NODE_ENV === 'production'
+        ? `memos-rn://SaveToken/${token}`
+        : `exp://192.168.1.2:19000/--/SaveToken/${token}`
 
     res.redirect(url)
   }

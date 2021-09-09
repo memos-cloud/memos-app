@@ -16,8 +16,8 @@ const AlbumFile: FC<Props> = ({ item, width, previewHandler }) => {
   return item.fileURL !== 'empty' ? (
     <TouchableWithoutFeedback onPress={previewHandler}>
       <SmoothFastImage
-        source={{ uri: item.fileURL }}
-        resizeMode='cover'
+        uri={item.fileURL}
+        loadFirst={item.deviceFileUrl}
         style={{
           width: width,
           height: width,

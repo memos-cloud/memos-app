@@ -15,18 +15,19 @@ import { SmoothFastImage } from '../components/SmoothFastImage'
 
 interface AlbumFilesCoverProps {
   fileURL: string
+  deviceFileUrl: string
   Key: string
 }
 
 const fileWidth = Dimensions.get('screen').width / 4 - 7 * 2
 
 const AlbumFilesCover: FC<AlbumFilesCoverProps> = memo(
-  ({ fileURL }) => {
+  ({ fileURL, deviceFileUrl }) => {
     return (
       <SmoothFastImage
-        resizeMode='cover'
         style={[styles.albumCover, styles.parent]}
-        source={{ uri: fileURL, priority: 'high' }}
+        uri={fileURL}
+        loadFirst={deviceFileUrl}
       />
     )
   },
@@ -105,6 +106,7 @@ const AlbumFilesScreen = ({
                 <AlbumFilesCover
                   Key={albumData?.albumCover?.id}
                   fileURL={albumData?.albumCover?.fileURL}
+                  deviceFileUrl={albumData?.albumCover?.deviceFileUrl}
                 />
               </View>
               <View

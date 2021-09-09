@@ -1,7 +1,7 @@
 import { StackNavigationProp } from '@react-navigation/stack'
 import * as MediaLibrary from 'expo-media-library'
 import _ from 'lodash'
-import React, { memo, useEffect, useState } from 'react'
+import React, { memo, useEffect, useRef, useState } from 'react'
 import { FlatList } from 'react-native'
 import { useQueryClient } from 'react-query'
 import { v4 as uuidv4 } from 'uuid'
@@ -14,6 +14,7 @@ import { UploadHeader } from './UploadHeader'
 interface Props {
   navigation: StackNavigationProp<HomeStackParamList, 'AddFiles'>
   albumId: string
+  deviceAlbumId: string
   widthAndHeight: number
   assets: (
     | {
@@ -34,6 +35,15 @@ interface Props {
   openModal: any
   goBack: any
   albumTitle: string
+  getAssets: ({
+    albumId,
+    after,
+    first,
+  }: {
+    first?: number
+    albumId: string
+    after?: any
+  }) => Promise<MediaLibrary.Asset[] | undefined>
 }
 
 const AssetsFlatList = ({
@@ -43,7 +53,9 @@ const AssetsFlatList = ({
   albumTitle,
   goBack,
   albumId,
+  deviceAlbumId,
   navigation,
+  getAssets,
 }: Props) => {
   const queryClient = useQueryClient()
   const [selected, setSelected] = useState<string[]>([])
@@ -67,8 +79,12 @@ const AssetsFlatList = ({
     />
   )
 
+  console.log('OUTSIDE:', selected)
+
   const uploadAssetsHandler = async () => {
     const newFiles: any[] = []
+
+    console.log('INSIDE:', selected)
     selected.map((id, index) => {
       const asset: any = assets.find((asset) => asset?.id === id)
       newFiles.push(asset)
@@ -120,7 +136,10 @@ const AssetsFlatList = ({
     navigation.navigate('AlbumFiles', { id: albumId })
   }
 
-  useEffect(() => {
+  const [chooseAlbumsDisabled, setChooseAlbumsDisabled] = useState(false)
+  const lastAlbumTitle = useRef(albumTitle)
+
+  const setHeader = () => {
     navigation.setOptions({
       header: () => (
         <UploadHeader
@@ -132,21 +151,51 @@ const AssetsFlatList = ({
         />
       ),
     })
+  }
+
+  useEffect(() => {
+    setHeader()
+  }, [])
+
+  useEffect(() => {
+    if (
+      (selected.length && !chooseAlbumsDisabled) ||
+      (!selected.length && chooseAlbumsDisabled)
+    ) {
+      if (albumTitle !== lastAlbumTitle.current) {
+        lastAlbumTitle.current = albumTitle
+      }
+      setChooseAlbumsDisabled(selected.length > 0)
+
+      setHeader()
+    }
   }, [albumTitle, selected.length])
 
   const colors = useStoreState((state) => state.theme)
 
+  const onEndReachHandler = async () => {
+    const newAssets = await getAssets({
+      albumId: deviceAlbumId,
+      after: assets.length.toString(),
+    })
+
+    queryClient.setQueryData(['DeviceAssets', deviceAlbumId], () => {
+      return [...assets, ...(newAssets || [])]
+    })
+  }
+
   return (
     <FlatList
+      removeClippedSubviews={true}
       contentContainerStyle={{
         minHeight: '100%',
       }}
+      initialNumToRender={20}
       getItemLayout={(data, index) => ({
         length: widthAndHeight,
         offset: widthAndHeight * index,
         index,
       })}
-      initialNumToRender={20}
       style={{ backgroundColor: colors.borderColor, flex: 1 }}
       columnWrapperStyle={{
         justifyContent: 'space-between',
@@ -154,10 +203,8 @@ const AssetsFlatList = ({
       }}
       numColumns={3}
       renderItem={renderItem}
-      // onEndReached={async () => {
-      //   await getAssets({ first: 100, after: assets[assets.length - 1].id })
-      // }}
-      onEndReachedThreshold={0.5}
+      onEndReached={onEndReachHandler}
+      onEndReachedThreshold={2}
       keyExtractor={(item) => item!.id}
       data={assets}
     />

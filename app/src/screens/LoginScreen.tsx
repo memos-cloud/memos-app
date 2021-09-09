@@ -9,15 +9,16 @@ import Container from '../components/Container'
 import { MyButton } from '../components/MyButton'
 import { MyText } from '../components/MyText'
 import { serverURL } from '../constants/serverURL'
-import { getUniqueId } from 'react-native-device-info'
+import * as Device from 'expo-device'
+import * as Constants from 'expo-constants'
 
 const linearGradient = ['#0F0F0F', 'rgba(15, 15, 15, 0.2)']
 
 export const LoginScreen: FC<AuthNavProps<'Login'>> = () => {
   const [imageLoaded, setImageLoaded] = useState(false)
   const ContinueWithGoogleHandler = async () => {
-    const deviceId = getUniqueId()
-
+    const deviceId = Constants.default.deviceId
+    console.log(deviceId)
     if (Platform.OS === 'android') {
       await WebBrowser.openBrowserAsync(
         `${serverURL}/google?deviceId=${deviceId}`

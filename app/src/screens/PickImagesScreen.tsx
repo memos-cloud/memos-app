@@ -13,7 +13,15 @@ import { askingForFilesPermission } from '../utils/getFilesPermision'
 
 const widthAndHeight = (Dimensions.get('window').width - 10 * 4) / 3
 
-const getAssets = async ({ albumId }: { albumId: string }) => {
+const getAssets = async ({
+  first,
+  albumId,
+  after,
+}: {
+  first?: number
+  albumId: string
+  after?: string
+}) => {
   const granted = await askingForFilesPermission()
 
   if (!granted) {
@@ -21,8 +29,9 @@ const getAssets = async ({ albumId }: { albumId: string }) => {
   }
   try {
     const options: MediaLibrary.AssetsOptions = {
-      first: 100,
+      first: first ? first : 100,
       sortBy: 'default',
+      after,
       mediaType: [MediaLibrary.MediaType.video, MediaLibrary.MediaType.photo],
     }
 
@@ -31,16 +40,13 @@ const getAssets = async ({ albumId }: { albumId: string }) => {
     const data = await MediaLibrary.getAssetsAsync(options)
 
     return data.assets
-  } catch (error) {
-    console.log(error)
-  }
+  } catch (error) {}
 }
 
 const PickImages = ({
   navigation,
   route: { params },
 }: HomeNavProps<'AddFiles'>) => {
-  const queryClient = useQueryClient()
   const {
     data: assets,
     isLoading: assetsLoading,
@@ -52,6 +58,7 @@ const PickImages = ({
       staleTime: 0,
     }
   )
+
   const colors = useStoreState((state) => state.theme)
 
   return (
@@ -59,7 +66,7 @@ const PickImages = ({
       {assetsLoading && (
         <ActivityIndicator
           style={{
-            padding: assets ? 12 : 35,
+            padding: 12,
           }}
           size='small'
           color={colors.primary}
@@ -69,6 +76,7 @@ const PickImages = ({
         <AssetsList
           albumTitle={params?.albumTitle ? params?.albumTitle : 'All Photos'}
           albumId={params?.albumId}
+          deviceAlbumId={params?.deviceAlbumId}
           openModal={() => {
             navigation.navigate('ChooseAlbumsScreen', {
               albumId: params.albumId,
@@ -78,6 +86,7 @@ const PickImages = ({
           navigation={navigation}
           assets={assets}
           widthAndHeight={widthAndHeight}
+          getAssets={getAssets}
         />
       )}
     </Container>

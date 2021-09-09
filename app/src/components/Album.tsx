@@ -21,6 +21,7 @@ interface Props {
       key: string
       mimetype: string
       fileURL: string
+      deviceFileUrl: string
       createdAt: string
     }
   }
@@ -62,8 +63,8 @@ const Album: FC<Props> = ({
                 borderColor: colors.borderColor,
               },
             ]}
-            source={{ uri: albumCover?.fileURL }}
-            resizeMode='cover'
+            uri={albumCover?.fileURL}
+            loadFirst={albumCover?.deviceFileUrl}
           />
           <LinearGradient
             style={[{ flex: 1 }, styles.card]}

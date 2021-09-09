@@ -25,11 +25,7 @@ export const Profile: FC<Props> = ({ goToProfile, profilePic }) => {
       <SmoothFastImage
         id={smallProfilePic}
         style={styles.img}
-        resizeMode='cover'
-        source={{
-          uri: smallProfilePic,
-          priority: 'high',
-        }}
+        uri={smallProfilePic}
       />
     </TouchableOpacity>
   )

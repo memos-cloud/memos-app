@@ -2,12 +2,11 @@ import { addSeconds, format } from 'date-fns'
 import * as MediaLibrary from 'expo-media-library'
 import _ from 'lodash'
 import React, { FC, memo } from 'react'
-import { StyleSheet, View } from 'react-native'
+import { StyleSheet, View, Image } from 'react-native'
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler'
 import { Fonts } from '../@types/fonts'
 import { useStoreState } from '../@types/typedHooks'
 import { MyText } from './MyText'
-import { SmoothFastImage } from './SmoothFastImage'
 
 function formattedTime(seconds: number) {
   var helperDate = addSeconds(new Date(0), seconds)
@@ -40,10 +39,8 @@ const PickImage: FC<Props> = ({
         marginTop: 10,
       }}
     >
-      <SmoothFastImage
-        id={item.id}
+      <Image
         source={{ uri: item.uri }}
-        resizeMode='cover'
         style={{
           width: widthAndHeight,
           height: widthAndHeight,

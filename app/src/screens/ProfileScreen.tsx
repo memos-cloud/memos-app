@@ -35,8 +35,7 @@ export const ProfileScreen = ({
     <Container customStyles={{ paddingVertical: 25, paddingHorizontal: 20 }}>
       <View style={styles.info}>
         <SmoothFastImage
-          resizeMode='contain'
-          source={{ uri: profilePic }}
+          uri={profilePic}
           style={[
             styles.profilePic,
             {

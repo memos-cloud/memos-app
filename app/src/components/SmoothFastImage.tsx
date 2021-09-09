@@ -1,60 +1,33 @@
-import _ from 'lodash'
-import React, { FC, memo, useState } from 'react'
-import { useEffect } from 'react'
-import { ImageStyle, StyleProp } from 'react-native'
-import FastImage, { ResizeMode, Source } from 'react-native-fast-image'
-import Animated, {
-  useAnimatedStyle,
-  useSharedValue,
-  withTiming,
-} from 'react-native-reanimated'
+import React, { FC, memo, useEffect, useState } from 'react'
+import { ImageStyle, StyleProp, Image as PureImage } from 'react-native'
+import { Image } from 'react-native-expo-image-cache'
 
 interface Props {
-  resizeMode: ResizeMode
   style: StyleProp<ImageStyle>
-  source: number | Source
+  uri: string
   id?: string
-  loadFirst?: number | Source
+  loadFirst?: string
   transitionDuration?: number
 }
 
 export const SmoothFastImage: FC<Props> = memo(
-  ({ resizeMode, source, style, loadFirst, transitionDuration }) => {
-    const imageTransition = useSharedValue(0)
+  ({ uri, style, loadFirst, transitionDuration }) => {
+    const [imgSource, setImgSource] = useState(!!loadFirst)
 
-    const animatedStyles = useAnimatedStyle(() => {
-      return { opacity: imageTransition.value }
-    })
-
-    const [imgSource, setImgSource] = useState(loadFirst ? loadFirst : source)
-
-    useEffect(() => {
-      setImgSource(loadFirst ? loadFirst : source)
-    }, [source])
-
-    const imgTransitionDuration =
-      transitionDuration !== undefined ? transitionDuration : 150
-
-    return (
-      <Animated.View style={[animatedStyles]}>
-        <FastImage
-          source={imgSource}
-          onError={() => setImgSource(source)}
-          resizeMode={resizeMode}
-          style={style as any}
-          onLoadEnd={() =>
-            (imageTransition.value = withTiming(1, {
-              duration: imgTransitionDuration,
-            }))
-          }
-        />
-      </Animated.View>
+    return imgSource ? (
+      <PureImage
+        style={style}
+        source={{ uri: loadFirst }}
+        onError={() => setImgSource(false)}
+      />
+    ) : (
+      <Image transitionDuration={transitionDuration} style={style} uri={uri} />
     )
   },
   (prev, next) => {
     if (prev.id) {
       return prev.id === next.id
     }
-    return (prev.source as any).uri === (next.source as any).uri
+    return prev.uri === next.uri
   }
 )

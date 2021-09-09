@@ -13,6 +13,7 @@ export const getAlbumFiles = async (albumId: string) => {
     `${serverURL}/albums/${albumId}/files?take=10`,
     config
   )
+  console.log(`${serverURL}/albums/${albumId}/files?take=10`, data)
 
   return [{ placeholder: 'addFiles' }, ...data]
 }

@@ -17,8 +17,6 @@ export const resizeImage = async (
     height: Math.round((width * 2.5) / aspectRatio),
   }
 
-  // console.log(sizeOptions)
-
   const options = [{ resize: sizeOptions }]
 
   const manipResult = await ImageManipulator.manipulateAsync(
