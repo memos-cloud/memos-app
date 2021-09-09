@@ -91,11 +91,11 @@ export const AlbumsStack: FC<Props> = () => {
               route: { name },
               back,
               navigation,
-              options: { headerRight },
+              options: { headerRight, title },
             }) =>
               name !== 'AddFiles' ? (
                 <MyHeader
-                  title={name}
+                  title={title || name}
                   back={back}
                   navigation={navigation}
                   headerRight={headerRight}

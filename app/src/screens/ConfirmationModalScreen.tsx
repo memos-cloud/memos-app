@@ -1,9 +1,11 @@
 import BottomSheet from '@gorhom/bottom-sheet'
 import React, { useMemo, useRef } from 'react'
-import { StyleSheet, View } from 'react-native'
+import { useState } from 'react'
+import { ActivityIndicator, StyleSheet, View } from 'react-native'
 import { Fonts } from '../@types/fonts'
 import { HomeNavProps } from '../@types/NavProps'
 import { useStoreActions, useStoreState } from '../@types/typedHooks'
+import { deleteAlbum } from '../api/deleteAlbum'
 import { MyButton } from '../components/MyButton'
 import { MyText } from '../components/MyText'
 
@@ -20,9 +22,17 @@ export const ConfirmationModalScreen = ({
 
   const Logout = useStoreActions((state) => state.Logout)
 
-  const confirmHandler = () => {
+  const [actionLoading, setActionLoading] = useState(false)
+
+  const confirmHandler = async () => {
     if (params.actionType === 'logout') {
       Logout()
+    }
+    if (params.actionType === 'deleteAlbum' && params.deleteId) {
+      setActionLoading(true)
+      await deleteAlbum(params.deleteId)
+      setActionLoading(false)
+      navigation.navigate('Albums')
     }
   }
 
@@ -73,18 +83,36 @@ export const ConfirmationModalScreen = ({
               bg={'#272727'}
               onPress={goBack}
             />
-            <MyButton
-              customStyles={{ borderRadius: 10 }}
-              btnStyles={{
-                padding: 11,
-                paddingHorizontal: 17,
-                borderRadius: 10,
-                marginLeft: 10,
-              }}
-              text={'Confirm'}
-              bg={colors.primary}
-              onPress={confirmHandler}
-            />
+            <View>
+              <MyButton
+                customStyles={{ borderRadius: 10 }}
+                btnStyles={{
+                  padding: 11,
+                  paddingHorizontal: 17,
+                  borderRadius: 10,
+                  // marginLeft: 10,
+                }}
+                text={'Confirm'}
+                color={actionLoading ? 'transparent' : colors.white}
+                bg={colors.primary}
+                onPress={confirmHandler}
+              />
+              {actionLoading && (
+                <ActivityIndicator
+                  style={{
+                    position: 'absolute',
+                    top: '-17%',
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}
+                  size='small'
+                  color={colors.white}
+                />
+              )}
+            </View>
           </View>
         </View>
       </BottomSheet>

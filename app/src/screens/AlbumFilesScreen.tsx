@@ -1,6 +1,10 @@
-import React, { FC, memo, useCallback, useState } from 'react'
+import { TouchableOpacity } from '@gorhom/bottom-sheet'
+import React, { FC, memo, useCallback, useRef, useState } from 'react'
 import { Dimensions, StyleSheet, View } from 'react-native'
-import { FlatList } from 'react-native-gesture-handler'
+import {
+  FlatList,
+  TouchableWithoutFeedback,
+} from 'react-native-gesture-handler'
 import { useQuery, useQueryClient } from 'react-query'
 import { HomeNavProps } from '../@types/NavProps'
 import { useStoreState } from '../@types/typedHooks'
@@ -9,9 +13,12 @@ import { getAlbumFiles } from '../api/getAlbumFiles'
 import { AddFiles } from '../components/AddFiles'
 import AlbumFile from '../components/AlbumFile'
 import Container from '../components/Container'
+import { ThreeDots } from '../components/icons/ThreeDots'
 import { MyText } from '../components/MyText'
 import { RefreshControlComponent } from '../components/RefreshControl'
 import { SmoothFastImage } from '../components/SmoothFastImage'
+import OptionsMenu from 'react-native-option-menu'
+import { UIManager, findNodeHandle } from 'react-native'
 
 interface AlbumFilesCoverProps {
   fileURL: string
@@ -85,6 +92,38 @@ const AlbumFilesScreen = ({
   }
   const colors = useStoreState((state) => state.theme)
 
+  const optionsRef = useRef(null)
+
+  const openOptionsHandler = () => {
+    if (optionsRef.current) {
+      UIManager.showPopupMenu(
+        findNodeHandle(optionsRef.current) as any,
+        ['Edit Album', 'Default Album Cover to Latest', 'Delete Album'],
+        () => console.log('something went wrong with the popup menu'),
+        (item, index) => {
+          console.log(index)
+          switch (index) {
+            case 0:
+              navigation.navigate('NewAlbum', {
+                albumName: albumData.album.name,
+                albumId: albumData.album.id,
+              })
+              break
+            case 1:
+              break
+            case 2:
+              navigation.navigate('ConfirmationModal', {
+                title: 'Are you sure you want to Delete this Album?',
+                actionType: 'deleteAlbum',
+                deleteId: albumId,
+              })
+              break
+          }
+        }
+      )
+    }
+  }
+
   return (
     <Container customStyles={{ padding: 0 }}>
       <Container
@@ -108,6 +147,21 @@ const AlbumFilesScreen = ({
                   fileURL={albumData?.albumCover?.fileURL}
                   deviceFileUrl={albumData?.albumCover?.deviceFileUrl}
                 />
+                <View
+                  style={{
+                    position: 'absolute',
+                    top: 0,
+                    right: 0,
+                  }}
+                >
+                  <TouchableOpacity
+                    ref={optionsRef}
+                    onPress={openOptionsHandler}
+                    style={{ padding: 16 }}
+                  >
+                    <ThreeDots size={20} />
+                  </TouchableOpacity>
+                </View>
               </View>
               <View
                 style={{

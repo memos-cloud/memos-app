@@ -11,10 +11,14 @@ export type AppStackParamList = {
 export type HomeStackParamList = {
   Albums: undefined
   AssetsPreview: { albumId: string; index: number }
-  ConfirmationModal: { title: string; actionType: 'logout' }
+  ConfirmationModal: {
+    title: string
+    actionType: 'logout' | 'deleteAlbum'
+    deleteId?: string
+  }
   EditAlbum: { albumId: string }
   AlbumFiles: { id: string }
-  NewAlbum: undefined
+  NewAlbum: { albumName: string; albumId: string } | undefined
   AddFiles: { deviceAlbumId: string; albumTitle?: string; albumId: string }
   ChooseAlbumsScreen: { albumId: string }
   ProfileScreen: undefined

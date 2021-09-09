@@ -15,13 +15,16 @@ import { useQueryClient } from 'react-query'
 import { HomeNavProps } from '../@types/NavProps'
 import { useStoreState } from '../@types/typedHooks'
 import { createAlbum } from '../api/createAlbum'
+import { updateAlbum } from '../api/updateAlbum'
 import Container from '../components/Container'
 import Input from '../components/Input'
 import { MyButton } from '../components/MyButton'
+import { MyText } from '../components/MyText'
 import { useKeyboardHeight } from '../Hooks/useKeyboardHeight'
 
 export const CreateNewAlbumScreen: FC<HomeNavProps<'NewAlbum'>> = ({
   navigation,
+  route: { params },
 }) => {
   const queryClient = useQueryClient()
   const [loading, setLoading] = useState(false)
@@ -51,22 +54,60 @@ export const CreateNewAlbumScreen: FC<HomeNavProps<'NewAlbum'>> = ({
   const saveAlbumHandler = async ({ name }: { name: string }) => {
     if (!loading) {
       setLoading(true)
-      const album = await createAlbum(name)
+      const albums: any = queryClient.getQueryData('albums')
+      let albumId: string
+
+      if (params?.albumName) {
+        await updateAlbum(name, params.albumId)
+        const foundAlbum = albums.find(
+          ({ album }: any) => album.id === params.albumId
+        )
+
+        foundAlbum.album.name = name
+        foundAlbum.id = foundAlbum._id
+        delete foundAlbum._id
+
+        await queryClient.setQueryData(
+          'albums',
+          albums.map((album: any) => {
+            if (album.album.id === params.albumId) {
+              return foundAlbum
+            }
+            return album
+          })
+        )
+        albumId = params.albumId
+      } else {
+        const newAlbum = { album: await createAlbum(name), albumCover: null }
+
+        newAlbum.album.id = newAlbum.album._id
+        delete newAlbum.album._id
+
+        await queryClient.setQueryData('albums', [newAlbum, ...albums])
+        albumId = newAlbum.album.id
+      }
+
       setLoading(false)
 
-      const albums: any = queryClient.getQueryData('albums')
-
-      album.id = album._id
-      delete album._id
-
-      await queryClient.setQueryData('albums', [
-        { album, albumCover: null },
-        ...albums,
-      ])
-
-      navigation.navigate('AlbumFiles', { id: album.id })
+      navigation.navigate('AlbumFiles', { id: albumId })
     }
   }
+
+  const [initialValues, setInitialValues] = useState({ name: '' })
+
+  useEffect(() => {
+    if (params?.albumName) {
+      setInitialValues({ name: params.albumName })
+    }
+  }, [params])
+
+  useEffect(() => {
+    if (params?.albumName) {
+      navigation.setOptions({
+        title: 'Edit Album',
+      })
+    }
+  }, [params])
 
   return (
     <Container
@@ -75,7 +116,11 @@ export const CreateNewAlbumScreen: FC<HomeNavProps<'NewAlbum'>> = ({
         paddingBottom: keyboardHeight ? 0 : 12,
       }}
     >
-      <Formik initialValues={{ name: '' }} onSubmit={saveAlbumHandler}>
+      <Formik
+        enableReinitialize={true}
+        initialValues={initialValues}
+        onSubmit={saveAlbumHandler}
+      >
         {({ handleChange, handleBlur, values, handleSubmit }) => {
           return (
             <TouchableWithoutFeedback
@@ -98,7 +143,7 @@ export const CreateNewAlbumScreen: FC<HomeNavProps<'NewAlbum'>> = ({
                 />
                 <Animated.View style={[animatedStyles]}>
                   <MyButton
-                    text='Save Album'
+                    text={`${params?.albumName ? 'Edit' : 'Save'} Album`}
                     onPress={handleSubmit}
                     bg={colors.primary}
                     customStyles={{ opacity: values.name.length ? 1 : 0.5 }}

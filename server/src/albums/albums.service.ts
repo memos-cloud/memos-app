@@ -211,6 +211,9 @@ export class AlbumsService {
     user: UserDocument,
     deviceFileUrl: string,
   ) {
+    if (!files) {
+      throw new HttpException('Files are required to Upload them.', 400)
+    }
     const album = await this.albumModel.findOne({ _id: id, owner: userId })
 
     if (!album) {
