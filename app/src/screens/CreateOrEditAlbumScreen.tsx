@@ -19,10 +19,9 @@ import { updateAlbum } from '../api/updateAlbum'
 import Container from '../components/Container'
 import Input from '../components/Input'
 import { MyButton } from '../components/MyButton'
-import { MyText } from '../components/MyText'
 import { useKeyboardHeight } from '../Hooks/useKeyboardHeight'
 
-export const CreateNewAlbumScreen: FC<HomeNavProps<'NewAlbum'>> = ({
+export const CreateOrEditAlbumScreen: FC<HomeNavProps<'NewAlbum'>> = ({
   navigation,
   route: { params },
 }) => {
@@ -58,7 +57,7 @@ export const CreateNewAlbumScreen: FC<HomeNavProps<'NewAlbum'>> = ({
       let albumId: string
 
       if (params?.albumName) {
-        await updateAlbum(name, params.albumId)
+        await updateAlbum({ name }, params.albumId)
         const foundAlbum = albums.find(
           ({ album }: any) => album.id === params.albumId
         )

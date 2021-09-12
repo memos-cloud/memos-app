@@ -20,7 +20,7 @@ import AlbumFilesScreen from '../screens/AlbumFilesScreen'
 import { ConfirmationModalScreen } from '../screens/ConfirmationModalScreen'
 import AlbumsScreen from '../screens/AlbumsScreen'
 import { ChooseAlbumsScreen } from '../screens/ChooseAlbumsScreen'
-import { CreateNewAlbumScreen } from '../screens/CreateNewAlbum'
+import { CreateOrEditAlbumScreen } from '../screens/CreateOrEditAlbumScreen'
 import { EditAlbumScreen } from '../screens/EditAlbumScreen'
 import PickImages from '../screens/PickImagesScreen'
 import { ProfileScreen } from '../screens/ProfileScreen'
@@ -109,7 +109,7 @@ export const AlbumsStack: FC<Props> = () => {
             {(props) => <AlbumsScreen {...props} />}
           </Stack.Screen>
           <Stack.Screen name='AlbumFiles' component={AlbumFilesScreen} />
-          <Stack.Screen name='NewAlbum' component={CreateNewAlbumScreen} />
+          <Stack.Screen name='NewAlbum' component={CreateOrEditAlbumScreen} />
           <Stack.Screen
             initialParams={{ albumId: 'kmdsam7138d1@E!2ioejwjdauds' }}
             name='AddFiles'

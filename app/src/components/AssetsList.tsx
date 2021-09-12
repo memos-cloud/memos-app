@@ -1,15 +1,24 @@
 import { StackNavigationProp } from '@react-navigation/stack'
 import * as MediaLibrary from 'expo-media-library'
 import _ from 'lodash'
-import React, { memo, useEffect, useRef, useState } from 'react'
-import { FlatList } from 'react-native'
+import React, { memo, useCallback, useEffect, useRef, useState } from 'react'
+import {
+  Dimensions,
+  FlatList,
+  SafeAreaView,
+  TouchableOpacity,
+  View,
+} from 'react-native'
 import { useQueryClient } from 'react-query'
 import { v4 as uuidv4 } from 'uuid'
 import { HomeStackParamList } from '../@types/StackParamList'
 import { useStoreState } from '../@types/typedHooks'
 import { uploadAssets } from '../api/uploadAssets'
+import { ArrowIcon } from './icons/Arrow'
+import { DropDownArrow } from './icons/DropDownArrow'
+import { MyText } from './MyText'
 import { PickImage } from './PickImage'
-import { UploadHeader } from './UploadHeader'
+import * as Constants from 'expo-constants'
 
 interface Props {
   navigation: StackNavigationProp<HomeStackParamList, 'AddFiles'>
@@ -79,12 +88,9 @@ const AssetsFlatList = ({
     />
   )
 
-  console.log('OUTSIDE:', selected)
-
   const uploadAssetsHandler = async () => {
     const newFiles: any[] = []
 
-    console.log('INSIDE:', selected)
     selected.map((id, index) => {
       const asset: any = assets.find((asset) => asset?.id === id)
       newFiles.push(asset)
@@ -107,7 +113,7 @@ const AssetsFlatList = ({
           albumCover: {
             id: uuidv4(),
             mimetype: asset?.mediaType,
-            fileURL: asset!.uri,
+            deviceFileURL: asset!.uri,
             createdAt: Date.now(),
           },
         }
@@ -139,24 +145,6 @@ const AssetsFlatList = ({
   const [chooseAlbumsDisabled, setChooseAlbumsDisabled] = useState(false)
   const lastAlbumTitle = useRef(albumTitle)
 
-  const setHeader = () => {
-    navigation.setOptions({
-      header: () => (
-        <UploadHeader
-          albumTitle={albumTitle}
-          disableChoosingAlbums={selected.length > 0}
-          goBack={goBack}
-          openModal={openModal}
-          uploadAssetsHandler={uploadAssetsHandler}
-        />
-      ),
-    })
-  }
-
-  useEffect(() => {
-    setHeader()
-  }, [])
-
   useEffect(() => {
     if (
       (selected.length && !chooseAlbumsDisabled) ||
@@ -166,8 +154,6 @@ const AssetsFlatList = ({
         lastAlbumTitle.current = albumTitle
       }
       setChooseAlbumsDisabled(selected.length > 0)
-
-      setHeader()
     }
   }, [albumTitle, selected.length])
 
@@ -185,29 +171,121 @@ const AssetsFlatList = ({
   }
 
   return (
-    <FlatList
-      removeClippedSubviews={true}
-      contentContainerStyle={{
-        minHeight: '100%',
-      }}
-      initialNumToRender={20}
-      getItemLayout={(data, index) => ({
-        length: widthAndHeight,
-        offset: widthAndHeight * index,
-        index,
-      })}
-      style={{ backgroundColor: colors.borderColor, flex: 1 }}
-      columnWrapperStyle={{
-        justifyContent: 'space-between',
-        paddingHorizontal: 10,
-      }}
-      numColumns={3}
-      renderItem={renderItem}
-      onEndReached={onEndReachHandler}
-      onEndReachedThreshold={2}
-      keyExtractor={(item) => item!.id}
-      data={assets}
-    />
+    <>
+      <SafeAreaView
+        style={{
+          backgroundColor: colors.secondary,
+          borderWidth: 1,
+          borderBottomColor: colors.borderColor,
+          paddingTop: Constants.default.statusBarHeight,
+        }}
+      >
+        <View
+          style={{
+            justifyContent: 'space-between',
+            flexDirection: 'row',
+            backgroundColor: colors.secondary,
+            alignItems: 'center',
+            paddingVertical: 10,
+          }}
+        >
+          <TouchableOpacity
+            style={{
+              padding: 12,
+              paddingLeft: 20,
+            }}
+            activeOpacity={colors.activeOpacity}
+            onPress={goBack}
+          >
+            <ArrowIcon width={21} />
+          </TouchableOpacity>
+          <View
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              justifyContent: 'center',
+              alignItems: 'center',
+              zIndex: -1,
+            }}
+          >
+            <TouchableOpacity
+              disabled={selected.length > 0}
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}
+              onPress={openModal}
+              activeOpacity={colors.activeOpacity}
+            >
+              <MyText
+                numberOfLines={1}
+                customStyles={{
+                  textAlign: 'center',
+                  paddingVertical: 16,
+                  marginRight: 6,
+                  maxWidth: Dimensions.get('screen').width / 2.8,
+                  opacity: selected.length > 0 ? 0.6 : 1,
+                }}
+              >
+                {albumTitle}
+              </MyText>
+              <DropDownArrow
+                width={15}
+                fill={
+                  selected.length > 0
+                    ? 'rgba(255, 255, 255, 0.6)'
+                    : colors.white
+                }
+              />
+            </TouchableOpacity>
+          </View>
+          <TouchableOpacity
+            disabled={!(selected.length > 0)}
+            onPress={uploadAssetsHandler}
+            style={{
+              paddingRight: 20,
+            }}
+            activeOpacity={colors.activeOpacity}
+          >
+            <MyText
+              customStyles={{
+                color: colors.primary,
+                opacity: !(selected.length > 0) ? 0.6 : 1,
+              }}
+            >
+              Upload
+            </MyText>
+          </TouchableOpacity>
+        </View>
+      </SafeAreaView>
+      <FlatList
+        removeClippedSubviews={true}
+        contentContainerStyle={{
+          minHeight: '100%',
+        }}
+        initialNumToRender={20}
+        getItemLayout={(data, index) => ({
+          length: widthAndHeight,
+          offset: widthAndHeight * index,
+          index,
+        })}
+        style={{ backgroundColor: colors.borderColor, flex: 1 }}
+        columnWrapperStyle={{
+          justifyContent: 'space-between',
+          paddingHorizontal: 10,
+        }}
+        numColumns={3}
+        renderItem={renderItem}
+        onEndReached={onEndReachHandler}
+        onEndReachedThreshold={2}
+        keyExtractor={(item) => item!.id}
+        data={assets}
+      />
+    </>
   )
 }
 

@@ -1,24 +1,52 @@
 import React, { FC, memo, useEffect, useState } from 'react'
-import { ImageStyle, StyleProp, Image as PureImage } from 'react-native'
+import {
+  Image as PureImage,
+  ImageLoadEventData,
+  ImageResizeMode,
+  ImageStyle,
+  NativeSyntheticEvent,
+  StyleProp,
+  View,
+} from 'react-native'
 import { Image } from 'react-native-expo-image-cache'
+import * as FileSystem from 'expo-file-system'
 
 interface Props {
-  style: StyleProp<ImageStyle>
+  style?: StyleProp<ImageStyle>
   uri: string
   id?: string
   loadFirst?: string
   transitionDuration?: number
+  resizeMode?: ImageResizeMode
 }
 
 export const SmoothFastImage: FC<Props> = memo(
-  ({ uri, style, loadFirst, transitionDuration }) => {
-    const [imgSource, setImgSource] = useState(!!loadFirst)
+  ({ uri, style, loadFirst, transitionDuration, resizeMode }) => {
+    const [loadFromDisk, setLoadFromDisk] = useState(!!loadFirst)
+    const [imgResult, setImgResult] = useState(false)
 
-    return imgSource ? (
+    useEffect(() => {
+      const checkImage = async () => {
+        if (loadFirst) {
+          const { exists } = await FileSystem.getInfoAsync(loadFirst)
+          setLoadFromDisk(exists)
+        }
+
+        setImgResult(true)
+      }
+      checkImage()
+    }, [])
+
+    if (!imgResult) {
+      return <View style={style} />
+    }
+
+    return loadFromDisk ? (
       <PureImage
+        resizeMode={resizeMode}
         style={style}
         source={{ uri: loadFirst }}
-        onError={() => setImgSource(false)}
+        onError={() => setLoadFromDisk(false)}
       />
     ) : (
       <Image transitionDuration={transitionDuration} style={style} uri={uri} />

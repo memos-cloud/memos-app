@@ -5,7 +5,6 @@ import { StatusBar } from 'expo-status-bar'
 import React from 'react'
 import { LogBox, View } from 'react-native'
 import { QueryClientProvider } from 'react-query'
-import { useStoreState } from './src/@types/typedHooks'
 import Routes from './src/Routes'
 import { queryClient, store } from './src/state-management/stores'
 

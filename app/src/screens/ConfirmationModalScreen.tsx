@@ -2,6 +2,7 @@ import BottomSheet from '@gorhom/bottom-sheet'
 import React, { useMemo, useRef } from 'react'
 import { useState } from 'react'
 import { ActivityIndicator, StyleSheet, View } from 'react-native'
+import { useQueryClient } from 'react-query'
 import { Fonts } from '../@types/fonts'
 import { HomeNavProps } from '../@types/NavProps'
 import { useStoreActions, useStoreState } from '../@types/typedHooks'
@@ -13,6 +14,7 @@ export const ConfirmationModalScreen = ({
   navigation,
   route: { params },
 }: HomeNavProps<'ConfirmationModal'>) => {
+  const queryClient = useQueryClient()
   const colors = useStoreState((state) => state.theme)
   const bottomSheetRef = useRef<BottomSheet>(null)
 
@@ -31,6 +33,12 @@ export const ConfirmationModalScreen = ({
     if (params.actionType === 'deleteAlbum' && params.deleteId) {
       setActionLoading(true)
       await deleteAlbum(params.deleteId)
+      const albums = (queryClient.getQueryData('albums') as any[]).filter(
+        (e) => {
+          return e.album.id !== params.deleteId
+        }
+      )
+      queryClient.setQueryData('albums', albums)
       setActionLoading(false)
       navigation.navigate('Albums')
     }

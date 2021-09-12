@@ -8,6 +8,9 @@
     "sdkVersion": "42.0.0",
     "orientation": "portrait",
     "icon": "./src/assets/images/icon.png",
+    "androidStatusBar": {
+      "barStyle": "light-content"
+    },
     "splash": {
       "image": "./src/assets/images/splash.png",
       "resizeMode": "contain",

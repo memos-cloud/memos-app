@@ -18,7 +18,7 @@ export const LoginScreen: FC<AuthNavProps<'Login'>> = () => {
   const [imageLoaded, setImageLoaded] = useState(false)
   const ContinueWithGoogleHandler = async () => {
     const deviceId = Constants.default.deviceId
-    console.log(deviceId)
+
     if (Platform.OS === 'android') {
       await WebBrowser.openBrowserAsync(
         `${serverURL}/google?deviceId=${deviceId}`

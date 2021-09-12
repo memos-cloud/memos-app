@@ -24,7 +24,7 @@ const linking: LinkingOptions<{
 export const AuthStack = () => {
   return (
     <NavigationContainer linking={linking}>
-      <StatusBar animated={true} backgroundColor='transparent' />
+      <StatusBar animated={true} backgroundColor='transparent' style='light' />
       <Stack.Navigator
         initialRouteName='Login'
         screenOptions={{

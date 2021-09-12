@@ -1,15 +1,26 @@
 import { TouchableOpacity } from '@gorhom/bottom-sheet'
-import React, { FC, memo, useCallback, useRef, useState } from 'react'
-import { Dimensions, StyleSheet, View } from 'react-native'
+import React, {
+  FC,
+  memo,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react'
 import {
-  FlatList,
-  TouchableWithoutFeedback,
-} from 'react-native-gesture-handler'
+  Dimensions,
+  findNodeHandle,
+  StyleSheet,
+  UIManager,
+  View,
+} from 'react-native'
+import { FlatList } from 'react-native-gesture-handler'
 import { useQuery, useQueryClient } from 'react-query'
 import { HomeNavProps } from '../@types/NavProps'
 import { useStoreState } from '../@types/typedHooks'
 import { getAlbumById } from '../api/getAlbumById'
 import { getAlbumFiles } from '../api/getAlbumFiles'
+import { updateAlbum } from '../api/updateAlbum'
 import { AddFiles } from '../components/AddFiles'
 import AlbumFile from '../components/AlbumFile'
 import Container from '../components/Container'
@@ -17,8 +28,6 @@ import { ThreeDots } from '../components/icons/ThreeDots'
 import { MyText } from '../components/MyText'
 import { RefreshControlComponent } from '../components/RefreshControl'
 import { SmoothFastImage } from '../components/SmoothFastImage'
-import OptionsMenu from 'react-native-option-menu'
-import { UIManager, findNodeHandle } from 'react-native'
 
 interface AlbumFilesCoverProps {
   fileURL: string
@@ -98,10 +107,9 @@ const AlbumFilesScreen = ({
     if (optionsRef.current) {
       UIManager.showPopupMenu(
         findNodeHandle(optionsRef.current) as any,
-        ['Edit Album', 'Default Album Cover to Latest', 'Delete Album'],
-        () => console.log('something went wrong with the popup menu'),
+        ['Edit Album', 'Default Album Cover', 'Delete Album'],
+        () => alert('something went wrong with the popup menu'),
         (item, index) => {
-          console.log(index)
           switch (index) {
             case 0:
               navigation.navigate('NewAlbum', {
@@ -110,6 +118,7 @@ const AlbumFilesScreen = ({
               })
               break
             case 1:
+              updateAlbum({ AlbumFileId: 'default' }, albumId)
               break
             case 2:
               navigation.navigate('ConfirmationModal', {
@@ -123,6 +132,20 @@ const AlbumFilesScreen = ({
       )
     }
   }
+
+  useEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <TouchableOpacity
+          ref={optionsRef}
+          onPress={openOptionsHandler}
+          style={{ padding: 9 }}
+        >
+          <ThreeDots size={18} />
+        </TouchableOpacity>
+      ),
+    })
+  }, [])
 
   return (
     <Container customStyles={{ padding: 0 }}>
@@ -153,15 +176,7 @@ const AlbumFilesScreen = ({
                     top: 0,
                     right: 0,
                   }}
-                >
-                  <TouchableOpacity
-                    ref={optionsRef}
-                    onPress={openOptionsHandler}
-                    style={{ padding: 16 }}
-                  >
-                    <ThreeDots size={20} />
-                  </TouchableOpacity>
-                </View>
+                ></View>
               </View>
               <View
                 style={{

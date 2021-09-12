@@ -2,7 +2,10 @@ import axios from 'axios'
 import { serverURL } from '../constants/serverURL'
 import { store } from '../state-management/stores'
 
-export const updateAlbum = async (name: string, albumId: string) => {
+export const updateAlbum = async (
+  { name, AlbumFileId }: { name?: string; AlbumFileId?: string },
+  albumId: string
+) => {
   const accessToken = store.getState().accessToken
 
   const config = {
@@ -11,7 +14,7 @@ export const updateAlbum = async (name: string, albumId: string) => {
 
   const { data } = await axios.put(
     `${serverURL}/albums/${albumId}`,
-    { name },
+    { name, AlbumFileId },
     config
   )
 
