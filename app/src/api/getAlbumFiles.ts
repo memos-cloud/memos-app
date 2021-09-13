@@ -10,7 +10,7 @@ export const getAlbumFiles = async (albumId: string) => {
   }
 
   const { data } = await axios.get(
-    `${serverURL}/albums/${albumId}/files?take=10`,
+    `${serverURL}/albums/${albumId}/files?take=40`,
     config
   )
 

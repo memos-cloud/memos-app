@@ -7,6 +7,7 @@ import {
   ImageLoadEventData,
   NativeSyntheticEvent,
   StyleSheet,
+  ToastAndroid,
   View,
 } from 'react-native'
 import Gallery, { GalleryRef } from 'react-native-awesome-gallery'
@@ -21,12 +22,84 @@ import { DeleteIcon } from '../components/icons/DeleteIcon'
 import { DownloadIcon } from '../components/icons/DownloadIcon'
 import { ShareIcon } from '../components/icons/ShareIcon'
 import { MyText } from '../components/MyText'
+import * as MediaLibrary from 'expo-media-library'
+import * as FileSystem from 'expo-file-system'
+import * as Sharing from 'expo-sharing'
+import shorthash from 'shorthash'
+import { askingForFilesPermission } from '../utils/getFilesPermision'
+
+interface downloadAsset {
+  remoteUrl: string
+  localUri: string
+  mimetype: string
+}
+const downloadAsset = async ({
+  remoteUrl,
+  mimetype,
+  localUri,
+}: downloadAsset) => {
+  askingForFilesPermission()
+  ToastAndroid.show('Progressing...', ToastAndroid.BOTTOM)
+  const hashedUrl = shorthash.unique(remoteUrl)
+  const ext = '.' + mimetype.replace('image/', '').replace('video/', '')
+  const { exists } = await FileSystem.getInfoAsync(
+    FileSystem.documentDirectory + hashedUrl + ext
+  )
+  const { exists: exists2 } = await FileSystem.getInfoAsync(localUri)
+
+  if (exists || exists2) {
+    return ToastAndroid.show('Image is already on device!', ToastAndroid.BOTTOM)
+  }
+
+  const downloadedImage = await FileSystem.downloadAsync(
+    remoteUrl,
+    FileSystem.documentDirectory + hashedUrl + ext
+  )
+
+  await MediaLibrary.saveToLibraryAsync(downloadedImage.uri)
+
+  ToastAndroid.show('Saved Image!', ToastAndroid.BOTTOM)
+}
+
+const shareAsset = async ({ localUri, remoteUrl, mimetype }: downloadAsset) => {
+  ToastAndroid.show('Progressing...', ToastAndroid.SHORT)
+  const ext = '.' + mimetype.replace('image/', '').replace('video/', '')
+  const { exists } = await FileSystem.getInfoAsync(localUri)
+
+  let image: any
+  if (!exists) {
+    const hashedUrl = shorthash.unique(remoteUrl)
+    const cacheUrl = FileSystem.cacheDirectory + hashedUrl + ext
+
+    const cacheExists = await FileSystem.getInfoAsync(cacheUrl)
+
+    if (cacheExists.exists) {
+      image = cacheExists
+    } else {
+      const cachedImage = await FileSystem.downloadAsync(remoteUrl, cacheUrl)
+      image = cachedImage
+    }
+  } else {
+    image = { uri: localUri }
+  }
+
+  if (!(await Sharing.isAvailableAsync())) {
+    alert(`Uh oh, sharing isn't available on your platform`)
+    return
+  }
+
+  await Sharing.shareAsync(image.uri, {
+    mimeType: mimetype,
+    dialogTitle: 'Share Image',
+  })
+}
 
 const options = [
   {
     id: uuidv4(),
     label: 'Share',
     icon: <ShareIcon size={22} />,
+    action: shareAsset,
   },
   {
     id: uuidv4(),
@@ -38,6 +111,7 @@ const options = [
     id: uuidv4(),
     label: 'Download',
     icon: <DownloadIcon size={22} />,
+    action: downloadAsset,
   },
 ]
 
@@ -108,24 +182,23 @@ export const AssetsPreviewScreen = ({
         <View
           style={[
             styles.topHeader,
-            {
-              backgroundColor: colors.secondary,
-              paddingVertical: 2,
-              paddingTop: 2,
-              paddingHorizontal: 20,
-              paddingLeft: 20,
-              bottom: 0,
-              top: undefined,
-              justifyContent: 'space-between',
-            },
+            styles.bottomHeader,
+            { backgroundColor: colors.secondary },
           ]}
         >
           {options.map((e) => (
             <TouchableOpacity
+              onPress={() => {
+                if (e.action)
+                  e.action({
+                    remoteUrl: assets[currentIndex].fileURL,
+                    localUri: assets[currentIndex].deviceFileUrl,
+                    mimetype: assets[currentIndex].mimetype,
+                  })
+              }}
               key={e.id}
               activeOpacity={colors.activeOpacity}
               style={styles.optionParent}
-              disabled={e.label === 'Download'}
             >
               {e.icon}
               <MyText
@@ -204,6 +277,15 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     paddingLeft: 15,
     paddingTop: 8 + Constants.default.statusBarHeight,
+  },
+  bottomHeader: {
+    paddingVertical: 2,
+    paddingTop: 2,
+    paddingHorizontal: 20,
+    paddingLeft: 20,
+    bottom: 0,
+    top: undefined,
+    justifyContent: 'space-between',
   },
   date: {
     paddingLeft: 2,

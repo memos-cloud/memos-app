@@ -6,6 +6,7 @@ import {
   Dimensions,
   FlatList,
   SafeAreaView,
+  ToastAndroid,
   TouchableOpacity,
   View,
 } from 'react-native'
@@ -71,14 +72,24 @@ const AssetsFlatList = ({
 
   const selectHandler = (id: string) => {
     setSelected((selected) => {
+      console.log(selected.length)
       const isSelected = selected.find((e) => e === id)
 
       if (isSelected) {
         return selected.filter((e) => e !== id)
       }
+
+      if (selected.length >= 15) {
+        ToastAndroid.show(
+          "Can't save more than 15 assets at a time!",
+          ToastAndroid.BOTTOM
+        )
+        return selected
+      }
       return [...selected, id]
     })
   }
+
   const renderItem = ({ item }: { item: any }) => (
     <PickImage
       item={item}
@@ -104,7 +115,8 @@ const AssetsFlatList = ({
     const newAlbums = albums.map((albumData: any) => {
       if (albumId === albumData.album.id) {
         const photoAssets = assets.filter(
-          (asset) => asset?.mediaType === 'photo'
+          (asset) =>
+            asset?.mediaType === 'photo' && selected.find((e) => e === asset.id)
         )
         const asset = photoAssets[photoAssets.length - 1]
 
@@ -113,8 +125,8 @@ const AssetsFlatList = ({
           albumCover: {
             id: uuidv4(),
             mimetype: asset?.mediaType,
-            deviceFileURL: asset!.uri,
-            createdAt: Date.now(),
+            deviceFileUrl: asset!.uri,
+            createdAt: new Date().toISOString(),
           },
         }
       }
@@ -130,8 +142,8 @@ const AssetsFlatList = ({
         return {
           id: uuidv4(),
           mimetype: asset.mimetype === 'photo' ? 'image/png' : 'video/mp3',
-          fileURL: asset.uri,
-          createdAt: new Date(),
+          deviceFileUrl: asset.uri,
+          createdAt: new Date().toISOString(),
         }
       }),
       ...albumFiles.filter((e: any) => !e.placeholder),
@@ -263,7 +275,6 @@ const AssetsFlatList = ({
         </View>
       </SafeAreaView>
       <FlatList
-        removeClippedSubviews={true}
         contentContainerStyle={{
           minHeight: '100%',
         }}

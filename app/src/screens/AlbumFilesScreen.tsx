@@ -37,21 +37,6 @@ interface AlbumFilesCoverProps {
 
 const fileWidth = Dimensions.get('screen').width / 4 - 7 * 2
 
-const AlbumFilesCover: FC<AlbumFilesCoverProps> = memo(
-  ({ fileURL, deviceFileUrl }) => {
-    return (
-      <SmoothFastImage
-        style={[styles.albumCover, styles.parent]}
-        uri={fileURL}
-        loadFirst={deviceFileUrl}
-      />
-    )
-  },
-  (prev, next) => {
-    return prev.Key === next.Key
-  }
-)
-
 const MemoizedAlbumFile = memo(
   ({ addFilesHandler }: { addFilesHandler: any }) => {
     return <AddFiles width={fileWidth} addFilesHandler={addFilesHandler} />
@@ -137,9 +122,10 @@ const AlbumFilesScreen = ({
     navigation.setOptions({
       headerRight: () => (
         <TouchableOpacity
+          activeOpacity={colors.activeOpacity}
           ref={optionsRef}
           onPress={openOptionsHandler}
-          style={{ padding: 9 }}
+          style={{ padding: 9, paddingRight: 4.5 }}
         >
           <ThreeDots size={18} />
         </TouchableOpacity>
@@ -148,106 +134,86 @@ const AlbumFilesScreen = ({
   }, [])
 
   return (
-    <Container customStyles={{ padding: 0 }}>
-      <Container
-        customStyles={{
-          flex: 0,
-          padding: 0,
-        }}
-      >
-        <FlatList
-          ListHeaderComponent={
-            <>
-              <View
-                style={{
-                  backgroundColor: !albumData.albumCover
-                    ? colors.secondary
-                    : 'transparent',
-                }}
-              >
-                <AlbumFilesCover
-                  Key={albumData?.albumCover?.id}
-                  fileURL={albumData?.albumCover?.fileURL}
-                  deviceFileUrl={albumData?.albumCover?.deviceFileUrl}
-                />
-                <View
-                  style={{
-                    position: 'absolute',
-                    top: 0,
-                    right: 0,
-                  }}
-                ></View>
-              </View>
-              <View
-                style={{
-                  marginBottom: 10,
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                  alignContent: 'center',
-                  padding: 15,
-                  paddingBottom: 0,
-                }}
-              >
-                <MyText
-                  customStyles={{
-                    maxWidth: '85%',
-                  }}
-                  size='lg'
-                >
-                  {albumData.album.name}
-                </MyText>
-              </View>
-            </>
-          }
-          refreshControl={
-            <RefreshControlComponent
-              refreshing={refreshing || isLoading}
-              onRefresh={onRefresh}
+    <FlatList
+      ListHeaderComponent={
+        <>
+          <View
+            style={{
+              backgroundColor: !albumData.albumCover
+                ? colors.secondary
+                : 'transparent',
+            }}
+          >
+            <SmoothFastImage
+              style={[styles.albumCover, styles.parent]}
+              uri={albumData?.albumCover?.fileURL}
+              loadFirst={albumData?.albumCover?.deviceFileUrl}
             />
-          }
-          ListHeaderComponentStyle={{ width: '100%' }}
-          contentContainerStyle={{
-            flexDirection: 'column',
-            flex: 1,
-          }}
-          numColumns={4}
-          columnWrapperStyle={{
-            justifyContent: 'space-between',
-            padding: 15,
-            paddingTop: 0,
-            paddingBottom: 0,
-          }}
-          renderItem={({ item, index }) => {
-            if (item.placeholder) {
-              return <MemoizedAlbumFile addFilesHandler={addFilesHandler} />
-            }
-            return (
-              <AlbumFile
-                previewHandler={() =>
-                  navigation.navigate('AssetsPreview', {
-                    albumId: route.params.id,
-                    index,
-                  })
-                }
-                item={item}
-                width={fileWidth}
-              />
-            )
-          }}
-          data={
-            (data || []).length % 4
-              ? [
-                  ...(data || []),
-                  ...[...Array((data || []).length % 4)].map(() => ({
-                    fileURL: 'empty',
-                  })),
-                ]
-              : data || []
-          }
-          keyExtractor={(item) => item.id}
+          </View>
+          <View
+            style={{
+              marginBottom: 10,
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignContent: 'center',
+              padding: 15,
+              paddingBottom: 0,
+            }}
+          >
+            <MyText
+              customStyles={{
+                maxWidth: '85%',
+              }}
+              size='lg'
+            >
+              {albumData.album.name}
+            </MyText>
+          </View>
+        </>
+      }
+      refreshControl={
+        <RefreshControlComponent
+          refreshing={refreshing || isLoading}
+          onRefresh={onRefresh}
         />
-      </Container>
-    </Container>
+      }
+      ListHeaderComponentStyle={{ width: '100%' }}
+      numColumns={4}
+      columnWrapperStyle={{
+        justifyContent: 'space-between',
+        padding: 15,
+        paddingTop: 0,
+        paddingBottom: 0,
+      }}
+      renderItem={({ item, index }) => {
+        if (item.placeholder) {
+          return <MemoizedAlbumFile addFilesHandler={addFilesHandler} />
+        }
+        return (
+          <AlbumFile
+            previewHandler={() =>
+              navigation.navigate('AssetsPreview', {
+                albumId: route.params.id,
+                index,
+              })
+            }
+            item={item}
+            width={fileWidth}
+          />
+        )
+      }}
+      data={
+        4 - ((data || []).length % 4)
+          ? [
+              ...(data || []),
+              ...[...Array(4 - ((data || []).length % 4))].map(() => ({
+                fileURL: 'empty',
+              })),
+            ]
+          : data || []
+      }
+      keyExtractor={(item) => item.id}
+    />
   )
 }
 

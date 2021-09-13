@@ -1,15 +1,13 @@
+import * as FileSystem from 'expo-file-system'
 import React, { FC, memo, useEffect, useState } from 'react'
 import {
   Image as PureImage,
-  ImageLoadEventData,
   ImageResizeMode,
   ImageStyle,
-  NativeSyntheticEvent,
   StyleProp,
   View,
 } from 'react-native'
 import { Image } from 'react-native-expo-image-cache'
-import * as FileSystem from 'expo-file-system'
 
 interface Props {
   style?: StyleProp<ImageStyle>

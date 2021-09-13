@@ -1,6 +1,6 @@
 import * as Constants from 'expo-constants'
 import * as MediaLibrary from 'expo-media-library'
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { ActivityIndicator, Dimensions, StyleSheet } from 'react-native'
 import 'react-native-console-time-polyfill'
 import 'react-native-get-random-values'
@@ -66,7 +66,7 @@ const PickImages = ({
       {assetsLoading && (
         <ActivityIndicator
           style={{
-            padding: 12,
+            padding: Constants.default.statusBarHeight + 6,
           }}
           size='small'
           color={colors.primary}

@@ -1,7 +1,7 @@
 import { addSeconds, format } from 'date-fns'
 import * as MediaLibrary from 'expo-media-library'
 import _ from 'lodash'
-import React, { FC, memo } from 'react'
+import React, { FC, memo, useState } from 'react'
 import { StyleSheet, View, Image } from 'react-native'
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler'
 import { Fonts } from '../@types/fonts'
