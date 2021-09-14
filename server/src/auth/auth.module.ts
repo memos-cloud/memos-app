@@ -5,6 +5,7 @@ import { MongooseModule } from '@nestjs/mongoose'
 import { User, UserSchema } from 'src/models/User.schema'
 import { AuthController } from './auth.controller'
 import { AuthService } from './auth.service'
+import { FacebookStrategy } from './facebook.strategy'
 import { GoogleStrategy } from './google.strategy'
 
 @Module({
@@ -17,6 +18,6 @@ import { GoogleStrategy } from './google.strategy'
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, GoogleStrategy],
+  providers: [AuthService, GoogleStrategy, FacebookStrategy],
 })
 export class AuthModule {}

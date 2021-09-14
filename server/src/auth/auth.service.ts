@@ -13,12 +13,16 @@ export class AuthService {
     @InjectModel(User.name) private userModel: Model<UserDocument>,
     private jwtService: JwtService,
   ) {}
-  async googleLogin(req: any, res: Response) {
+  async googleLogin(req: any, res: Response, type: 'google' | 'facebook') {
     if (!req.user) {
       return 'No user from google'
     }
 
-    const userExists = await this.userModel.findOne({ email: req.user.email })
+    const userExists = await this.userModel.findOne(
+      type === 'facebook'
+        ? { facebookId: req.user.facebookId }
+        : { email: req.user.email },
+    )
 
     let User: UserDocument
 
@@ -66,7 +70,7 @@ export class AuthService {
     const url =
       process.env.NODE_ENV === 'production'
         ? `memos-rn://SaveToken/${token}`
-        : `exp://192.168.1.5:19000/--/SaveToken/${token}`
+        : `exp://192.168.1.8:19000/--/SaveToken/${token}`
 
     res.redirect(url)
   }

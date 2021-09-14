@@ -13,8 +13,11 @@ export class User {
   @Prop({ required: true })
   name: string
 
-  @Prop({ required: true, unique: true })
-  email: string
+  @Prop({ unique: true })
+  email?: string
+
+  @Prop({ unique: true })
+  facebookId: string
 
   @Prop({ required: true })
   profilePic: string

@@ -64,12 +64,15 @@ export class AlbumsService {
       if (!albumObj.albumCover) {
         const lastFile = (
           await this.fileModel
-            .find({ albumId: albumObj.album.id })
+            .find({
+              albumId: albumObj.album.id,
+              mimetype: { $regex: /image/, $options: 'i' },
+            })
             .sort({ createdAt: -1 })
             .limit(1)
         )[0]
 
-        if (!lastFile || lastFile.mimetype.includes('video')) {
+        if (!lastFile) {
           return null
         }
 
@@ -141,7 +144,10 @@ export class AlbumsService {
     } else {
       const file = (
         await this.fileModel
-          .find({ albumId: album.id })
+          .find({
+            albumId: album.id,
+            mimetype: { $regex: /image/, $options: 'i' },
+          })
           .sort({ createdAt: -1 })
           .limit(1)
       )[0]
@@ -149,9 +155,7 @@ export class AlbumsService {
       if (!file) {
         albumCover = null
       } else {
-        albumCover = file.mimetype.includes('video')
-          ? null
-          : await getFile({ key: file.key, file })
+        albumCover = await getFile({ key: file.key, file })
       }
     }
 

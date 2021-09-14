@@ -1,30 +1,21 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { NavigationContainer } from '@react-navigation/native'
+import * as Permissions from 'expo-permissions'
+import * as SplashScreen from 'expo-splash-screen'
 import { StatusBar } from 'expo-status-bar'
-import React, { useCallback, useMemo, useRef, useState } from 'react'
+import React, { useEffect } from 'react'
+import { Dimensions } from 'react-native'
 import { Fonts } from '../@types/fonts'
 import { AppStackParamList } from '../@types/StackParamList'
+import { useStoreState } from '../@types/typedHooks'
 import { MyHeader } from '../components/Header'
 import { HomeFilledIcon } from '../components/icons/HomeFilled'
 import { HomeOutlineIcon } from '../components/icons/HomeOutline'
 import { SettingsFilledIcon } from '../components/icons/SettingsFilled'
 import { SettingsOutlineIcon } from '../components/icons/SettingsOutline'
+import { IconWrapper } from '../components/IconWrapper'
 import SettingsScreen from '../screens/SettingsScreen'
 import { AlbumsStack } from './AlbumsStack'
-import { Dimensions } from 'react-native'
-import { IconWrapper } from '../components/IconWrapper'
-import * as SplashScreen from 'expo-splash-screen'
-import { useEffect } from 'react'
-import { useStoreState } from '../@types/typedHooks'
-import BottomSheet from '@gorhom/bottom-sheet'
-import Animated, {
-  useAnimatedStyle,
-  useSharedValue,
-  withTiming,
-} from 'react-native-reanimated'
-import { View } from 'react-native'
-import { MyText } from '../components/MyText'
-import { createStackNavigator } from '@react-navigation/stack'
 
 const Tab = createBottomTabNavigator<AppStackParamList>()
 
@@ -48,6 +39,8 @@ export const AppStack = () => {
   useEffect(() => {
     const removeSplashScreen = async () => {
       await SplashScreen.hideAsync()
+      const { granted } = await Permissions.getAsync('mediaLibrary')
+      if (!granted) await Permissions.askAsync(Permissions.MEDIA_LIBRARY)
     }
     removeSplashScreen()
   }, [])

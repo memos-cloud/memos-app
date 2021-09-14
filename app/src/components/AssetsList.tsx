@@ -72,7 +72,6 @@ const AssetsFlatList = ({
 
   const selectHandler = (id: string) => {
     setSelected((selected) => {
-      console.log(selected.length)
       const isSelected = selected.find((e) => e === id)
 
       if (isSelected) {

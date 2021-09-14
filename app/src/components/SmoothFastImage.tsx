@@ -44,7 +44,6 @@ export const SmoothFastImage: FC<Props> = memo(
         resizeMode={resizeMode}
         style={style}
         source={{ uri: loadFirst }}
-        onError={() => setLoadFromDisk(false)}
       />
     ) : (
       <Image transitionDuration={transitionDuration} style={style} uri={uri} />

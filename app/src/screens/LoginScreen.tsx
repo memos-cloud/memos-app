@@ -9,7 +9,6 @@ import Container from '../components/Container'
 import { MyButton } from '../components/MyButton'
 import { MyText } from '../components/MyText'
 import { serverURL } from '../constants/serverURL'
-import * as Device from 'expo-device'
 import * as Constants from 'expo-constants'
 
 const linearGradient = ['#0F0F0F', 'rgba(15, 15, 15, 0.2)']
@@ -21,7 +20,16 @@ export const LoginScreen: FC<AuthNavProps<'Login'>> = () => {
 
     if (Platform.OS === 'android') {
       await WebBrowser.openBrowserAsync(
-        `${serverURL}/google?deviceId=${deviceId}`
+        `${serverURL}/auth/google?deviceId=${deviceId}`
+      )
+    }
+  }
+  const ContinueWithFacebookHandler = async () => {
+    const deviceId = Constants.default.deviceId
+
+    if (Platform.OS === 'android') {
+      await WebBrowser.openBrowserAsync(
+        `${serverURL}/auth/facebook?deviceId=${deviceId}`
       )
     }
   }
@@ -71,7 +79,7 @@ export const LoginScreen: FC<AuthNavProps<'Login'>> = () => {
               bg={colors.facebook}
               text='Continue With Facebook'
               icon={require('../assets/Images/facebook.png')}
-              onPress={() => {}}
+              onPress={ContinueWithFacebookHandler}
             />
           </View>
         </Container>

@@ -1,7 +1,7 @@
 import { TouchableOpacity } from '@gorhom/bottom-sheet'
 import { differenceInDays, format, parseISO } from 'date-fns'
 import * as Constants from 'expo-constants'
-import React, { useRef, useState } from 'react'
+import React, { useRef, useState, useEffect } from 'react'
 import {
   Image as PureImage,
   ImageLoadEventData,
@@ -275,35 +275,39 @@ export const AssetsPreviewScreen = ({
         onTap={() => setAssetHeadersShown(!assetHeadersShown)}
         renderItem={(imgInfo) => {
           const [loadFromDisk, setLoadFromDisk] = useState(true)
+          const [imgResult, setImgResult] = useState(false)
 
-          const onLoad = ({
-            nativeEvent,
-          }: NativeSyntheticEvent<ImageLoadEventData>) => {
-            const { width, height } = nativeEvent.source
+          const checkImage = async () => {
+            const { exists } = await FileSystem.getInfoAsync(
+              imgInfo.item.deviceFileUrl
+            )
 
-            imgInfo.setImageDimensions({ width, height })
+            setLoadFromDisk(exists)
+
+            setImgResult(true)
           }
 
-          return (
-            <View style={StyleSheet.absoluteFillObject}>
-              {loadFromDisk ? (
-                <PureImage
-                  onLoad={onLoad}
-                  resizeMode='contain'
-                  style={StyleSheet.absoluteFillObject}
-                  source={{ uri: imgInfo.item.fileURL }}
-                  onError={() => setLoadFromDisk(false)}
-                />
-              ) : (
-                <Image
-                  onLoad={onLoad}
-                  resizeMode='contain'
-                  transitionDuration={0}
-                  style={StyleSheet.absoluteFillObject}
-                  uri={imgInfo.item.deviceFileUrl}
-                />
-              )}
-            </View>
+          useEffect(() => {
+            checkImage()
+          }, [])
+
+          if (!imgResult) {
+            return <View style={StyleSheet.absoluteFillObject} />
+          }
+
+          return loadFromDisk ? (
+            <PureImage
+              resizeMode='contain'
+              style={StyleSheet.absoluteFillObject}
+              source={{ uri: imgInfo.item.deviceFileUrl }}
+            />
+          ) : (
+            <Image
+              resizeMode='contain'
+              transitionDuration={0}
+              style={StyleSheet.absoluteFillObject}
+              uri={imgInfo.item.fileURL}
+            />
           )
         }}
         emptySpaceWidth={15}
