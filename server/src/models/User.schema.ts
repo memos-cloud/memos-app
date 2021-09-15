@@ -16,9 +16,6 @@ export class User {
   @Prop({ unique: true })
   email?: string
 
-  @Prop({ unique: true })
-  facebookId: string
-
   @Prop({ required: true })
   profilePic: string
 

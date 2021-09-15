@@ -11,8 +11,8 @@ export class FacebookStrategy extends PassportStrategy(Strategy, 'facebook') {
       clientID: process.env.FACEBOOK_APP_ID,
       clientSecret: process.env.FACEBOOK_APP_SECRET,
       callbackURL: `${process.env.SERVER_URL}/auth/facebook/redirect`,
-      profileFields: ['id', 'emails', 'name', 'picture.type(large)'],
-      scope: ['email'],
+      profileFields: ['emails', 'name', 'picture.type(large)'],
+      scope: 'email',
     })
   }
 
@@ -30,12 +30,9 @@ export class FacebookStrategy extends PassportStrategy(Strategy, 'facebook') {
       lastName: name.familyName,
       picture: photos[0].value,
       facebookId: id,
-    }
-    const payload = {
-      user,
       accessToken,
     }
 
-    done(null, payload)
+    done(null, user)
   }
 }

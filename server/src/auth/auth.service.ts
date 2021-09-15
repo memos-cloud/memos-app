@@ -1,4 +1,4 @@
-import { HttpException, Injectable } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt'
 import { InjectModel } from '@nestjs/mongoose'
 import { Response } from 'express'
@@ -6,6 +6,8 @@ import * as fs from 'fs'
 import { Model } from 'mongoose'
 import * as path from 'path'
 import { User, UserDocument } from 'src/models/User.schema'
+import * as dotenv from 'dotenv'
+dotenv.config()
 
 @Injectable()
 export class AuthService {
@@ -15,11 +17,11 @@ export class AuthService {
   ) {}
   async googleLogin(req: any, res: Response, type: 'google' | 'facebook') {
     if (!req.user) {
-      res.send('<h1>No User from Google!</h1>')
+      return res.send('<h1>No User from Google!</h1>')
     }
 
     if (!req.user.email && type === 'facebook') {
-      res.send(
+      return res.send(
         "<h1>It Seems that your Facebook Acconut doesn't contain email address, please update your Facebook account information with a valid email to continue using this option.</h1>",
       )
     }
@@ -47,6 +49,12 @@ export class AuthService {
     }
 
     if (!userExists) {
+      const usersCount = await this.userModel.countDocuments({})
+      if (usersCount >= parseInt(process.env.USERS_LIMIT!)) {
+        return res.send(
+          '<h1>Sorry users free trial usage is for a limited number of people.</h1>',
+        )
+      }
       const result = await checkDeviceIfSignedUpBefore()
       if (!result) {
         global.deviceId = undefined
