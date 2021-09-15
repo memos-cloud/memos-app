@@ -5,7 +5,7 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "eject": "expo eject",
-    "push": "yarn standard-version --release-as minor && git push origin master"
+    "push": "yarn standard-version --release-as patch && git push origin master"
   },
   "dependencies": {
     "@gorhom/bottom-sheet": "^4",
@@ -69,5 +69,5 @@
   },
   "private": true,
   "name": "app",
-  "version": "1.1.0"
+  "version": "1.1.1"
 }
