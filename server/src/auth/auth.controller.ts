@@ -28,7 +28,7 @@ export class AuthController {
 
   // Facebook
   @Get('/facebook')
-  @UseGuards(AuthGuard('facebook'))
+  @UseGuards(DeviceIdGuard, AuthGuard('facebook'))
   async facebookAuth(): Promise<any> {}
 
   @Get('/facebook/redirect')
