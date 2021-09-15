@@ -74,9 +74,11 @@
     "babel-plugin-transform-remove-console": "^6.9.4",
     "react-native-svg-transformer": "^0.14.3",
     "react-performance-testing": "^2.0.0",
+    "standard-version": "^7.1.0",
+    "standard-version-expo": "^1.0.3",
     "typescript": "~4.0.0"
   },
   "private": true,
   "name": "app",
-  "version": "1.0.0"
+  "version": "1.0.2"
 }
