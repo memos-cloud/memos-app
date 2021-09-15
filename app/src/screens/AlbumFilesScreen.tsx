@@ -14,10 +14,10 @@ import {
   ToastAndroid,
   UIManager,
   View,
+  FlatList,
 } from 'react-native'
-import { FlatList } from 'react-native-gesture-handler'
 import { useQuery, useQueryClient } from 'react-query'
-import { HomeNavProps } from '../@types/NavProps'
+import { AppNavProps, HomeNavProps } from '../@types/NavProps'
 import { useStoreState } from '../@types/typedHooks'
 import { getAlbumById } from '../api/getAlbumById'
 import { getAlbumFiles } from '../api/getAlbumFiles'
@@ -25,7 +25,6 @@ import { getAlbums } from '../api/getAlbums'
 import { updateAlbum } from '../api/updateAlbum'
 import { AddFiles } from '../components/AddFiles'
 import AlbumFile from '../components/AlbumFile'
-import Container from '../components/Container'
 import { ThreeDots } from '../components/icons/ThreeDots'
 import { MyText } from '../components/MyText'
 import { RefreshControlComponent } from '../components/RefreshControl'
@@ -37,7 +36,7 @@ interface AlbumFilesCoverProps {
   Key: string
 }
 
-const fileWidth = Dimensions.get('screen').width / 4 - 7 * 2
+const fileWidth = Dimensions.get('window').width / 4 - 7 * 2
 
 const MemoizedAlbumFile = memo(
   ({ addFilesHandler }: { addFilesHandler: any }) => {
@@ -45,16 +44,10 @@ const MemoizedAlbumFile = memo(
   }
 )
 
-const AlbumFilesScreen = ({
-  navigation,
-  route,
-}: HomeNavProps<'AlbumFiles'>) => {
+const AlbumFilesScreen = ({ navigation, route }: AppNavProps<'AlbumFiles'>) => {
   const queryClient = useQueryClient()
   const [refreshing, setRefreshing] = useState(false)
-  const { data: fetchedAlbums, isLoading: isLoading2 } = useQuery(
-    'albums',
-    getAlbums
-  )
+  const { data: fetchedAlbums } = useQuery('albums', getAlbums)
 
   const albumId = route.params.id
 
@@ -62,8 +55,10 @@ const AlbumFilesScreen = ({
     ? []
     : fetchedAlbums.find(({ album }: any) => album.id === albumId)
 
-  const { data, isLoading, error } = useQuery(`albumFiles:${albumId}`, () =>
-    getAlbumFiles(albumId)
+  const { data, isLoading, error } = useQuery(
+    `albumFiles:${albumId}`,
+    () => getAlbumFiles(albumId),
+    { staleTime: 60 * 10 }
   )
 
   const onRefresh = useCallback(async () => {
@@ -158,6 +153,7 @@ const AlbumFilesScreen = ({
             }}
           >
             <SmoothFastImage
+              id={albumData?.albumCover?.id}
               style={[styles.albumCover, styles.parent]}
               uri={albumData?.albumCover?.fileURL}
               loadFirst={albumData?.albumCover?.deviceFileUrl}

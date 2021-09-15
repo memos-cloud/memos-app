@@ -2,9 +2,8 @@ import * as Constants from 'expo-constants'
 import * as MediaLibrary from 'expo-media-library'
 import React, { useState, useEffect } from 'react'
 import { ActivityIndicator, Dimensions, StyleSheet } from 'react-native'
-import 'react-native-get-random-values'
 import { useQuery, useQueryClient } from 'react-query'
-import { HomeNavProps } from '../@types/NavProps'
+import { AppNavProps, HomeNavProps } from '../@types/NavProps'
 import { useStoreState } from '../@types/typedHooks'
 import { AssetsList } from '../components/AssetsList'
 import Container from '../components/Container'
@@ -45,7 +44,7 @@ const getAssets = async ({
 const PickImages = ({
   navigation,
   route: { params },
-}: HomeNavProps<'AddFiles'>) => {
+}: AppNavProps<'AddFiles'>) => {
   const {
     data: assets,
     isLoading: assetsLoading,

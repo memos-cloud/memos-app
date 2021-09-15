@@ -1,18 +1,26 @@
 import React, { FC } from 'react'
-import { Dimensions, StyleSheet, TouchableOpacity, View } from 'react-native'
-import { ScrollView } from 'react-native-gesture-handler'
-import { AppNavProps } from '../@types/NavProps'
+import {
+  Dimensions,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+  ScrollView,
+} from 'react-native'
 import { useStoreActions, useStoreState } from '../@types/typedHooks'
-import { AddIcon } from '../components/icons/AddIcon'
 import { MyText } from '../components/MyText'
 import { PaintIcon } from '../components/icons/Paint'
 import { themes } from '../config/themes'
+import { HomeTabsParamList } from '../@types/StackParamList'
+import { HomeNavProps } from '../@types/NavProps'
 
 const marginRightBetweenBoxes = 7
 const themeBoxSize =
-  (Dimensions.get('screen').width - 40 / 0.3 - marginRightBetweenBoxes * 3) / 4
+  (Dimensions.get('window').width - 40 / 0.3 - marginRightBetweenBoxes * 3) / 4
 
-const SettingsScreen: FC<AppNavProps<'Settings'>> = ({ navigation, route }) => {
+const SettingsScreen: FC<HomeNavProps<'Settings'>> = ({
+  navigation,
+  route,
+}) => {
   const colors = useStoreState((state) => state.theme)
   const changeTheme = useStoreActions((actions) => actions.changeTheme)
   const saveTheme = useStoreActions((actions) => actions.saveTheme)

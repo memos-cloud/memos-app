@@ -1995,6 +1995,11 @@
     sudo-prompt "^9.0.0"
     wcwidth "^1.0.1"
 
+"@react-native-community/slider@3.0.3":
+  version "3.0.3"
+  resolved "https://registry.yarnpkg.com/@react-native-community/slider/-/slider-3.0.3.tgz#830167fd757ba70ac638747ba3169b2dbae60330"
+  integrity sha512-8IeHfDwJ9/CTUwFs6x90VlobV3BfuPgNLjTgC6dRZovfCWigaZwVNIFFJnHBakK3pW2xErAPwhdvNR4JeNoYbw==
+
 "@react-navigation/bottom-tabs@^6.0.5":
   version "6.0.5"
   resolved "https://registry.yarnpkg.com/@react-navigation/bottom-tabs/-/bottom-tabs-6.0.5.tgz#ece601449054bf555d4f5b2cc00f7a20eb6f557a"
@@ -4043,6 +4048,13 @@ expo-updates@~0.8.1:
     fbemitter "^2.1.1"
     resolve-from "^5.0.0"
     uuid "^3.4.0"
+
+expo-video-player@^2.0.1:
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/expo-video-player/-/expo-video-player-2.0.1.tgz#533d0c10c6405d9bdcd62719897d50625a491fe7"
+  integrity sha512-+bBgyOI9IgKFQBEV/x+NcCz5qZ5MDvohpokpmAV00XvQWKZYYiAo3mVQcjGuxVkEHYDjiUIuj6q2SjAUHK9rGA==
+  dependencies:
+    tslib "^2.3.0"
 
 expo-web-browser@^9.2.0:
   version "9.2.0"
@@ -6865,10 +6877,10 @@ react-is@^17.0.1:
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-17.0.2.tgz#e691d4a8e9c789365655539ab372762b0efb54f0"
   integrity sha512-w2GsyukL62IJnlaff/nRegPQR94C/XXamvMWmSHRJ4y7Ts/4ocGRmTHvOs8PSE6pB3dWOrD/nueuU5sduBsQ4w==
 
-react-native-awesome-gallery@^0.2.4:
-  version "0.2.4"
-  resolved "https://registry.yarnpkg.com/react-native-awesome-gallery/-/react-native-awesome-gallery-0.2.4.tgz#e1afb353cdb73520d5d59ee875923e96acb8e6c9"
-  integrity sha512-Ecpjg3EjR7VUPbYLbqqDx4ijV4fCrKCatHlEK6V1V7o44eJVDXs5ovKCVtpFMCZn6tGINvYMiAFVl7k5Z3i27w==
+react-native-awesome-gallery@0.2.5:
+  version "0.2.5"
+  resolved "https://registry.yarnpkg.com/react-native-awesome-gallery/-/react-native-awesome-gallery-0.2.5.tgz#4c20728abd8ec62e37ebd510e83af4e975530f2f"
+  integrity sha512-dB3ZPmj/BPie8oq1YWvZcfZaTroVMnOjcriLyvFOC4FWO6kyGIPyK2vNtvaPf4bly4JpKlro+4PkC/wHXTVAlQ==
   dependencies:
     react-native-redash "^16.0.8"
 
@@ -8083,6 +8095,11 @@ tslib@^1.10.0:
   version "1.14.1"
   resolved "https://registry.yarnpkg.com/tslib/-/tslib-1.14.1.tgz#cf2d38bdc34a134bcaf1091c41f6619e2f672d00"
   integrity sha512-Xni35NKzjgMrwevysHTCArtLDpPvye8zV/0E4EyYn43P7/7qvQwPh9BGkHewbMulVntbigmcT7rdX3BNo9wRJg==
+
+tslib@^2.3.0:
+  version "2.3.1"
+  resolved "https://registry.yarnpkg.com/tslib/-/tslib-2.3.1.tgz#e8a335add5ceae51aa261d32a490158ef042ef01"
+  integrity sha512-77EbyPPpMz+FRFRuAFlWMtmgUWGe9UOG2Z25NqCwiIjRhOf5iKGuzSe5P2w1laq+FkRy4p+PCuVkJSGkzTEKVw==
 
 type-fest@^0.18.0:
   version "0.18.1"

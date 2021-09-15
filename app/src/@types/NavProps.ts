@@ -3,7 +3,7 @@ import { StackNavigationProp } from '@react-navigation/stack'
 import {
   AppStackParamList,
   AuthStackParamList,
-  HomeStackParamList,
+  HomeTabsParamList,
 } from './StackParamList'
 
 export interface AuthNavProps<Screen extends keyof AuthStackParamList> {
@@ -11,12 +11,12 @@ export interface AuthNavProps<Screen extends keyof AuthStackParamList> {
   navigation: StackNavigationProp<AuthStackParamList, Screen>
 }
 
+export interface HomeNavProps<Screen extends keyof HomeTabsParamList> {
+  route: RouteProp<HomeTabsParamList, Screen>
+  navigation: StackNavigationProp<HomeTabsParamList, Screen>
+}
+
 export interface AppNavProps<Screen extends keyof AppStackParamList> {
   route: RouteProp<AppStackParamList, Screen>
   navigation: StackNavigationProp<AppStackParamList, Screen>
-}
-
-export interface HomeNavProps<Screen extends keyof HomeStackParamList> {
-  route: RouteProp<HomeStackParamList, Screen>
-  navigation: StackNavigationProp<HomeStackParamList, Screen>
 }

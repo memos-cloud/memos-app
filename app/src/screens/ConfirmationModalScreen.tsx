@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { ActivityIndicator, StyleSheet, View } from 'react-native'
 import { useQueryClient } from 'react-query'
 import { Fonts } from '../@types/fonts'
-import { HomeNavProps } from '../@types/NavProps'
+import { AppNavProps, HomeNavProps } from '../@types/NavProps'
 import { useStoreActions, useStoreState } from '../@types/typedHooks'
 import { deleteAlbum } from '../api/deleteAlbum'
 import { deleteAssets } from '../api/deleteAsset'
@@ -14,12 +14,12 @@ import { MyText } from '../components/MyText'
 export const ConfirmationModalScreen = ({
   navigation,
   route: { params },
-}: HomeNavProps<'ConfirmationModal'>) => {
+}: AppNavProps<'ConfirmationModal'>) => {
   const queryClient = useQueryClient()
   const colors = useStoreState((state) => state.theme)
   const bottomSheetRef = useRef<BottomSheet>(null)
 
-  const snapPoints = useMemo(() => ['25%'], [])
+  const snapPoints = useMemo(() => ['24%'], [])
 
   const goBack = () => navigation.goBack()
 
@@ -41,7 +41,7 @@ export const ConfirmationModalScreen = ({
       )
       queryClient.setQueryData('albums', albums)
       setActionLoading(false)
-      navigation.navigate('Albums')
+      navigation.navigate('HomeTabs')
     }
     if (params.actionType === 'deleteFiles' && params.deleteId) {
       setActionLoading(true)
@@ -103,6 +103,7 @@ export const ConfirmationModalScreen = ({
             paddingHorizontal: 25,
             flex: 1,
             alignItems: 'center',
+            justifyContent: 'center',
           }}
         >
           <MyText

@@ -3,12 +3,13 @@ import { useFonts } from 'expo-font'
 import * as SplashScreen from 'expo-splash-screen'
 import { StatusBar } from 'expo-status-bar'
 import React from 'react'
-import { LogBox, View } from 'react-native'
+import { LogBox } from 'react-native'
+import 'react-native-get-random-values'
 import { QueryClientProvider } from 'react-query'
 import Routes from './src/Routes'
 import { queryClient, store } from './src/state-management/stores'
 
-SplashScreen.preventAutoHideAsync().catch(console.warn) // it's good to explicitly catch and inspect any error
+SplashScreen.preventAutoHideAsync().catch(console.warn)
 
 export default () => {
   const [fontsLoaded] = useFonts({

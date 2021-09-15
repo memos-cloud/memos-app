@@ -27,6 +27,7 @@ export default function Input({
         {label} :
       </MyText>
       <TextInput
+        selectionColor={colors.primary}
         placeholderTextColor={'rgba(255, 255, 255, 0.5)'}
         placeholder={placeholder}
         style={[

@@ -2,7 +2,7 @@ import * as MediaLibrary from 'expo-media-library'
 import React from 'react'
 import { FlatList } from 'react-native'
 import { useQuery } from 'react-query'
-import { HomeNavProps } from '../@types/NavProps'
+import { AppNavProps, HomeNavProps } from '../@types/NavProps'
 import { useStoreState } from '../@types/typedHooks'
 import { AlbumRenderItem } from '../components/ChooseAlbum'
 import Container from '../components/Container'
@@ -51,7 +51,7 @@ const getDeviceAlbums = async () => {
 export const ChooseAlbumsScreen = ({
   navigation,
   route: { params },
-}: HomeNavProps<'ChooseAlbumsScreen'>) => {
+}: AppNavProps<'ChooseAlbumsScreen'>) => {
   const {
     data: albums,
     isLoading,

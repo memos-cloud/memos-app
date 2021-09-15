@@ -305,11 +305,11 @@ export class AlbumsService {
       return value + currentValue
     }, 0)
 
+    await deleteFiles({ keys: files.map((file) => file.key) })
+
     user.usage = parseFloat((user.usage - filesSize).toFixed(1))
 
     await user.save()
-
-    await deleteFiles({ keys: files.map((file) => file.key) })
 
     return this.fileModel.deleteMany(findObject)
   }

@@ -12,7 +12,7 @@ import {
 } from 'react-native'
 import { useQueryClient } from 'react-query'
 import { v4 as uuidv4 } from 'uuid'
-import { HomeStackParamList } from '../@types/StackParamList'
+import { AppStackParamList } from '../@types/StackParamList'
 import { useStoreState } from '../@types/typedHooks'
 import { uploadAssets } from '../api/uploadAssets'
 import { ArrowIcon } from './icons/Arrow'
@@ -22,7 +22,7 @@ import { PickImage } from './PickImage'
 import * as Constants from 'expo-constants'
 
 interface Props {
-  navigation: StackNavigationProp<HomeStackParamList, 'AddFiles'>
+  navigation: StackNavigationProp<AppStackParamList, 'AddFiles'>
   albumId: string
   deviceAlbumId: string
   widthAndHeight: number
@@ -99,58 +99,62 @@ const AssetsFlatList = ({
   )
 
   const uploadAssetsHandler = async () => {
-    const newFiles: any[] = []
+    try {
+      const newFiles: any[] = []
 
-    selected.map((id, index) => {
-      const asset: any = assets.find((asset) => asset?.id === id)
-      newFiles.push(asset)
+      selected.map((id, index) => {
+        const asset: any = assets.find((asset) => asset?.id === id)
+        newFiles.push(asset)
+        uploadAssets(albumId, asset.uri)
+      })
 
-      uploadAssets(albumId, asset.uri)
-    })
+      // Set new Album Cover
+      const albums = queryClient.getQueryData('albums') as any
 
-    // Set new Album Cover
-    const albums = queryClient.getQueryData('albums') as any
+      const newAlbums = albums.map((albumData: any) => {
+        if (albumId === albumData.album.id) {
+          const photoAssets = assets.filter((asset) =>
+            selected.find((e) => e === asset?.id)
+          )
+          const asset = photoAssets[photoAssets.length - 1]
 
-    const newAlbums = albums.map((albumData: any) => {
-      if (albumId === albumData.album.id) {
-        const photoAssets = assets.filter(
-          (asset) =>
-            asset?.mediaType === 'photo' && selected.find((e) => e === asset.id)
-        )
-        const asset = photoAssets[photoAssets.length - 1]
+          return {
+            ...albumData,
+            albumCover: {
+              id: uuidv4(),
+              mimetype: asset?.mediaType,
+              deviceFileUrl: asset!.uri,
+              createdAt: new Date().toISOString(),
+            },
+          }
+        }
+        return albumData
+      })
+      await queryClient.setQueryData(`albums`, newAlbums)
 
-        return {
-          ...albumData,
-          albumCover: {
+      // Add new Files to the album
+      const albumFiles = queryClient.getQueryData(
+        `albumFiles:${albumId}`
+      ) as any
+      const newAlbumFiles = [
+        { placeholder: 'addFiles' },
+        ...newFiles.map((asset) => {
+          return {
             id: uuidv4(),
-            mimetype: asset?.mediaType,
-            deviceFileUrl: asset!.uri,
+            mimetype: asset.mimetype === 'photo' ? 'image/png' : 'video/mp3',
+            deviceFileUrl: asset.uri,
             createdAt: new Date().toISOString(),
-          },
-        }
-      }
-      return albumData
-    })
-    await queryClient.setQueryData(`albums`, newAlbums)
+          }
+        }),
+        ...albumFiles.filter((e: any) => !e.placeholder),
+      ]
 
-    // Add new Files to the album
-    const albumFiles = queryClient.getQueryData(`albumFiles:${albumId}`) as any
-    const newAlbumFiles = [
-      { placeholder: 'addFiles' },
-      ...newFiles.map((asset) => {
-        return {
-          id: uuidv4(),
-          mimetype: asset.mimetype === 'photo' ? 'image/png' : 'video/mp3',
-          deviceFileUrl: asset.uri,
-          createdAt: new Date().toISOString(),
-        }
-      }),
-      ...albumFiles.filter((e: any) => !e.placeholder),
-    ]
+      await queryClient.setQueryData(`albumFiles:${albumId}`, newAlbumFiles)
 
-    await queryClient.setQueryData(`albumFiles:${albumId}`, newAlbumFiles)
-
-    navigation.navigate('AlbumFiles', { id: albumId })
+      navigation.navigate('AlbumFiles', { id: albumId })
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   const [chooseAlbumsDisabled, setChooseAlbumsDisabled] = useState(false)
@@ -238,7 +242,7 @@ const AssetsFlatList = ({
                   textAlign: 'center',
                   paddingVertical: 16,
                   marginRight: 6,
-                  maxWidth: Dimensions.get('screen').width / 2.8,
+                  maxWidth: Dimensions.get('window').width / 2.8,
                   opacity: selected.length > 0 ? 0.6 : 1,
                 }}
               >

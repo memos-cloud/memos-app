@@ -1,8 +1,9 @@
 import { TouchableOpacity } from '@gorhom/bottom-sheet'
 import { differenceInDays, format, parseISO } from 'date-fns'
 import * as Constants from 'expo-constants'
-import React, { useRef, useState, useEffect } from 'react'
+import React, { useRef, useState, useEffect, useCallback, memo } from 'react'
 import {
+  Button,
   Image as PureImage,
   ImageLoadEventData,
   NativeSyntheticEvent,
@@ -14,7 +15,7 @@ import Gallery, { GalleryRef } from 'react-native-awesome-gallery'
 import { Image } from 'react-native-expo-image-cache'
 import { useQueryClient } from 'react-query'
 import { v4 as uuidv4 } from 'uuid'
-import { HomeNavProps } from '../@types/NavProps'
+import { AppNavProps, HomeNavProps } from '../@types/NavProps'
 import { useStoreState } from '../@types/typedHooks'
 import { AlbumIcon } from '../components/icons/AlbumIcon'
 import { ArrowIcon } from '../components/icons/Arrow'
@@ -28,8 +29,9 @@ import * as Sharing from 'expo-sharing'
 import shorthash from 'shorthash'
 import { askingForFilesPermission } from '../utils/getFilesPermision'
 import { StackNavigationProp } from '@react-navigation/stack'
-import { HomeStackParamList } from '../@types/StackParamList'
+import { AppStackParamList } from '../@types/StackParamList'
 import { updateAlbum } from '../api/updateAlbum'
+import { AssetsGallery } from '../components/AssetsGallery'
 
 interface downloadAsset {
   remoteUrl: string
@@ -41,7 +43,7 @@ interface deleteAsset {
   assetId: string
   albumId: string
   mimetype: string
-  navigation: StackNavigationProp<HomeStackParamList, 'AssetsPreview'>
+  navigation: StackNavigationProp<AppStackParamList, 'AssetsPreview'>
 }
 
 interface setAlbumCover {
@@ -161,7 +163,7 @@ const options = [
 export const AssetsPreviewScreen = ({
   navigation,
   route: { params },
-}: HomeNavProps<'AssetsPreview'>) => {
+}: AppNavProps<'AssetsPreview'>) => {
   const [assetHeadersShown, setAssetHeadersShown] = useState(true)
   const queryClient = useQueryClient()
   const assets = (
@@ -172,7 +174,6 @@ export const AssetsPreviewScreen = ({
 
   const colors = useStoreState((state) => state.theme)
 
-  const galleryRef = useRef<GalleryRef>(null)
   const [currentIndex, setCurrentIndex] = useState(params.index - 1)
 
   const getDate = () => {
@@ -189,7 +190,9 @@ export const AssetsPreviewScreen = ({
         return format(parseISO(assets[currentIndex].createdAt), 'MMMM d, yyyy')
     }
   }
-
+  const [videoStatus, setVideoStatus] = useState<{ isPlaying: boolean }>({})
+  const videoRef = useRef(null)
+  console.log(videoStatus)
   return (
     <View style={styles.container}>
       {assetHeadersShown && (
@@ -229,6 +232,14 @@ export const AssetsPreviewScreen = ({
             { backgroundColor: colors.secondary },
           ]}
         >
+          <Button
+            title={videoStatus.isPlaying ? 'Pause' : 'Play'}
+            onPress={() =>
+              videoStatus.isPlaying
+                ? videoRef.current?.pauseAsync()
+                : videoRef.current?.playAsync()
+            }
+          />
           {options.map((e) => (
             <TouchableOpacity
               onPress={() => {
@@ -270,54 +281,13 @@ export const AssetsPreviewScreen = ({
           ))}
         </View>
       )}
-      <Gallery
-        ref={galleryRef}
-        onTap={() => setAssetHeadersShown(!assetHeadersShown)}
-        renderItem={(imgInfo) => {
-          const [loadFromDisk, setLoadFromDisk] = useState(true)
-          const [imgResult, setImgResult] = useState(false)
 
-          const checkImage = async () => {
-            const { exists } = await FileSystem.getInfoAsync(
-              imgInfo.item.deviceFileUrl
-            )
-
-            setLoadFromDisk(exists)
-
-            setImgResult(true)
-          }
-
-          useEffect(() => {
-            checkImage()
-          }, [])
-
-          if (!imgResult) {
-            return <View style={StyleSheet.absoluteFillObject} />
-          }
-
-          return loadFromDisk ? (
-            <PureImage
-              resizeMode='contain'
-              style={StyleSheet.absoluteFillObject}
-              source={{ uri: imgInfo.item.deviceFileUrl }}
-            />
-          ) : (
-            <Image
-              resizeMode='contain'
-              transitionDuration={0}
-              style={StyleSheet.absoluteFillObject}
-              uri={imgInfo.item.fileURL}
-            />
-          )
-        }}
-        emptySpaceWidth={15}
-        initialIndex={params.index - 1}
-        data={assets}
-        disableVerticalSwipe={true}
-        onIndexChange={(i) => {
-          setTimeout(() => galleryRef.current?.reset(), 500)
-          setCurrentIndex(i)
-        }}
+      <AssetsGallery
+        setVideoStatus={setVideoStatus}
+        videoRef={videoRef}
+        params={params}
+        setAssetHeadersShown={setAssetHeadersShown}
+        setCurrentIndex={setCurrentIndex}
       />
     </View>
   )
@@ -342,8 +312,9 @@ const styles = StyleSheet.create({
     paddingTop: 8 + Constants.default.statusBarHeight,
   },
   bottomHeader: {
-    paddingVertical: 2,
-    paddingTop: 2,
+    paddingVertical: 4,
+    paddingBottom: 6,
+    paddingTop: 4,
     paddingHorizontal: 20,
     paddingLeft: 20,
     bottom: 0,

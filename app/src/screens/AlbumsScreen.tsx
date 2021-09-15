@@ -2,7 +2,7 @@ import { useScrollToTop } from '@react-navigation/native'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { FlatList, ScrollView, StyleSheet } from 'react-native'
 import { useQuery, useQueryClient } from 'react-query'
-import { HomeNavProps } from '../@types/NavProps'
+import { AppNavProps, HomeNavProps } from '../@types/NavProps'
 import { useStoreState } from '../@types/typedHooks'
 import { getAlbums } from '../api/getAlbums'
 import Album from '../components/Album'
@@ -13,7 +13,7 @@ import { MyText } from '../components/MyText'
 import { NoAlbums } from '../components/NoAlbums'
 import { RefreshControlComponent } from '../components/RefreshControl'
 
-interface Props extends HomeNavProps<'Albums'> {}
+interface Props extends AppNavProps<'HomeTabs'> {}
 
 const AlbumsScreen = ({ navigation }: Props) => {
   const queryClient = useQueryClient()

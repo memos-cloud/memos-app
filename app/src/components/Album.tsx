@@ -2,8 +2,8 @@ import { StackNavigationProp } from '@react-navigation/stack'
 import { format, parseISO } from 'date-fns'
 import { LinearGradient } from 'expo-linear-gradient'
 import React, { FC, memo } from 'react'
-import { StyleSheet, TouchableOpacity, View } from 'react-native'
-import { HomeStackParamList } from '../@types/StackParamList'
+import { Image, StyleSheet, TouchableOpacity, View } from 'react-native'
+import { AppStackParamList } from '../@types/StackParamList'
 import { useStoreState } from '../@types/typedHooks'
 import { MyText } from './MyText'
 import { SmoothFastImage } from './SmoothFastImage'
@@ -13,7 +13,6 @@ interface Props {
     album: {
       id: string
       name: string
-      albumCover: string
       createdAt: string
     }
     albumCover: {
@@ -23,9 +22,10 @@ interface Props {
       fileURL: string
       deviceFileUrl: string
       createdAt: string
-    }
+    } | null
   }
-  navigation: StackNavigationProp<HomeStackParamList, 'Albums'>
+  disabled?: boolean
+  navigation?: StackNavigationProp<AppStackParamList, 'HomeTabs'>
 }
 
 const Album: FC<Props> = ({
@@ -34,6 +34,7 @@ const Album: FC<Props> = ({
     albumCover,
   },
   navigation,
+  disabled,
 }) => {
   const linearGradient = albumCover
     ? ['rgba(15, 15, 15, 0)', 'rgba(15, 15, 15, 0.8)']
@@ -43,6 +44,7 @@ const Album: FC<Props> = ({
 
   return (
     <TouchableOpacity
+      disabled={disabled}
       style={[styles.touchable, styles.parent]}
       activeOpacity={colors.activeOpacity}
       onPress={() => {
@@ -98,7 +100,7 @@ const Album: FC<Props> = ({
 
 export default memo(Album, ({ data: prev }, { data: next }) => {
   const secondCondition = prev?.albumCover
-    ? prev.albumCover.key !== next.albumCover.key
+    ? prev.albumCover.key !== next?.albumCover?.key
     : false
 
   if (prev.album.id !== next.album.id || secondCondition) {

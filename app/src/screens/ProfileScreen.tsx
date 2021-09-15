@@ -2,13 +2,12 @@ import { format, parseISO } from 'date-fns'
 import React, { useState } from 'react'
 import {
   Dimensions,
-  RefreshControl,
   ScrollView,
   StyleSheet,
   TouchableOpacity,
   View,
 } from 'react-native'
-import { HomeNavProps } from '../@types/NavProps'
+import { AppNavProps } from '../@types/NavProps'
 import { useStoreActions, useStoreState } from '../@types/typedHooks'
 import { getProfile } from '../api/getProfile'
 import Container from '../components/Container'
@@ -18,11 +17,9 @@ import { RefreshControlComponent } from '../components/RefreshControl'
 import { SmoothFastImage } from '../components/SmoothFastImage'
 
 const profilePicSize = 150
-const progressBarWidth = Dimensions.get('screen').width - 40
+const progressBarWidth = Dimensions.get('window').width - 40
 
-export const ProfileScreen = ({
-  navigation,
-}: HomeNavProps<'ProfileScreen'>) => {
+export const ProfileScreen = ({ navigation }: AppNavProps<'ProfileScreen'>) => {
   const [refreshing, setRefreshing] = useState(false)
   const profileData = useStoreState((state) => state.profile)
 
@@ -44,7 +41,10 @@ export const ProfileScreen = ({
   const accessToken = useStoreState((state) => state.accessToken)
   const setProfile = useStoreActions((state) => state.setProfile)
   const onRefresh = async () => {
+    setRefreshing(true)
     const profile = await getProfile(accessToken!)
+    setRefreshing(false)
+
     setProfile(profile)
   }
 
@@ -85,7 +85,7 @@ export const ProfileScreen = ({
           </View>
           <View style={styles.email}>
             <MyText size='md' customStyles={{ marginBottom: 2 }}>
-              Email:
+              {profileData.facebookId ? 'Facebook Id' : 'Email'}
             </MyText>
             <MyText
               size='xs'

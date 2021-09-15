@@ -3,13 +3,13 @@ export type AuthStackParamList = {
   SaveToken: { token: string }
 }
 
-export type AppStackParamList = {
-  Home: undefined
+export type HomeTabsParamList = {
+  Albums: undefined
   Settings: undefined
 }
 
-export type HomeStackParamList = {
-  Albums: undefined
+export type AppStackParamList = {
+  HomeTabs: undefined
   AssetsPreview: { albumId: string; index: number }
   ConfirmationModal: {
     title: string
