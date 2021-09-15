@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { HttpException, Injectable } from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt'
 import { InjectModel } from '@nestjs/mongoose'
 import { Response } from 'express'
@@ -15,14 +15,15 @@ export class AuthService {
   ) {}
   async googleLogin(req: any, res: Response, type: 'google' | 'facebook') {
     if (!req.user) {
-      return 'No user from google'
+      res.send('<h1>No User from Google!</h1>')
     }
 
-    const userExists = await this.userModel.findOne(
-      type === 'facebook'
-        ? { facebookId: req.user.facebookId }
-        : { email: req.user.email },
-    )
+    if (!req.user.email && type === 'facebook') {
+      res.send(
+        "<h1>It Seems that your Facebook Acconut doesn't contain email address, please update your Facebook account information with a valid email to continue using this option.</h1>",
+      )
+    }
+    const userExists = await this.userModel.findOne({ email: req.user.email })
 
     let User: UserDocument
 
