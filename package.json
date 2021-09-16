@@ -1,0 +1,9 @@
+{
+  "scripts": {
+    "start": "cd server && npm run start:prod",
+    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install --prefix server && npm run build --prefix server"
+  },
+  "engines": {
+    "node": "16.4.0"
+  }
+}

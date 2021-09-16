@@ -1,0 +1,6 @@
+1- // --Done-- // Fix Images in the Gallery always downloading image from remote url.
+2- // --Done-- // Load Videos in the Gallery
+3- Custom Video Player
+4- // --Done-- // Fix: deleting files, Doesn't update user usage.
+5- Loading Indicator below the header when uploading files
+6- Generating the ObjectId on the frontend and send it to the server for the assets (to solve when deleting a file that is generated on the frontend.)
