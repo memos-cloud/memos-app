@@ -354,7 +354,10 @@ export class AlbumsService {
       return value + currentValue
     }, 0)
 
-    await deleteFiles({ keys: files.map((file) => file.key) })
+    //! MalformedXML when deleting an empty array of Objects
+    if (files.map((file) => file.key).length) {
+      await deleteFiles({ keys: files.map((file) => file.key) })
+    }
 
     user.usage = parseFloat((user.usage - filesSize).toFixed(1))
 

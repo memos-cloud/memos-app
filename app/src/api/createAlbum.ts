@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage'
 import axios from 'axios'
 import { ToastAndroid } from 'react-native'
 import { serverURL } from '../constants/serverURL'
@@ -12,6 +13,7 @@ export const createAlbum = async (name: string) => {
 
   try {
     const { data } = await axios.post(`${serverURL}/albums`, { name }, config)
+    await AsyncStorage.setItem(`album:${data._id}:albumCover`, 'default')
 
     return data
   } catch (error) {

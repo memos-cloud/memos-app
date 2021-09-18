@@ -55,10 +55,17 @@ const downloadAsset = async ({
   mimetype,
   localUri,
 }: downloadAsset) => {
+  if (!remoteUrl) {
+    return ToastAndroid.show(
+      'Pull to Refresh The Album Files Screen First!',
+      ToastAndroid.BOTTOM
+    )
+  }
   askingForFilesPermission()
   ToastAndroid.show('Progressing...', ToastAndroid.BOTTOM)
   const hashedUrl = shorthash.unique(remoteUrl)
   const ext = '.' + mimetype.replace('image/', '').replace('video/', '')
+
   const { exists } = await FileSystem.getInfoAsync(
     FileSystem.documentDirectory + hashedUrl + ext
   )

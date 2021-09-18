@@ -7,6 +7,13 @@ interface deleteFilesArgs {
 }
 
 export const deleteFiles = ({ keys }: deleteFilesArgs) => {
+  console.log({
+    Objects: keys.map((key) => {
+      return {
+        Key: key,
+      }
+    }),
+  })
   const data: S3.DeleteObjectsRequest = {
     Bucket: bucketName,
     Delete: {

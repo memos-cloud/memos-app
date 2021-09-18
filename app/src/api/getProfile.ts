@@ -11,6 +11,7 @@ export const getProfile = async (accessToken: string) => {
     const { data } = await axios.get(`${serverURL}/me`, config)
     return data
   } catch (error) {
+    console.log(error)
     ToastAndroid.show("Couldn't Get Profile!", ToastAndroid.SHORT)
   }
 }

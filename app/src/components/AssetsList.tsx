@@ -106,11 +106,11 @@ const AssetsFlatList = ({
     try {
       const newFiles: any[] = []
 
-      startUpload(selected.length)
+      // startUpload(selected.length)
 
       const assetsIds: string[] = []
 
-      selected.map((id, index) => {
+      selected.map((id) => {
         const objectID = new ObjectID().toHexString()
         const asset: any = assets.find((asset) => asset?.id === id)
         newFiles.push(asset)
