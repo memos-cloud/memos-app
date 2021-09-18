@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { ToastAndroid } from 'react-native'
 import { serverURL } from '../constants/serverURL'
 
 export const getProfile = async (accessToken: string) => {
@@ -6,7 +7,10 @@ export const getProfile = async (accessToken: string) => {
     headers: { Authorization: `Bearer ${accessToken}` },
   }
 
-  const { data } = await axios.get(`${serverURL}/me`, config)
-
-  return data
+  try {
+    const { data } = await axios.get(`${serverURL}/me`, config)
+    return data
+  } catch (error) {
+    ToastAndroid.show("Couldn't Get Profile!", ToastAndroid.SHORT)
+  }
 }

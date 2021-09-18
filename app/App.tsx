@@ -8,6 +8,11 @@ import 'react-native-get-random-values'
 import { QueryClientProvider } from 'react-query'
 import Routes from './src/Routes'
 import { queryClient, store } from './src/state-management/stores'
+import * as Sentry from 'sentry-expo'
+
+Sentry.init({
+  dsn: 'https://acfd7902ab8740fcacce9c7ceec3729c@o1003933.ingest.sentry.io/5964826',
+})
 
 SplashScreen.preventAutoHideAsync().catch(console.warn)
 

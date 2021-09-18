@@ -1,4 +1,4 @@
-import { IsArray, IsOptional, IsString } from 'class-validator'
+import { IsArray, IsMongoId, IsOptional, IsString } from 'class-validator'
 
 export class CreateAlbumDto {
   @IsString()

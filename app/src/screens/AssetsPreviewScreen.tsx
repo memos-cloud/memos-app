@@ -6,7 +6,7 @@ import * as Constants from 'expo-constants'
 import * as FileSystem from 'expo-file-system'
 import * as MediaLibrary from 'expo-media-library'
 import * as Sharing from 'expo-sharing'
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { Button, StyleSheet, ToastAndroid, View } from 'react-native'
 import { useQueryClient } from 'react-query'
 import shorthash from 'shorthash'
@@ -20,10 +20,15 @@ import { AlbumIcon } from '../components/icons/AlbumIcon'
 import { ArrowIcon } from '../components/icons/Arrow'
 import { DeleteIcon } from '../components/icons/DeleteIcon'
 import { DownloadIcon } from '../components/icons/DownloadIcon'
+import { MuteIcon } from '../components/icons/MuteIcon'
+import { PauseIcon } from '../components/icons/PauseIcon'
+import { PlayIcon } from '../components/icons/PlayIcon'
 import { ShareIcon } from '../components/icons/ShareIcon'
+import { VolumeIcon } from '../components/icons/VolumeIcon'
 import { MyText } from '../components/MyText'
 import { queryClient } from '../state-management/stores'
 import { askingForFilesPermission } from '../utils/getFilesPermision'
+import Slider from '@react-native-community/slider'
 
 interface downloadAsset {
   remoteUrl: string
@@ -210,8 +215,20 @@ export const AssetsPreviewScreen = ({
         return format(parseISO(assets[currentIndex].createdAt), 'MMMM d, yyyy')
     }
   }
-  const [videoStatus, setVideoStatus] = useState<{ isPlaying: boolean }>({})
+  const [videoStatus, setVideoStatus] = useState<any>({})
   const videoRef = useRef(null)
+
+  useEffect(() => {
+    const videoEnded = async () => {
+      if ((videoStatus as any).didJustFinish) {
+        await (videoRef.current as any).setPositionAsync(0)
+        await (videoRef.current as any)?.pauseAsync()
+      }
+    }
+    if (videoRef.current && videoStatus) {
+      videoEnded()
+    }
+  }, [videoRef, videoStatus])
 
   return (
     <View style={styles.container}>
@@ -249,60 +266,132 @@ export const AssetsPreviewScreen = ({
           style={[
             styles.topHeader,
             styles.bottomHeader,
-            { backgroundColor: colors.secondary },
+            { flexDirection: 'column' },
           ]}
         >
           {assets[currentIndex].mimetype.includes('video/') && (
-            <Button
-              title={videoStatus.isPlaying ? 'Pause' : 'Play'}
-              onPress={() =>
-                videoStatus.isPlaying
-                  ? (videoRef.current as any)?.pauseAsync()
-                  : (videoRef.current as any)?.playAsync()
-              }
-            />
-          )}
-          {options.map((e) => (
-            <TouchableOpacity
-              onPress={() => {
-                if (
-                  e.action &&
-                  (e.label === 'Share' || e.label === 'Download')
-                ) {
-                  e.action({
-                    remoteUrl: assets[currentIndex].fileURL,
-                    localUri: assets[currentIndex].deviceFileUrl,
-                    mimetype: assets[currentIndex].mimetype,
-                  } as any)
-                } else if (e.label === 'Delete') {
-                  e.action({
-                    mimetype: assets[currentIndex].mimetype,
-                    albumId: params.albumId,
-                    assetId: assets[currentIndex].id,
-                    navigation,
-                  } as any)
-                } else if (e.label === 'Album Cover') {
-                  e.action({
-                    albumId: params.albumId,
-                    AlbumFileId: assets[currentIndex].id,
-                    localUri: assets[currentIndex].deviceFileUrl,
-                    remoteUrl: assets[currentIndex].fileURL,
-                  } as any)
-                }
-              }}
-              key={e.id}
-              activeOpacity={colors.activeOpacity}
-              style={styles.optionParent}
+            <View
+              style={[
+                styles.videoControls,
+                {
+                  paddingHorizontal: 20,
+                  paddingLeft: 20,
+                  backgroundColor: 'rgba(24, 24, 24, 0.75)',
+                },
+              ]}
             >
-              {e.icon}
-              <MyText
-                size='2xs'
-                customStyles={{ paddingTop: 1.5, opacity: 0.8 }}
+              <TouchableOpacity
+                activeOpacity={colors.activeOpacity}
+                style={{
+                  paddingHorizontal: 5,
+                  paddingVertical: 10,
+                }}
+                onPress={async () => {
+                  videoStatus.isPlaying
+                    ? await (videoRef.current as any)?.pauseAsync()
+                    : await (videoRef.current as any)?.playAsync()
+                }}
               >
-                {e.label}
-              </MyText>
-            </TouchableOpacity>
-          ))}
+                {videoStatus.isPlaying ? (
+                  <PauseIcon size={15} />
+                ) : (
+                  <PlayIcon size={15} />
+                )}
+              </TouchableOpacity>
+              <Slider
+                style={{ flex: 1, height: 35 }}
+                minimumValue={0}
+                value={videoStatus?.positionMillis}
+                onSlidingStart={async () => {
+                  ;(videoRef.current as any)?.pauseAsync()
+                }}
+                onValueChange={async (value) => {
+                  ;(videoRef.current as any).setPositionAsync(value)
+                }}
+                onSlidingComplete={async () => {
+                  ;(videoRef.current as any)?.playAsync()
+                }}
+                maximumValue={(videoStatus as any)?.durationMillis}
+                minimumTrackTintColor={colors.primary}
+                thumbTintColor={colors.primary}
+                maximumTrackTintColor={colors.white}
+                step={250}
+              />
+
+              <TouchableOpacity
+                style={{
+                  paddingHorizontal: 5,
+                  paddingVertical: 10,
+                }}
+                activeOpacity={colors.activeOpacity}
+                onPress={async () => {
+                  await (videoRef.current as any)?.setIsMutedAsync(
+                    !(videoStatus as any).isMuted
+                  )
+                }}
+              >
+                {(videoStatus as any)?.isMuted ? (
+                  <MuteIcon size={17} />
+                ) : (
+                  <VolumeIcon size={17} />
+                )}
+              </TouchableOpacity>
+            </View>
+          )}
+
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              width: '100%',
+              backgroundColor: colors.secondary,
+              paddingHorizontal: 20,
+              paddingLeft: 20,
+              paddingBottom: 4,
+            }}
+          >
+            {options.map((e) => (
+              <TouchableOpacity
+                onPress={() => {
+                  if (
+                    e.action &&
+                    (e.label === 'Share' || e.label === 'Download')
+                  ) {
+                    e.action({
+                      remoteUrl: assets[currentIndex].fileURL,
+                      localUri: assets[currentIndex].deviceFileUrl,
+                      mimetype: assets[currentIndex].mimetype,
+                    } as any)
+                  } else if (e.label === 'Delete') {
+                    e.action({
+                      mimetype: assets[currentIndex].mimetype,
+                      albumId: params.albumId,
+                      assetId: assets[currentIndex].id,
+                      navigation,
+                    } as any)
+                  } else if (e.label === 'Album Cover') {
+                    e.action({
+                      albumId: params.albumId,
+                      AlbumFileId: assets[currentIndex].id,
+                      localUri: assets[currentIndex].deviceFileUrl,
+                      remoteUrl: assets[currentIndex].fileURL,
+                    } as any)
+                  }
+                }}
+                key={e.id}
+                activeOpacity={colors.activeOpacity}
+                style={styles.optionParent}
+              >
+                {e.icon}
+                <MyText
+                  size='2xs'
+                  customStyles={{ paddingTop: 1.5, opacity: 0.8 }}
+                >
+                  {e.label}
+                </MyText>
+              </TouchableOpacity>
+            ))}
+          </View>
         </View>
       )}
 
@@ -337,10 +426,10 @@ const styles = StyleSheet.create({
   },
   bottomHeader: {
     paddingVertical: 4,
-    paddingBottom: 6,
+    paddingBottom: 0,
     paddingTop: 4,
-    paddingHorizontal: 20,
-    paddingLeft: 20,
+    paddingHorizontal: 0,
+    paddingLeft: 0,
     bottom: 0,
     top: undefined,
     justifyContent: 'space-between',
@@ -356,5 +445,13 @@ const styles = StyleSheet.create({
   optionParent: {
     alignItems: 'center',
     padding: 10,
+  },
+  videoControls: {
+    width: '100%',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 5,
+    paddingVertical: 10,
   },
 })

@@ -8,7 +8,8 @@ export type AlbumDocument = Album & Document
 
 @Schema({ timestamps: true })
 export class Album {
-  _id: string
+  @Prop({ required: true })
+  _id: mongoose.Types.ObjectId
 
   @Prop({ required: true })
   name: string

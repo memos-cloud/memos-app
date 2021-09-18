@@ -8,7 +8,8 @@ export type FileDocument = File & Document
 
 @Schema({ timestamps: true })
 export class File {
-  _id: string
+  @Prop({ required: true })
+  _id: mongoose.Schema.Types.ObjectId
 
   @Prop({ required: true })
   key: string

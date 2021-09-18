@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { ToastAndroid } from 'react-native'
 import { serverURL } from '../constants/serverURL'
 import { store } from '../state-management/stores'
 
@@ -9,7 +10,11 @@ export const createAlbum = async (name: string) => {
     headers: { Authorization: `Bearer ${accessToken}` },
   }
 
-  const { data } = await axios.post(`${serverURL}/albums`, { name }, config)
+  try {
+    const { data } = await axios.post(`${serverURL}/albums`, { name }, config)
 
-  return data
+    return data
+  } catch (error) {
+    ToastAndroid.show("Couldn't Create a new Album!", ToastAndroid.SHORT)
+  }
 }

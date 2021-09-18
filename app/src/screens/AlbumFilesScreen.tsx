@@ -153,7 +153,6 @@ const AlbumFilesScreen = ({ navigation, route }: AppNavProps<'AlbumFiles'>) => {
 
   const onEndReachHandler = async () => {
     const hasMore = queryClient.getQueryData(`albumFiles:${albumId}:hasMore`)
-
     if (hasMore) {
       setHasMore(true)
       // Fetch next 30 Albums

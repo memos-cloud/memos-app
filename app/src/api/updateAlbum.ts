@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { ToastAndroid } from 'react-native'
 import { serverURL } from '../constants/serverURL'
 import { store } from '../state-management/stores'
 
@@ -12,11 +13,15 @@ export const updateAlbum = async (
     headers: { Authorization: `Bearer ${accessToken}` },
   }
 
-  const res = await axios.put(
-    `${serverURL}/albums/${albumId}`,
-    { name, AlbumFileId },
-    config
-  )
+  try {
+    const res = await axios.put(
+      `${serverURL}/albums/${albumId}`,
+      { name, AlbumFileId },
+      config
+    )
 
-  return res.data
+    return res.data
+  } catch (error) {
+    ToastAndroid.show("Couldn't Update Album!", ToastAndroid.SHORT)
+  }
 }

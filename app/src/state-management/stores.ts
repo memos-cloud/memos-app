@@ -39,6 +39,22 @@ const store = createStore<StoreModel>({
   accessToken: null,
   profile: null,
   theme: colors,
+  uploadProgress: { filesCount: 0, uploaded: 0 },
+  startUpload: action((state, payload) => {
+    state.uploadProgress = {
+      ...state.uploadProgress,
+      filesCount: state.uploadProgress.filesCount + payload,
+    }
+  }),
+  fileUploaded: action((state) => {
+    state.uploadProgress = {
+      filesCount: state.uploadProgress.filesCount,
+      uploaded: state.uploadProgress.uploaded + 1,
+    }
+  }),
+  resetUploadProgress: action((state) => {
+    state.uploadProgress = { filesCount: 0, uploaded: 0 }
+  }),
   changeTheme: action((state, theme) => {
     const colors: any[] = []
     themes

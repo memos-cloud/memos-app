@@ -12,7 +12,6 @@ import {
   UseInterceptors,
 } from '@nestjs/common'
 import { FilesInterceptor } from '@nestjs/platform-express'
-import { Request } from 'express'
 import { Album } from 'src/models/Album.schema'
 import { pagination } from 'src/shared/pagination'
 import { AlbumsService } from './albums.service'
@@ -86,6 +85,7 @@ export class AlbumsController {
       req.userId,
       req.user,
       req.headers.devicefileurl,
+      req.headers.fileid,
     )
   }
 

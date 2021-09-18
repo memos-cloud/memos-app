@@ -1,4 +1,5 @@
 import BottomSheet from '@gorhom/bottom-sheet'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 import React, { useMemo, useRef } from 'react'
 import { useState } from 'react'
 import { ActivityIndicator, StyleSheet, View } from 'react-native'
@@ -62,17 +63,30 @@ export const ConfirmationModalScreen = ({
 
       if (albumFiles.length === 1) {
         foundAlbum.albumCover = null
-      }
+        queryClient.setQueryData(
+          'albums',
+          albums.map((album: any) => {
+            if (album.album.id === albumId) {
+              return foundAlbum
+            }
+            return album
+          })
+        )
+      } else if (foundAlbum.albumCover.id === assetId) {
+        await AsyncStorage.setItem(`album:${albumId}:albumCover`, 'default')
 
-      queryClient.setQueryData(
-        'albums',
-        albums.map((album: any) => {
-          if (album.album.id === albumId) {
-            return foundAlbum
+        const newAlbums = albums!.map((e: any) => {
+          if (e.album.id === albumId) {
+            return {
+              ...e,
+              albumCover: albumFiles[1],
+            }
           }
-          return album
+          return e
         })
-      )
+
+        queryClient.setQueryData('albums', newAlbums)
+      }
 
       setActionLoading(false)
       navigation.navigate('AlbumFiles', { id: albumId })

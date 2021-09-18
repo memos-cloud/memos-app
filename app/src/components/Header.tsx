@@ -1,8 +1,8 @@
-import React, { FC, memo } from 'react'
-import { StyleSheet, TouchableOpacity, View } from 'react-native'
+import * as Progress from 'expo-progress'
+import React, { FC, memo, useEffect } from 'react'
+import { StyleSheet, ToastAndroid, TouchableOpacity, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { useQueryClient } from 'react-query'
-import { useStoreState } from '../@types/typedHooks'
+import { useStoreActions, useStoreState } from '../@types/typedHooks'
 import { ArrowIcon } from './icons/Arrow'
 import { Logo } from './Logo'
 import { MyText } from './MyText'
@@ -24,14 +24,37 @@ export const MyHeader: FC<Props> = memo(
     const colors = useStoreState((state) => state.theme)
     const profile = useStoreState((state) => state.profile)
 
+    const uploadProgress = useStoreState((state) => state.uploadProgress)
+    const resetUploadProgress = useStoreActions(
+      (actions) => actions.resetUploadProgress
+    )
+
+    useEffect(() => {
+      if (
+        uploadProgress.filesCount !== 0 &&
+        uploadProgress.filesCount === uploadProgress.uploaded
+      ) {
+        ToastAndroid.show('Files Uploaded Successfully!', ToastAndroid.SHORT)
+        setTimeout(() => {
+          resetUploadProgress()
+        }, 1000)
+      }
+    }, [uploadProgress])
+
     return (
-      <SafeAreaView style={{ backgroundColor: colors.secondary }}>
+      <SafeAreaView
+        style={{
+          backgroundColor: colors.secondary,
+          borderBottomWidth: uploadProgress.filesCount ? 0 : 1,
+          borderBottomColor: colors.borderColor,
+        }}
+      >
         <View
           style={[
             styles.parent,
             {
               backgroundColor: colors.secondary,
-              borderBottomColor: colors.borderColor,
+              paddingBottom: uploadProgress.filesCount ? 3 : 11,
             },
           ]}
         >
@@ -93,6 +116,28 @@ export const MyHeader: FC<Props> = memo(
             />
           )}
         </View>
+        {!!uploadProgress.filesCount && (
+          <>
+            <MyText
+              size='xs'
+              customStyles={{
+                textAlign: 'center',
+                paddingBottom: 7,
+                color: colors.white,
+                opacity: 0.9,
+              }}
+            >
+              {uploadProgress.uploaded} of {uploadProgress.filesCount} Uploaded
+            </MyText>
+            <Progress.Bar
+              style={styles.loadingBar}
+              isIndeterminate
+              color={colors.primary}
+              height={2}
+              isAnimated={true}
+            />
+          </>
+        )}
       </SafeAreaView>
     )
   }
@@ -106,7 +151,6 @@ const styles = StyleSheet.create({
     paddingLeft: 15,
     paddingVertical: 11,
     flexDirection: 'row',
-    borderBottomWidth: 1,
   },
   imgParent: {
     position: 'absolute',
@@ -116,5 +160,11 @@ const styles = StyleSheet.create({
     bottom: 0,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  loadingBar: {
+    height: 2,
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
   },
 })

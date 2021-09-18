@@ -1,6 +1,7 @@
 import { HttpException, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 import { FilterQuery, Model } from 'mongoose'
+import * as mongoose from 'mongoose'
 import { deleteFiles } from 'src/aws/deleteFiles'
 import { getFile } from 'src/aws/getFiles'
 import { uploadFile } from 'src/aws/uploadFile'
@@ -12,6 +13,7 @@ import {
   DeleteAlbumFilesDto,
   UpdateAlbumDto,
 } from './dto/albums.dto'
+import * as sharp from 'sharp'
 
 @Injectable()
 export class AlbumsService {
@@ -33,7 +35,7 @@ export class AlbumsService {
     const albumsCount = await this.albumModel.countDocuments({ owner: userId })
 
     const files = await this.fileModel.find({
-      _id: { $in: albums.map((e) => e.AlbumFileId as string) },
+      _id: { $in: albums.map((e) => e.AlbumFileId as any) },
     })
 
     const getAlbumCoversPromises = files.map((file) =>
@@ -110,7 +112,10 @@ export class AlbumsService {
     albumId: string,
     { take, skip }: { take: number; skip: number },
   ) {
-    const album = await this.albumModel.findOne({ _id: albumId, owner: userId })
+    const album = await this.albumModel.findOne({
+      _id: new mongoose.mongo.ObjectId(albumId),
+      owner: userId,
+    })
 
     if (!album) {
       throw new HttpException('Album Not Found!', 404)
@@ -137,7 +142,10 @@ export class AlbumsService {
   }
 
   async getAlbumById(id: string, userId: string) {
-    const album = await this.albumModel.findOne({ _id: id, owner: userId })
+    const album = await this.albumModel.findOne({
+      _id: new mongoose.mongo.ObjectId(id),
+      owner: userId,
+    })
 
     if (!album) {
       throw new HttpException('Album Not Found!', 404)
@@ -146,7 +154,9 @@ export class AlbumsService {
     let albumCover: any
 
     if (album.AlbumFileId) {
-      const file = await this.fileModel.findById(album.AlbumFileId)
+      const file = await this.fileModel.findById(
+        new mongoose.mongo.ObjectId(album.AlbumFileId as string),
+      )
 
       albumCover = await getFile({ key: file.key, file })
     } else {
@@ -178,7 +188,10 @@ export class AlbumsService {
   }
 
   async updateAlbum(id: string, data: UpdateAlbumDto, userId: string) {
-    const album = await this.albumModel.findOne({ _id: id, owner: userId })
+    const album = await this.albumModel.findOne({
+      _id: new mongoose.mongo.ObjectId(id),
+      owner: userId,
+    })
 
     if (!album) {
       throw new HttpException('Album Not Found!', 404)
@@ -194,7 +207,9 @@ export class AlbumsService {
     }
 
     if (data.AlbumFileId) {
-      const file = await this.fileModel.findById(data.AlbumFileId)
+      const file = await this.fileModel.findById(
+        new mongoose.mongo.ObjectId(data.AlbumFileId),
+      )
 
       if (!file) {
         throw new HttpException('File not found for the Album Cover!', 400)
@@ -212,7 +227,10 @@ export class AlbumsService {
   }
 
   async deleteAlbum(id: string, userId: string, user: UserDocument) {
-    const album = await this.albumModel.findOne({ _id: id, owner: userId })
+    const album = await this.albumModel.findOne({
+      _id: new mongoose.mongo.ObjectId(id),
+      owner: userId,
+    })
 
     if (!album) {
       throw new HttpException('Album Not Found!', 404)
@@ -233,28 +251,49 @@ export class AlbumsService {
     userId: string,
     user: UserDocument,
     deviceFileUrl: string,
+    fileId: string,
   ) {
     if (!files) {
       throw new HttpException('Files are required to Upload them.', 400)
     }
-    const album = await this.albumModel.findOne({ _id: id, owner: userId })
+    const album = await this.albumModel.findOne({
+      _id: new mongoose.mongo.ObjectId(id),
+      owner: userId,
+    })
 
     if (!album) {
       throw new HttpException('Album Not Found!', 404)
     }
 
-    const fileSizesArr = files.map((file) => file.size / 1048576)
+    const sizeInMB = (size: number) => size / 1048576
+
+    const bufferPromises = files.map(async (file) => {
+      if (
+        file.mimetype.split('/')[1] === 'gif' ||
+        file.mimetype.split('/')[0] === 'video'
+      ) {
+        return file.buffer
+      }
+      return sharp(file.buffer)[file.mimetype.split('/')[1]]().toBuffer()
+    })
+
+    const buffers = await Promise.all(bufferPromises)
+
+    const fileSizesArr = buffers.map((buffer) =>
+      sizeInMB(Buffer.byteLength(buffer)),
+    )
 
     const filesSize = fileSizesArr.reduce((value, currentValue) => {
       return value + currentValue
     }, 0)
 
     if (user.usage + filesSize > parseInt(process.env.QUOTA_LIMIT!)) {
-      throw new HttpException("You've Reached Your Quota Limit!", 404)
+      throw new HttpException("You've Reached Your Quota Limit!", 400)
     }
 
     const uploadAlbumFiles = async () => {
       const albumFiles: {
+        _id: mongoose.Types.ObjectId
         key: string
         albumId: string
         owner: string
@@ -263,23 +302,25 @@ export class AlbumsService {
         deviceFileUrl: string
       }[] = []
 
-      const promises = files.map(async (file) => {
+      const promises = files.map(async (file, i) => {
         const fileName = Date.now() + '.' + file.mimetype.split('/')[1]
         const folderName = album.name + '-' + album.id + '/'
 
         const key = folderName + fileName
+        const ID = new mongoose.mongo.ObjectId(fileId)
 
         albumFiles.push({
+          _id: ID,
           key,
           albumId: album.id,
           owner: userId,
-          size: file.size / 1048576,
+          size: sizeInMB(Buffer.byteLength(buffers[i])),
           mimetype: file.mimetype,
           deviceFileUrl,
         })
 
         return uploadFile({
-          buffer: file.buffer,
+          buffer: buffers[i],
           fileName,
           folder: folderName,
           mimetype: file.mimetype,
@@ -325,13 +366,22 @@ export class AlbumsService {
   async deleteAlbumFiles(
     user: UserDocument,
     userId: string,
-    id: string,
+    albumId: string,
     { filesIds }: DeleteAlbumFilesDto,
   ) {
     const findObject: FilterQuery<File> = {
-      _id: { $in: filesIds },
-      albumId: id,
+      _id: { $in: filesIds as any },
+      albumId,
       owner: userId,
+    }
+
+    const album = await this.albumModel.findOne({
+      _id: new mongoose.mongo.ObjectId(albumId),
+    })
+
+    if (album && filesIds.includes(album.AlbumFileId as string)) {
+      album.AlbumFileId = undefined
+      await album.save()
     }
 
     return this.deleteFiles(findObject, user)

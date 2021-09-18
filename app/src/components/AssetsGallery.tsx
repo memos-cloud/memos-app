@@ -1,7 +1,7 @@
+import { Video } from 'expo-av'
 import * as FileSystem from 'expo-file-system'
 import React, { FC, memo, useEffect, useRef, useState } from 'react'
 import {
-  Dimensions,
   Image as PureImage,
   ImageLoadEventData,
   NativeSyntheticEvent,
@@ -14,8 +14,6 @@ import Gallery, {
 } from 'react-native-awesome-gallery'
 import { Image } from 'react-native-expo-image-cache'
 import { useQueryClient } from 'react-query'
-import { useStoreState } from '../@types/typedHooks'
-import { Video } from 'expo-av'
 
 interface Props {
   params: {
@@ -25,7 +23,7 @@ interface Props {
   setAssetHeadersShown: React.Dispatch<React.SetStateAction<boolean>>
   setCurrentIndex: React.Dispatch<React.SetStateAction<number>>
   videoRef: React.MutableRefObject<null>
-  setVideoStatus: React.Dispatch<React.SetStateAction<{}>>
+  setVideoStatus: any
 }
 
 export const AssetsGallery: FC<Props> = memo(
@@ -77,6 +75,9 @@ export const AssetsGallery: FC<Props> = memo(
                 style={{ flex: 1 }}
                 resizeMode='contain'
                 source={{ uri: imgInfo.item.deviceFileUrl }}
+                onError={({ nativeEvent }) => {
+                  throw new Error(nativeEvent.error)
+                }}
               />
             ) : (
               <Image
@@ -85,6 +86,9 @@ export const AssetsGallery: FC<Props> = memo(
                 resizeMode='contain'
                 transitionDuration={0}
                 uri={imgInfo.item.fileURL}
+                onError={({ nativeEvent }) => {
+                  throw new Error(nativeEvent.error as any)
+                }}
               />
             )}
           </View>
@@ -102,7 +106,12 @@ export const AssetsGallery: FC<Props> = memo(
               uri: imgInfo.item.deviceFileUrl,
             }}
             resizeMode='contain'
-            onPlaybackStatusUpdate={(status) => setVideoStatus(() => status)}
+            onPlaybackStatusUpdate={(status) => {
+              if ((status as any).didJustFinish) {
+                return setVideoStatus(() => ({ ...status, positionMillis: 0 }))
+              }
+              setVideoStatus(() => status)
+            }}
           />
         )
       }

@@ -14,7 +14,7 @@ import {
 import { useQueryClient } from 'react-query'
 import { v4 as uuidv4 } from 'uuid'
 import { AppStackParamList } from '../@types/StackParamList'
-import { useStoreState } from '../@types/typedHooks'
+import { useStoreActions, useStoreState } from '../@types/typedHooks'
 import { uploadAssets } from '../api/uploadAssets'
 import { ArrowIcon } from './icons/Arrow'
 import { DropDownArrow } from './icons/DropDownArrow'
@@ -22,6 +22,7 @@ import { MyText } from './MyText'
 import { PickImage } from './PickImage'
 import * as Constants from 'expo-constants'
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import ObjectID from 'bson-objectid'
 
 interface Props {
   navigation: StackNavigationProp<AppStackParamList, 'AddFiles'>
@@ -71,6 +72,7 @@ const AssetsFlatList = ({
 }: Props) => {
   const queryClient = useQueryClient()
   const [selected, setSelected] = useState<string[]>([])
+  const startUpload = useStoreActions((actions) => actions.startUpload)
 
   const selectHandler = (id: string) => {
     setSelected((selected) => {
@@ -104,10 +106,16 @@ const AssetsFlatList = ({
     try {
       const newFiles: any[] = []
 
+      startUpload(selected.length)
+
+      const assetsIds: string[] = []
+
       selected.map((id, index) => {
+        const objectID = new ObjectID().toHexString()
         const asset: any = assets.find((asset) => asset?.id === id)
         newFiles.push(asset)
-        uploadAssets(albumId, asset.uri)
+        uploadAssets(albumId, asset.uri, objectID)
+        assetsIds.push(objectID)
       })
 
       // Set new Album Cover
@@ -116,6 +124,8 @@ const AssetsFlatList = ({
       const isDefaultCoverImage = await AsyncStorage.getItem(
         `album:${albumId}:albumCover`
       )
+
+      const lastFileObjectId = assetsIds[assetsIds.length - 1]
 
       const newAlbums = albums.map((albumData: any) => {
         if (albumId === albumData.album.id && isDefaultCoverImage) {
@@ -129,7 +139,7 @@ const AssetsFlatList = ({
           return {
             ...albumData,
             albumCover: {
-              id: uuidv4(),
+              id: lastFileObjectId,
               mimetype: asset?.mediaType,
               deviceFileUrl: asset!.uri,
               createdAt: new Date().toISOString(),
@@ -147,9 +157,9 @@ const AssetsFlatList = ({
 
       const newAlbumFiles = [
         { placeholder: 'addFiles' },
-        ...newFiles.map((asset) => {
+        ...newFiles.map((asset, i) => {
           return {
-            id: uuidv4(),
+            id: assetsIds[i],
             mimetype: asset.mediaType === 'photo' ? 'image/png' : 'video/mp3',
             deviceFileUrl: asset.uri,
             createdAt: new Date().toISOString(),
