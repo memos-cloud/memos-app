@@ -3,12 +3,15 @@ import { useFonts } from 'expo-font'
 import * as SplashScreen from 'expo-splash-screen'
 import { StatusBar } from 'expo-status-bar'
 import React from 'react'
-import { LogBox } from 'react-native'
+import { LogBox, I18nManager } from 'react-native'
 import 'react-native-get-random-values'
 import { QueryClientProvider } from 'react-query'
 import Routes from './src/Routes'
 import { queryClient, store } from './src/state-management/stores'
 import * as Sentry from 'sentry-expo'
+
+I18nManager.forceRTL(false)
+I18nManager.allowRTL(false)
 
 Sentry.init({
   dsn: 'https://acfd7902ab8740fcacce9c7ceec3729c@o1003933.ingest.sentry.io/5964826',
