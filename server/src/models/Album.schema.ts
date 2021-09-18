@@ -9,9 +9,6 @@ export type AlbumDocument = Album & Document
 @Schema({ timestamps: true })
 export class Album {
   @Prop({ required: true })
-  _id: mongoose.Types.ObjectId
-
-  @Prop({ required: true })
   name: string
 
   @Prop({ type: mongoose.Types.ObjectId, ref: 'User', required: true })
