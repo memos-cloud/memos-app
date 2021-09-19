@@ -101,7 +101,7 @@ export const MyHeader: FC<Props> = memo(
             </View>
           )}
           {back && HeaderRight && <HeaderRight />}
-          {!back && (
+          {!back && profile && (
             <Profile
               profilePic={profile?.profilePic}
               goToProfile={() => navigation.navigate('ProfileScreen')}
