@@ -75,9 +75,6 @@ export const AssetsGallery: FC<Props> = memo(
                 style={{ flex: 1 }}
                 resizeMode='contain'
                 source={{ uri: imgInfo.item.deviceFileUrl }}
-                onError={({ nativeEvent }) => {
-                  throw new Error(nativeEvent.error)
-                }}
               />
             ) : (
               <Image
@@ -86,9 +83,6 @@ export const AssetsGallery: FC<Props> = memo(
                 resizeMode='contain'
                 transitionDuration={0}
                 uri={imgInfo.item.fileURL}
-                onError={({ nativeEvent }) => {
-                  throw new Error(nativeEvent.error as any)
-                }}
               />
             )}
           </View>

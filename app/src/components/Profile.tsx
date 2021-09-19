@@ -1,4 +1,4 @@
-import React, { FC, memo } from 'react'
+import React, { FC } from 'react'
 import { StyleSheet, TouchableOpacity } from 'react-native'
 import { colors } from '../config/colors'
 import { SmoothFastImage } from './SmoothFastImage'
@@ -11,7 +11,7 @@ interface Props {
 const profilePicSize = 37
 
 export const Profile: FC<Props> = ({ goToProfile, profilePic }) => {
-  const smallProfilePic = profilePic.replace(
+  const smallProfilePic = profilePic?.replace(
     /=s.*?-c/,
     `=s${profilePicSize * 3}-c`
   )
@@ -26,6 +26,7 @@ export const Profile: FC<Props> = ({ goToProfile, profilePic }) => {
         id={smallProfilePic}
         style={styles.img}
         uri={smallProfilePic}
+        resizeMode='cover'
       />
     </TouchableOpacity>
   )

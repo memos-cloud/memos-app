@@ -1,5 +1,4 @@
 import { LinearGradient } from 'expo-linear-gradient'
-import * as SplashScreen from 'expo-splash-screen'
 import * as WebBrowser from 'expo-web-browser'
 import React, { FC, useEffect, useState } from 'react'
 import { ImageBackground, Platform, StyleSheet, View } from 'react-native'
@@ -10,6 +9,7 @@ import { MyButton } from '../components/MyButton'
 import { MyText } from '../components/MyText'
 import { serverURL } from '../constants/serverURL'
 import * as Constants from 'expo-constants'
+import AppLoading from 'expo-app-loading'
 
 const linearGradient = ['#0F0F0F', 'rgba(15, 15, 15, 0.2)']
 
@@ -33,13 +33,6 @@ export const LoginScreen: FC<AuthNavProps<'Login'>> = () => {
       )
     }
   }
-  useEffect(() => {
-    const removeSplashScreen = async () => {
-      await SplashScreen.hideAsync()
-    }
-
-    if (imageLoaded) removeSplashScreen()
-  }, [imageLoaded])
 
   const colors = useStoreState((state) => state.theme)
 

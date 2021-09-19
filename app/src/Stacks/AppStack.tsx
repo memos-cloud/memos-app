@@ -7,7 +7,6 @@ import {
   TransitionSpecs,
 } from '@react-navigation/stack'
 import * as Permissions from 'expo-permissions'
-import * as SplashScreen from 'expo-splash-screen'
 import { StatusBar } from 'expo-status-bar'
 import React, { useEffect } from 'react'
 import { AppStackParamList } from '../@types/StackParamList'
@@ -39,12 +38,11 @@ export const AppStack = ({}) => {
   }
 
   useEffect(() => {
-    const removeSplashScreen = async () => {
-      await SplashScreen.hideAsync()
+    const getMediaLibraryPermission = async () => {
       const { granted } = await Permissions.getAsync('mediaLibrary')
       if (!granted) await Permissions.askAsync(Permissions.MEDIA_LIBRARY)
     }
-    removeSplashScreen()
+    getMediaLibraryPermission()
   }, [])
 
   const CustomScreenTransition: {
