@@ -1,9 +1,11 @@
+import AsyncStorage from '@react-native-async-storage/async-storage'
 import { StackNavigationProp } from '@react-navigation/stack'
+import ObjectID from 'bson-objectid'
+import * as Constants from 'expo-constants'
 import * as MediaLibrary from 'expo-media-library'
 import _ from 'lodash'
 import React, { memo, useEffect, useRef, useState } from 'react'
 import {
-  ActivityIndicator,
   Dimensions,
   FlatList,
   SafeAreaView,
@@ -12,7 +14,6 @@ import {
   View,
 } from 'react-native'
 import { useQueryClient } from 'react-query'
-import { v4 as uuidv4 } from 'uuid'
 import { AppStackParamList } from '../@types/StackParamList'
 import { useStoreActions, useStoreState } from '../@types/typedHooks'
 import { uploadAssets } from '../api/uploadAssets'
@@ -20,9 +21,6 @@ import { ArrowIcon } from './icons/Arrow'
 import { DropDownArrow } from './icons/DropDownArrow'
 import { MyText } from './MyText'
 import { PickImage } from './PickImage'
-import * as Constants from 'expo-constants'
-import AsyncStorage from '@react-native-async-storage/async-storage'
-import ObjectID from 'bson-objectid'
 
 interface Props {
   navigation: StackNavigationProp<AppStackParamList, 'AddFiles'>
@@ -106,7 +104,7 @@ const AssetsFlatList = ({
     try {
       const newFiles: any[] = []
 
-      // startUpload(selected.length)
+      startUpload(selected.length)
 
       const assetsIds: string[] = []
 
