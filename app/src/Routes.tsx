@@ -1,4 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import AppLoading from 'expo-app-loading'
 import jwt_decode from 'jwt-decode'
 import * as React from 'react'
 import { useEffect, useState } from 'react'
@@ -6,7 +7,6 @@ import { View } from 'react-native'
 import { useStoreActions, useStoreState } from './@types/typedHooks'
 import { AppStack } from './Stacks/AppStack'
 import { AuthStack } from './Stacks/AuthStack'
-import { queryClient } from './state-management/stores'
 
 function Routes() {
   const [loading, setLoading] = useState(true)
@@ -33,6 +33,10 @@ function Routes() {
   }, [])
 
   const colors = useStoreState((state) => state.theme)
+
+  if (loading) {
+    return <AppLoading />
+  }
 
   if (!loading && accessToken) {
     return (
