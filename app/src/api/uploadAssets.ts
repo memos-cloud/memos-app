@@ -7,9 +7,9 @@ import { store } from '../state-management/stores'
 export const uploadAssets = (
   albumId: string,
   filePath: string,
-  objectID: string
+  objectID: string,
 ) => {
-  const accessToken = store.getState().accessToken
+  const { accessToken } = store.getState()
   const uploadTo = `${serverURL}/albums/${albumId}/upload`
 
   return FileSystem.uploadAsync(uploadTo, filePath, {
@@ -23,10 +23,11 @@ export const uploadAssets = (
     httpMethod: 'POST',
     sessionType: FileSystemSessionType.BACKGROUND,
   })
-    .then((value) => {
+    .then(() => {
       store.getActions().fileUploaded()
     })
     .catch(() => {
+      store.getActions().resetUploadProgress()
       ToastAndroid.show("Couldn't Upload Assets!", ToastAndroid.SHORT)
     })
 }

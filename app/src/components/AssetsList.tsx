@@ -6,6 +6,7 @@ import * as MediaLibrary from 'expo-media-library'
 import _ from 'lodash'
 import React, { memo, useEffect, useRef, useState } from 'react'
 import {
+  ActivityIndicator,
   Dimensions,
   FlatList,
   SafeAreaView,
@@ -46,11 +47,7 @@ interface Props {
   openModal: any
   goBack: any
   albumTitle: string
-  getAssets: ({
-    albumId,
-    after,
-    first,
-  }: {
+  getAssets: (props: {
     first?: number
     albumId: string
     after?: any
@@ -73,21 +70,21 @@ const AssetsFlatList = ({
   const startUpload = useStoreActions((actions) => actions.startUpload)
 
   const selectHandler = (id: string) => {
-    setSelected((selected) => {
-      const isSelected = selected.find((e) => e === id)
+    setSelected((selectedValues) => {
+      const isSelected = selectedValues.find((e) => e === id)
 
       if (isSelected) {
-        return selected.filter((e) => e !== id)
+        return selectedValues.filter((e) => e !== id)
       }
 
-      if (selected.length >= 15) {
+      if (selectedValues.length >= 15) {
         ToastAndroid.show(
           "Can't save more than 15 assets at a time!",
-          ToastAndroid.BOTTOM
+          ToastAndroid.BOTTOM,
         )
-        return selected
+        return selectedValues
       }
-      return [...selected, id]
+      return [...selectedValues, id]
     })
   }
 
@@ -101,75 +98,69 @@ const AssetsFlatList = ({
   )
 
   const uploadAssetsHandler = async () => {
-    try {
-      const newFiles: any[] = []
+    const newFiles: any[] = []
 
-      // startUpload(selected.length)
+    startUpload(selected.length)
 
-      const assetsIds: string[] = []
+    const assetsIds: string[] = []
 
-      selected.map((id) => {
-        const objectID = new ObjectID().toHexString()
-        const asset: any = assets.find((asset) => asset?.id === id)
-        newFiles.push(asset)
-        uploadAssets(albumId, asset.uri, objectID)
-        assetsIds.push(objectID)
-      })
+    selected.forEach((id) => {
+      const objectID = new ObjectID().toHexString()
+      const asset: any = assets.find((e) => e?.id === id)
+      newFiles.push(asset)
+      uploadAssets(albumId, asset.uri, objectID)
+      assetsIds.push(objectID)
+    })
 
-      // Set new Album Cover
-      const albums = queryClient.getQueryData('albums') as any
+    // Set new Album Cover
+    const albums = queryClient.getQueryData('albums') as any
 
-      const isDefaultCoverImage = await AsyncStorage.getItem(
-        `album:${albumId}:albumCover`
-      )
+    const isDefaultCoverImage = await AsyncStorage.getItem(
+      `album:${albumId}:albumCover`,
+    )
 
-      const lastFileObjectId = assetsIds[assetsIds.length - 1]
+    const lastFileObjectId = assetsIds[assetsIds.length - 1]
 
-      const newAlbums = albums.map((albumData: any) => {
-        if (albumId === albumData.album.id && isDefaultCoverImage) {
-          const photoAssets = assets.filter(
-            (asset) =>
-              selected.find((e) => e === asset?.id) &&
-              asset?.mediaType === 'photo'
-          )
-          const asset = photoAssets[photoAssets.length - 1]
+    const newAlbums = albums.map((albumData: any) => {
+      if (albumId === albumData.album.id && isDefaultCoverImage) {
+        const photoAssets = assets.filter(
+          (asset) =>
+            selected.find((e) => e === asset?.id) &&
+            asset?.mediaType === 'photo',
+        )
+        const asset = photoAssets[photoAssets.length - 1]
 
-          return {
-            ...albumData,
-            albumCover: {
-              id: lastFileObjectId,
-              mimetype: asset?.mediaType,
-              deviceFileUrl: asset!.uri,
-              createdAt: new Date().toISOString(),
-            },
-          }
-        }
-        return albumData
-      })
-      queryClient.setQueryData(`albums`, newAlbums)
-
-      // Add new Files to the album
-      const albumFiles = queryClient.getQueryData(
-        `albumFiles:${albumId}`
-      ) as any
-
-      const newAlbumFiles = [
-        { placeholder: 'addFiles' },
-        ...newFiles.map((asset, i) => {
-          return {
-            id: assetsIds[i],
-            mimetype: asset.mediaType === 'photo' ? 'image/png' : 'video/mp3',
-            deviceFileUrl: asset.uri,
+        return {
+          ...albumData,
+          albumCover: {
+            id: lastFileObjectId,
+            mimetype: asset?.mediaType,
+            deviceFileUrl: asset!.uri,
             createdAt: new Date().toISOString(),
-          }
-        }),
-        ...albumFiles.filter((e: any) => !e.placeholder),
-      ]
+          },
+        }
+      }
+      return albumData
+    })
+    queryClient.setQueryData('albums', newAlbums)
 
-      queryClient.setQueryData(`albumFiles:${albumId}`, newAlbumFiles)
+    // Add new Files to the album
+    const albumFiles = queryClient.getQueryData(`albumFiles:${albumId}`) as any
 
-      navigation.navigate('AlbumFiles', { id: albumId })
-    } catch (error) {}
+    const newAlbumFiles = [
+      { placeholder: 'addFiles' },
+      ...newFiles.map((asset, i) => ({
+        id: assetsIds[i],
+        mimetype: asset.mediaType === 'photo' ? 'image/png' : 'video/mp3',
+        deviceFileUrl: asset.uri,
+        createdAt: new Date().toISOString(),
+      })),
+      ...albumFiles.filter((e: any) => !e.placeholder),
+    ]
+
+    queryClient.setQueryData(`albumFiles:${albumId}`, newAlbumFiles)
+
+    navigation.navigate('AlbumFiles', { id: albumId })
   }
 
   const [chooseAlbumsDisabled, setChooseAlbumsDisabled] = useState(false)
@@ -195,9 +186,10 @@ const AssetsFlatList = ({
       after: assets.length.toString(),
     })
 
-    queryClient.setQueryData(['DeviceAssets', deviceAlbumId], () => {
-      return [...assets, ...(newAssets || [])]
-    })
+    queryClient.setQueryData(['DeviceAssets', deviceAlbumId], () => [
+      ...assets,
+      ...(newAssets || []),
+    ])
   }
 
   return (
@@ -258,7 +250,6 @@ const AssetsFlatList = ({
                   paddingVertical: 16,
                   marginRight: 6,
                   maxWidth: Dimensions.get('window').width / 2.8,
-                  opacity: selected.length > 0 ? 0.6 : 1,
                 }}
               >
                 {albumTitle}
@@ -316,6 +307,13 @@ const AssetsFlatList = ({
         onEndReachedThreshold={2}
         keyExtractor={(item) => item!.id}
         data={assets}
+        ListFooterComponent={
+          <ActivityIndicator
+            style={{ padding: 20 }}
+            size="small"
+            color={colors.primary}
+          />
+        }
       />
     </>
   )

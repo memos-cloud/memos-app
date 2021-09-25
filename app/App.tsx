@@ -1,14 +1,18 @@
 import { StoreProvider } from 'easy-peasy'
+import AppLoading from 'expo-app-loading'
 import { useFonts } from 'expo-font'
 import { StatusBar } from 'expo-status-bar'
-import React, { useEffect } from 'react'
-import { LogBox, I18nManager } from 'react-native'
+import React from 'react'
+import { I18nManager, LogBox } from 'react-native'
 import 'react-native-get-random-values'
 import { QueryClientProvider } from 'react-query'
+import * as Sentry from 'sentry-expo'
 import Routes from './src/Routes'
 import { queryClient, store } from './src/state-management/stores'
-import * as Sentry from 'sentry-expo'
-import AppLoading from 'expo-app-loading'
+
+// Require Fonts
+const PoppinsRegularFont = require('./src/assets/fonts/Poppins-Regular.ttf')
+const PoppinsBoldFont = require('./src/assets/fonts/Poppins-Bold.ttf')
 
 I18nManager.forceRTL(false)
 I18nManager.allowRTL(false)
@@ -19,12 +23,12 @@ Sentry.init({
 
 export default () => {
   const [fontsLoaded] = useFonts({
-    'Poppins-regular': require('./src/assets/fonts/Poppins-Regular.ttf'),
-    'Poppins-bold': require('./src/assets/fonts/Poppins-Bold.ttf'),
+    'Poppins-regular': PoppinsRegularFont,
+    'Poppins-bold': PoppinsBoldFont,
   })
 
   if (!fontsLoaded) {
-    return <AppLoading autoHideSplash={false} />
+    return <AppLoading autoHideSplash />
   }
 
   LogBox.ignoreLogs(['Setting a timer'])
@@ -32,11 +36,7 @@ export default () => {
   return (
     <QueryClientProvider client={queryClient}>
       <StoreProvider store={store}>
-        <StatusBar
-          animated={true}
-          backgroundColor={'transparent'}
-          style='light'
-        />
+        <StatusBar animated backgroundColor="transparent" style="light" />
         <Routes />
       </StoreProvider>
     </QueryClientProvider>

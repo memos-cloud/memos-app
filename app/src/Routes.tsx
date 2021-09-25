@@ -1,6 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import AppLoading from 'expo-app-loading'
-import jwt_decode from 'jwt-decode'
+import jwtDecode from 'jwt-decode'
 import * as React from 'react'
 import { useEffect, useState } from 'react'
 import { View } from 'react-native'
@@ -19,7 +19,7 @@ function Routes() {
       const accessTokenExists = await AsyncStorage.getItem('accessToken')
 
       if (accessTokenExists) {
-        const decoded: { exp: number } = jwt_decode(accessTokenExists)
+        const decoded: { exp: number } = jwtDecode(accessTokenExists)
         const expired = decoded.exp < Date.now() / 1000
 
         if (!expired) {

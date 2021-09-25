@@ -26,7 +26,7 @@ export const MyHeader: FC<Props> = memo(
 
     const uploadProgress = useStoreState((state) => state.uploadProgress)
     const resetUploadProgress = useStoreActions(
-      (actions) => actions.resetUploadProgress
+      (actions) => actions.resetUploadProgress,
     )
 
     useEffect(() => {
@@ -45,7 +45,7 @@ export const MyHeader: FC<Props> = memo(
       <SafeAreaView
         style={{
           backgroundColor: colors.secondary,
-          borderBottomWidth: uploadProgress.filesCount ? 0 : 1,
+          borderBottomWidth: 1,
           borderBottomColor: colors.borderColor,
         }}
       >
@@ -83,7 +83,7 @@ export const MyHeader: FC<Props> = memo(
                 <ArrowIcon width={21} />
               </TouchableOpacity>
               <MyText
-                size='md'
+                size="md"
                 customStyles={{
                   position: 'absolute',
                   left: '120%',
@@ -94,7 +94,7 @@ export const MyHeader: FC<Props> = memo(
               </MyText>
             </View>
           )}
-          {!back && <MyText size='md'>{title}</MyText>}
+          {!back && <MyText size="md">{title}</MyText>}
           {!back && (
             <View style={styles.imgParent}>
               <Logo />
@@ -119,7 +119,7 @@ export const MyHeader: FC<Props> = memo(
         {!!uploadProgress.filesCount && (
           <>
             <MyText
-              size='xs'
+              size="xs"
               customStyles={{
                 textAlign: 'center',
                 paddingBottom: 7,
@@ -140,7 +140,7 @@ export const MyHeader: FC<Props> = memo(
         )}
       </SafeAreaView>
     )
-  }
+  },
 )
 
 const styles = StyleSheet.create({

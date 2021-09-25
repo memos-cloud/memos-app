@@ -60,7 +60,7 @@ const AlbumRenderItem = ({ item, setAlbums }: Props) => {
         <MyText>{item.title}</MyText>
         <MyText
           numberOfLines={1}
-          size='xs'
+          size="xs"
           customStyles={{ color: '#808080', maxWidth: '90%' }}
         >
           {item.assetCount}

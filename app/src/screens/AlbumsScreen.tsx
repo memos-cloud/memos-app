@@ -23,10 +23,8 @@ interface Props extends AppNavProps<'HomeTabs'> {}
 const AlbumsScreen = ({ navigation }: Props) => {
   const queryClient = useQueryClient()
   const [refreshing, setRefreshing] = useState(false)
-  const { data, isLoading, error } = useQuery('albums', () => getAlbums())
+  const { data, isLoading } = useQuery('albums', () => getAlbums())
   const [hasMore, setHasMore] = useState(false)
-
-  console.log(data)
 
   const onRefresh = async () => {
     setRefreshing(true)
@@ -86,7 +84,7 @@ const AlbumsScreen = ({ navigation }: Props) => {
                 borderWidth: 2,
                 borderColor: colors.primary,
               }}
-              text='Create New Album'
+              text="Create New Album"
               onPress={() => navigation.navigate('NewAlbum')}
               bg={colors.black}
               color={colors.primary}
@@ -96,7 +94,7 @@ const AlbumsScreen = ({ navigation }: Props) => {
             hasMore ? (
               <ActivityIndicator
                 style={{ paddingVertical: 8 }}
-                size='small'
+                size="small"
                 color={colors.primary}
               />
             ) : undefined
@@ -137,7 +135,7 @@ const AlbumsScreen = ({ navigation }: Props) => {
                   paddingVertical: 12,
                   borderRadius: 8,
                 }}
-                text='Create New Album'
+                text="Create New Album"
                 bg={colors.primary}
                 onPress={() => navigation.navigate('NewAlbum')}
               />

@@ -1,9 +1,9 @@
 import * as Constants from 'expo-constants'
 import * as MediaLibrary from 'expo-media-library'
-import React, { useState, useEffect } from 'react'
-import { ActivityIndicator, Dimensions, StyleSheet } from 'react-native'
-import { useQuery, useQueryClient } from 'react-query'
-import { AppNavProps, HomeNavProps } from '../@types/NavProps'
+import React from 'react'
+import { ActivityIndicator, Dimensions } from 'react-native'
+import { useQuery } from 'react-query'
+import { AppNavProps } from '../@types/NavProps'
 import { useStoreState } from '../@types/typedHooks'
 import { AssetsList } from '../components/AssetsList'
 import Container from '../components/Container'
@@ -11,50 +11,41 @@ import { askingForFilesPermission } from '../utils/getFilesPermision'
 
 const widthAndHeight = (Dimensions.get('window').width - 10 * 4) / 3
 
-const getAssets = async ({
-  first,
-  albumId,
-  after,
-}: {
+interface GetAssetsProps {
   first?: number
   albumId: string
   after?: string
-}) => {
+}
+const getAssets = async ({ first, albumId, after }: GetAssetsProps) => {
   const granted = await askingForFilesPermission()
 
   if (!granted) {
-    return
+    return []
   }
-  try {
-    const options: MediaLibrary.AssetsOptions = {
-      first: first ? first : 100,
-      sortBy: 'default',
-      after,
-      mediaType: [MediaLibrary.MediaType.video, MediaLibrary.MediaType.photo],
-    }
+  const options: MediaLibrary.AssetsOptions = {
+    first: first || 100,
+    sortBy: 'default',
+    after,
+    mediaType: [MediaLibrary.MediaType.video, MediaLibrary.MediaType.photo],
+  }
 
-    if (albumId !== 'kmdsam7138d1@E!2ioejwjdauds') options.album = albumId
+  if (albumId !== 'kmdsam7138d1@E!2ioejwjdauds') options.album = albumId
 
-    const data = await MediaLibrary.getAssetsAsync(options)
+  const data = await MediaLibrary.getAssetsAsync(options)
 
-    return data.assets
-  } catch (error) {}
+  return data.assets
 }
 
 const PickImages = ({
   navigation,
   route: { params },
 }: AppNavProps<'AddFiles'>) => {
-  const {
-    data: assets,
-    isLoading: assetsLoading,
-    error,
-  } = useQuery(
+  const { data: assets, isLoading: assetsLoading } = useQuery(
     ['DeviceAssets', params.deviceAlbumId],
     () => getAssets({ albumId: params.deviceAlbumId }),
     {
       staleTime: 0,
-    }
+    },
   )
 
   const colors = useStoreState((state) => state.theme)
@@ -66,7 +57,7 @@ const PickImages = ({
           style={{
             padding: Constants.default.statusBarHeight + 6,
           }}
-          size='small'
+          size="small"
           color={colors.primary}
         />
       )}
@@ -92,5 +83,3 @@ const PickImages = ({
 }
 
 export default PickImages
-
-const styles = StyleSheet.create({})
