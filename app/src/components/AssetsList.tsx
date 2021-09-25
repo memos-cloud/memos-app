@@ -104,7 +104,7 @@ const AssetsFlatList = ({
     try {
       const newFiles: any[] = []
 
-      startUpload(selected.length)
+      // startUpload(selected.length)
 
       const assetsIds: string[] = []
 

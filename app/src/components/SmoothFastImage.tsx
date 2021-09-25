@@ -24,6 +24,10 @@ export const SmoothFastImage: FC<Props> = memo(
     const [imgResult, setImgResult] = useState(false)
 
     useEffect(() => {
+      if (loadFirst) setLoadFromDisk(true)
+    }, [loadFirst])
+
+    useEffect(() => {
       const checkImage = async () => {
         if (loadFirst) {
           const { exists } = await FileSystem.getInfoAsync(loadFirst)

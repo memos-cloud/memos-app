@@ -79,7 +79,7 @@ export class AuthService {
     const url =
       process.env.NODE_ENV === 'production'
         ? `memos-rn://SaveToken/${token}`
-        : `exp://192.168.1.4:19000/--/SaveToken/${token}`
+        : `exp://192.168.1.5:19000/--/SaveToken/${token}`
 
     res.redirect(url)
   }

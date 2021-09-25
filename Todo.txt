@@ -4,3 +4,4 @@
 4- // --Done-- // Fix: deleting files, Doesn't update user usage.
 5- // --Done-- // Loading Indicator below the header when uploading files
 6- // --Done-- // Generating the ObjectId on the frontend and send it to the server for the assets (to solve when deleting a file that is generated on the frontend.
+7- Deleting Assets doesn't update the usage properly.

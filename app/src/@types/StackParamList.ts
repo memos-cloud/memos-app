@@ -1,6 +1,7 @@
 export type AuthStackParamList = {
   Login: undefined
   SaveToken: { token: string }
+  Auth: undefined
 }
 
 export type HomeTabsParamList = {

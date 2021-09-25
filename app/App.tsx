@@ -1,7 +1,7 @@
 import { StoreProvider } from 'easy-peasy'
 import { useFonts } from 'expo-font'
 import { StatusBar } from 'expo-status-bar'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { LogBox, I18nManager } from 'react-native'
 import 'react-native-get-random-values'
 import { QueryClientProvider } from 'react-query'
@@ -24,7 +24,7 @@ export default () => {
   })
 
   if (!fontsLoaded) {
-    return <AppLoading />
+    return <AppLoading autoHideSplash={false} />
   }
 
   LogBox.ignoreLogs(['Setting a timer'])

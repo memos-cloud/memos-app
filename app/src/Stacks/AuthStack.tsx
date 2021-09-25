@@ -4,6 +4,7 @@ import * as Linking from 'expo-linking'
 import { StatusBar } from 'expo-status-bar'
 import React from 'react'
 import { AuthStackParamList } from '../@types/StackParamList'
+import { AuthScreen } from '../screens/AuthScreen'
 import { LoginScreen } from '../screens/LoginScreen'
 import { SaveTokenScreen } from '../screens/SaveTokenScreen'
 
@@ -33,6 +34,7 @@ export const AuthStack = () => {
       >
         <Stack.Screen name='Login' component={LoginScreen} />
         <Stack.Screen name='SaveToken' component={SaveTokenScreen} />
+        <Stack.Screen name='Auth' component={AuthScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   )

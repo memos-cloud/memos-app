@@ -26,6 +26,8 @@ const AlbumsScreen = ({ navigation }: Props) => {
   const { data, isLoading, error } = useQuery('albums', () => getAlbums())
   const [hasMore, setHasMore] = useState(false)
 
+  console.log(data)
+
   const onRefresh = async () => {
     setRefreshing(true)
     queryClient.setQueryData('albums', await getAlbums())

@@ -15,6 +15,7 @@ const linearGradient = ['#0F0F0F', 'rgba(15, 15, 15, 0.2)']
 
 export const LoginScreen: FC<AuthNavProps<'Login'>> = () => {
   const [imageLoaded, setImageLoaded] = useState(false)
+
   const ContinueWithGoogleHandler = async () => {
     const deviceId = Constants.default.deviceId
 
@@ -35,6 +36,10 @@ export const LoginScreen: FC<AuthNavProps<'Login'>> = () => {
   }
 
   const colors = useStoreState((state) => state.theme)
+
+  if (!imageLoaded) {
+    return <AppLoading />
+  }
 
   return (
     <ImageBackground

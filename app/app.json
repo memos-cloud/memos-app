@@ -8,8 +8,10 @@
     "sdkVersion": "42.0.0",
     "orientation": "portrait",
     "icon": "./src/assets/images/icon.png",
+    "backgroundColor": "#0F0F0F",
     "androidStatusBar": {
-      "barStyle": "light-content"
+      "barStyle": "light-content",
+      "backgroundColor": "#0F0F0F"
     },
     "splash": {
       "image": "./src/assets/images/splash.png",
@@ -27,12 +29,12 @@
     },
     "android": {
       "package": "com.yassineldeeb.memosapp",
-      "softwareKeyboardLayoutMode": "pan",
       "versionCode": 420010111,
       "adaptiveIcon": {
         "foregroundImage": "./src/assets/images/adaptive-icon.png",
         "backgroundColor": "#0F0F0F"
-      }
+      },
+      "softwareKeyboardLayoutMode": "pan"
     },
     "web": {
       "favicon": "./src/assets/images/favicon.png"
