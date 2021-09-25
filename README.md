@@ -10,7 +10,7 @@
 
 # Cloud Storage For Your Best Moments
 
-Memos is a mobile application that is built with ReactNative and NestJS and will be available for Android and IOS stores.
+Memos is a mobile application that is built with ReactNative and NestJS and will be available for Android.
 Users Files are very secure and can't be lost, They are hosted on an AWS S3 Bucket.
 Memos is like any other cloud storage, but It provides a very special UI that makes storing and syncing your Images/Videos more enjoyable and very user friendly.
 
