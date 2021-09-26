@@ -4,7 +4,8 @@ import * as Linking from 'expo-linking'
 import { StatusBar } from 'expo-status-bar'
 import React from 'react'
 import { AuthStackParamList } from '../@types/StackParamList'
-import { AuthScreen } from '../screens/AuthScreen'
+import { ChooseAuthScreen } from '../screens/ChooseAuthScreen'
+import { FingerPrintScreen } from '../screens/FingerPrintScreen'
 import { LoginScreen } from '../screens/LoginScreen'
 import { SaveTokenScreen } from '../screens/SaveTokenScreen'
 
@@ -22,19 +23,20 @@ const linking: LinkingOptions<{
     },
   },
 }
+
 export const AuthStack = () => {
+  const variable = ''
   return (
     <NavigationContainer linking={linking}>
-      <StatusBar animated={true} backgroundColor='transparent' style='light' />
+      <StatusBar animated backgroundColor="transparent" style="light" />
       <Stack.Navigator
-        initialRouteName='Login'
+        initialRouteName="Login"
         screenOptions={{
-          header: () => null,
+          headerShown: false,
         }}
       >
-        <Stack.Screen name='Login' component={LoginScreen} />
-        <Stack.Screen name='SaveToken' component={SaveTokenScreen} />
-        <Stack.Screen name='Auth' component={AuthScreen} />
+        <Stack.Screen name="Login" component={LoginScreen} />
+        <Stack.Screen name="SaveToken" component={SaveTokenScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   )

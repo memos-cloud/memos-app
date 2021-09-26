@@ -288,7 +288,7 @@ export class AlbumsService {
     }, 0)
 
     if (user.usage + filesSize > parseInt(process.env.QUOTA_LIMIT!)) {
-      throw new HttpException("You've Reached Your Quota Limit!", 400)
+      throw new HttpException("You've Reached Your Quota Limit!", 429)
     }
 
     const uploadAlbumFiles = async () => {
@@ -336,8 +336,9 @@ export class AlbumsService {
 
     await this.fileModel.insertMany(albumFiles)
 
-    user.usage = parseFloat((user.usage + filesSize).toFixed(1))
-    await user.save()
+    await this.userModel.findByIdAndUpdate(userId, {
+      $inc: { usage: filesSize },
+    })
 
     return {
       ok: true,
@@ -359,9 +360,9 @@ export class AlbumsService {
       await deleteFiles({ keys: files.map((file) => file.key) })
     }
 
-    user.usage = parseFloat((user.usage - filesSize).toFixed(1))
-
-    await user.save()
+    await this.userModel.findByIdAndUpdate(user.id, {
+      $inc: { usage: -filesSize },
+    })
 
     return this.fileModel.deleteMany(findObject)
   }

@@ -1,11 +1,6 @@
 import { useScrollToTop } from '@react-navigation/native'
 import React, { useEffect, useRef, useState } from 'react'
-import {
-  ActivityIndicator,
-  FlatList,
-  ScrollView,
-  StyleSheet,
-} from 'react-native'
+import { ActivityIndicator, FlatList, ScrollView } from 'react-native'
 import { useQuery, useQueryClient } from 'react-query'
 import { AppNavProps } from '../@types/NavProps'
 import { useStoreState } from '../@types/typedHooks'
@@ -148,5 +143,3 @@ const AlbumsScreen = ({ navigation }: Props) => {
 }
 
 export default AlbumsScreen
-
-const styles = StyleSheet.create({})

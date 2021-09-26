@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react'
 import { View } from 'react-native'
 import { useStoreActions, useStoreState } from './@types/typedHooks'
 import { AppStack } from './Stacks/AppStack'
+import { Auth2Stack } from './Stacks/Auth2Stack'
 import { AuthStack } from './Stacks/AuthStack'
 
 function Routes() {
@@ -13,6 +14,7 @@ function Routes() {
   const accessToken = useStoreState((state) => state.accessToken)
   const Login = useStoreActions((state) => state.Login)
   const getTheme = useStoreActions((state) => state.getTheme)
+  const authenticated = useStoreState((state) => state.authenticated)
 
   useEffect(() => {
     const checkLoggedInUser = async () => {
@@ -23,7 +25,7 @@ function Routes() {
         const expired = decoded.exp < Date.now() / 1000
 
         if (!expired) {
-          Login(accessTokenExists)
+          await Login(accessTokenExists)
           await getTheme()
         }
       }
@@ -41,7 +43,7 @@ function Routes() {
   if (!loading && accessToken) {
     return (
       <View style={{ backgroundColor: colors.black, flex: 1 }}>
-        <AppStack />
+        {authenticated ? <AppStack /> : <Auth2Stack />}
       </View>
     )
   }

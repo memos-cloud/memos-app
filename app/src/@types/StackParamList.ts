@@ -1,7 +1,12 @@
 export type AuthStackParamList = {
   Login: undefined
   SaveToken: { token: string }
-  Auth: undefined
+}
+
+export type Auth2StackParamList = {
+  PINCode: undefined
+  FingerPrint: undefined
+  ChooseAuth: undefined
 }
 
 export type HomeTabsParamList = {

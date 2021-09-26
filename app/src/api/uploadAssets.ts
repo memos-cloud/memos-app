@@ -23,11 +23,23 @@ export const uploadAssets = (
     httpMethod: 'POST',
     sessionType: FileSystemSessionType.BACKGROUND,
   })
-    .then(() => {
-      store.getActions().fileUploaded()
-    })
     .catch(() => {
       store.getActions().resetUploadProgress()
       ToastAndroid.show("Couldn't Upload Assets!", ToastAndroid.SHORT)
+    })
+    .then((data) => {
+      if ([201, 200].includes(data?.status)) {
+        store.getActions().fileUploaded()
+      } else {
+        store.getActions().resetUploadProgress()
+        if (data?.status === 429) {
+          ToastAndroid.show(
+            "You've Reached Your Quota Limit!",
+            ToastAndroid.SHORT,
+          )
+        } else {
+          ToastAndroid.show("Couldn't Upload Assets!", ToastAndroid.SHORT)
+        }
+      }
     })
 }

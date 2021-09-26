@@ -37,8 +37,12 @@ persistQueryClient({
 // Easy Peasy
 const store = createStore<StoreModel>({
   accessToken: null,
+  authenticated: false,
   profile: null,
   theme: colors,
+  authenticate: action((state) => {
+    state.authenticated = true
+  }),
   uploadProgress: { filesCount: 0, uploaded: 0 },
   startUpload: action((state, payload) => {
     state.uploadProgress = {

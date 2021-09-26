@@ -67,6 +67,7 @@ const AssetsFlatList = ({
 }: Props) => {
   const queryClient = useQueryClient()
   const [selected, setSelected] = useState<string[]>([])
+  const [uploadLoading, setUploadLoading] = useState(false)
   const startUpload = useStoreActions((actions) => actions.startUpload)
 
   const selectHandler = (id: string) => {
@@ -98,69 +99,78 @@ const AssetsFlatList = ({
   )
 
   const uploadAssetsHandler = async () => {
-    const newFiles: any[] = []
+    if (!uploadLoading) {
+      setUploadLoading(true)
+      const newFiles: any[] = []
 
-    startUpload(selected.length)
+      startUpload(selected.length)
 
-    const assetsIds: string[] = []
+      const assetsIds: string[] = []
 
-    selected.forEach((id) => {
-      const objectID = new ObjectID().toHexString()
-      const asset: any = assets.find((e) => e?.id === id)
-      newFiles.push(asset)
-      uploadAssets(albumId, asset.uri, objectID)
-      assetsIds.push(objectID)
-    })
+      selected.forEach((id) => {
+        const objectID = new ObjectID().toHexString()
+        const asset: any = assets.find((e) => e?.id === id)
+        newFiles.push(asset)
+        uploadAssets(albumId, asset.uri, objectID)
+        assetsIds.push(objectID)
+      })
 
-    // Set new Album Cover
-    const albums = queryClient.getQueryData('albums') as any
+      // Set new Album Cover
+      const albums = queryClient.getQueryData('albums') as any
 
-    const isDefaultCoverImage = await AsyncStorage.getItem(
-      `album:${albumId}:albumCover`,
-    )
+      const isDefaultCoverImage = await AsyncStorage.getItem(
+        `album:${albumId}:albumCover`,
+      )
 
-    const lastFileObjectId = assetsIds[assetsIds.length - 1]
+      const lastFileObjectId = assetsIds[assetsIds.length - 1]
 
-    const newAlbums = albums.map((albumData: any) => {
-      if (albumId === albumData.album.id && isDefaultCoverImage) {
-        const photoAssets = assets.filter(
-          (asset) =>
-            selected.find((e) => e === asset?.id) &&
-            asset?.mediaType === 'photo',
-        )
-        const asset = photoAssets[photoAssets.length - 1]
+      const newAlbums = albums.map((albumData: any) => {
+        if (albumId === albumData.album.id && isDefaultCoverImage) {
+          const photoAssets = assets.filter(
+            (asset) =>
+              selected.find((e) => e === asset?.id) &&
+              asset?.mediaType === 'photo',
+          )
+          const asset = photoAssets[photoAssets.length - 1]
 
-        return {
-          ...albumData,
-          albumCover: {
-            id: lastFileObjectId,
-            mimetype: asset?.mediaType,
-            deviceFileUrl: asset!.uri,
-            createdAt: new Date().toISOString(),
-          },
+          return {
+            ...albumData,
+            albumCover: {
+              id: lastFileObjectId,
+              mimetype: asset?.mediaType,
+              deviceFileUrl: asset!.uri,
+              createdAt: new Date().toISOString(),
+            },
+          }
         }
-      }
-      return albumData
-    })
-    queryClient.setQueryData('albums', newAlbums)
+        return albumData
+      })
+      queryClient.setQueryData('albums', newAlbums)
 
-    // Add new Files to the album
-    const albumFiles = queryClient.getQueryData(`albumFiles:${albumId}`) as any
+      // Add new Files to the album
+      const albumFiles = queryClient.getQueryData(
+        `albumFiles:${albumId}`,
+      ) as any
 
-    const newAlbumFiles = [
-      { placeholder: 'addFiles' },
-      ...newFiles.map((asset, i) => ({
-        id: assetsIds[i],
-        mimetype: asset.mediaType === 'photo' ? 'image/png' : 'video/mp3',
-        deviceFileUrl: asset.uri,
-        createdAt: new Date().toISOString(),
-      })),
-      ...albumFiles.filter((e: any) => !e.placeholder),
-    ]
+      const newAlbumFiles = [
+        { placeholder: 'addFiles' },
+        ...newFiles.map((asset, i) => ({
+          id: assetsIds[i],
+          mimetype: asset.mediaType === 'photo' ? 'image/png' : 'video/mp3',
+          deviceFileUrl: asset.uri,
+          createdAt: new Date().toISOString(),
+        })),
+        ...albumFiles.filter((e: any) => !e.placeholder),
+      ]
 
-    queryClient.setQueryData(`albumFiles:${albumId}`, newAlbumFiles)
+      queryClient.setQueryData(`albumFiles:${albumId}`, newAlbumFiles)
 
-    navigation.navigate('AlbumFiles', { id: albumId })
+      navigation.navigate('AlbumFiles', { id: albumId })
+
+      setTimeout(() => {
+        setUploadLoading(false)
+      }, 1500)
+    }
   }
 
   const [chooseAlbumsDisabled, setChooseAlbumsDisabled] = useState(false)

@@ -25,7 +25,7 @@ export const ProfileScreen = ({ navigation }: AppNavProps<'ProfileScreen'>) => {
 
   const profilePic = profileData.profilePic.replace(
     /=s.*?-c/,
-    `=s${profilePicSize * 3}-c`
+    `=s${profilePicSize * 3}-c`,
   )
   const usagePercentage = Math.round((profileData.usage / 250) * 100)
 
@@ -75,20 +75,20 @@ export const ProfileScreen = ({ navigation }: AppNavProps<'ProfileScreen'>) => {
             ]}
           />
           <View style={[styles.info, { marginTop: 10 }]}>
-            <MyText size='lg'>{profileData.name}</MyText>
+            <MyText size="lg">{profileData.name}</MyText>
             <MyText
-              size='xs'
+              size="xs"
               customStyles={{ color: 'rgba(255, 255, 255, 0.55)' }}
             >
               Joined on {format(parseISO(profileData.createdAt), 'LLL d, yyyy')}
             </MyText>
           </View>
           <View style={styles.email}>
-            <MyText size='md' customStyles={{ marginBottom: 2 }}>
+            <MyText size="md" customStyles={{ marginBottom: 2 }}>
               {profileData.facebookId ? 'Facebook Id' : 'Email'}
             </MyText>
             <MyText
-              size='xs'
+              size="xs"
               customStyles={{ color: 'rgba(255, 255, 255, 0.55)' }}
             >
               {profileData.email}
@@ -101,7 +101,7 @@ export const ProfileScreen = ({ navigation }: AppNavProps<'ProfileScreen'>) => {
                 alignItems: 'center',
               }}
             >
-              <MyText size='md' customStyles={{ marginBottom: 8 }}>
+              <MyText size="md" customStyles={{ marginBottom: 8 }}>
                 Usage:
               </MyText>
               <View
@@ -113,7 +113,7 @@ export const ProfileScreen = ({ navigation }: AppNavProps<'ProfileScreen'>) => {
                 ]}
               >
                 <MyText
-                  size='2xs'
+                  size="2xs"
                   customStyles={{
                     transform: [{ translateY: 0.35 }],
                   }}
@@ -138,7 +138,7 @@ export const ProfileScreen = ({ navigation }: AppNavProps<'ProfileScreen'>) => {
                     transform: [
                       {
                         translateX: Math.round(
-                          (profileData.usage / 250) * progressBarWidth
+                          (profileData.usage / 250) * progressBarWidth,
                         ),
                       },
                     ],
@@ -156,7 +156,7 @@ export const ProfileScreen = ({ navigation }: AppNavProps<'ProfileScreen'>) => {
           >
             <LogoutIcon size={18} color={colors.primary} />
             <MyText
-              size='md'
+              size="md"
               customStyles={{
                 color: colors.primary,
                 marginLeft: 8,
