@@ -43,6 +43,9 @@ const store = createStore<StoreModel>({
   authenticate: action((state) => {
     state.authenticated = true
   }),
+  deauthenticate: action((state) => {
+    state.authenticated = false
+  }),
   uploadProgress: { filesCount: 0, uploaded: 0 },
   startUpload: action((state, payload) => {
     state.uploadProgress = {

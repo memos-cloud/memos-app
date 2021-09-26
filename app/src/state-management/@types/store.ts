@@ -22,6 +22,7 @@ export interface StoreModel {
   uploadProgress: { uploaded: number; filesCount: number }
   startUpload: Action<StoreModel, number>
   authenticate: Action<StoreModel>
+  deauthenticate: Action<StoreModel>
   resetUploadProgress: Action<StoreModel>
   fileUploaded: Action<StoreModel>
   setProfile: Action<StoreModel, any>
