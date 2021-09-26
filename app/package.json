@@ -44,6 +44,7 @@
     "formik": "^2.2.9",
     "jwt-decode": "^3.1.2",
     "lodash": "^4.17.21",
+    "lottie-react-native": "4.0.2",
     "react": "16.13.1",
     "react-dom": "16.13.1",
     "react-native": "~0.63.4",
@@ -87,5 +88,5 @@
   },
   "private": true,
   "name": "app",
-  "version": "1.2.5"
+  "version": "1.2.6"
 }

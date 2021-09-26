@@ -1,17 +1,20 @@
 import * as Constants from 'expo-constants'
 import * as LocalAuthentication from 'expo-local-authentication'
-import React, { useEffect, useState } from 'react'
-import { ActivityIndicator, Alert, Dimensions, View } from 'react-native'
+import LottieView from 'lottie-react-native'
+import React, { useEffect, useRef } from 'react'
+import { Dimensions, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useStoreActions, useStoreState } from '../@types/typedHooks'
-import { FingerPrintIcon } from '../components/icons/FingerPrint'
 import { LockIcon } from '../components/icons/LockIcon'
+
+const FingerPrintLottie = require('../assets/lotties/fingerprint.json')
 
 const { width } = Dimensions.get('window')
 
 export const FingerPrintScreen = () => {
   const colors = useStoreState((state) => state.theme)
   const authenticate = useStoreActions((state) => state.authenticate)
+  const animation = useRef<React.LegacyRef<LottieView>>(null)
 
   useEffect(() => {
     handleBiometricAuth()
@@ -25,10 +28,17 @@ export const FingerPrintScreen = () => {
     if (auth.success) {
       authenticate()
     } else {
-      handleBiometricAuth()
+      setTimeout(() => {
+        handleBiometricAuth()
+      }, 1000)
     }
   }
 
+  useEffect(() => {
+    if (animation.current) {
+      animation.current.play()
+    }
+  }, [animation])
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: colors.black }}>
       <View style={{ flex: 1 }}>
@@ -51,12 +61,16 @@ export const FingerPrintScreen = () => {
             justifyContent: 'center',
             alignItems: 'center',
             flex: 1,
-            opacity: 0.05,
           }}
         >
-          <View>
-            <FingerPrintIcon size={width * 1.4} />
-          </View>
+          <LottieView
+            ref={animation}
+            style={{
+              width: width * 1.5,
+              height: width * 1.5,
+            }}
+            source={FingerPrintLottie}
+          />
         </View>
       </View>
     </SafeAreaView>
