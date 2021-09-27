@@ -1,4 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import { useIsFocused } from '@react-navigation/core'
 import * as LocalAuthentication from 'expo-local-authentication'
 import React, { useEffect, useState } from 'react'
 import {
@@ -18,6 +19,7 @@ import { DropDownArrow } from '../components/icons/DropDownArrow'
 import { FingerPrintIcon } from '../components/icons/FingerPrint'
 import { LockIcon } from '../components/icons/LockIcon'
 import { PINIcon } from '../components/icons/PINIcon'
+import { SkipIcon } from '../components/icons/SkipIcon'
 import { MyText } from '../components/MyText'
 import hexToHSL from '../utils/hexToHsl'
 
@@ -42,13 +44,18 @@ const ChooseAuthScreen = ({ navigation }: Auth2NavProps<'ChooseAuth'>) => {
 
       // Check Saved Method
       const auth2 = await AsyncStorage.getItem('auth2')
+
       if (auth2 === 'fingerprint') {
         navigation.navigate('FingerPrint')
         return setTimeout(() => {
           setCheckingMethod(false)
         }, 1000)
-      }
-      if (auth2 === 'skip') {
+      } else if (auth2 === 'PIN') {
+        navigation.navigate('PINCode')
+        return setTimeout(() => {
+          setCheckingMethod(false)
+        }, 1000)
+      } else if (auth2 === 'skip') {
         authenticate()
       }
       setCheckingMethod(false)
@@ -99,7 +106,6 @@ const ChooseAuthScreen = ({ navigation }: Auth2NavProps<'ChooseAuth'>) => {
           </MyText>
           <Container
             customStyles={{
-              padding: 0,
               width: '100%',
               height: '100%',
               justifyContent: 'center',
@@ -128,7 +134,7 @@ const ChooseAuthScreen = ({ navigation }: Auth2NavProps<'ChooseAuth'>) => {
                 <Ripple
                   rippleDuration={600}
                   rippleColor={hslValue2}
-                  style={[styles.button, { backgroundColor: '#1b1b1b' }]}
+                  style={[styles.button, { backgroundColor: colors.primary }]}
                 >
                   <View style={styles.btnIconParent}>
                     <View style={styles.btnIcon}>
@@ -141,41 +147,25 @@ const ChooseAuthScreen = ({ navigation }: Auth2NavProps<'ChooseAuth'>) => {
                 </Ripple>
               </View>
             </TouchableWithoutFeedback>
+            <TouchableWithoutFeedback onPress={SkipHandler}>
+              <View style={[styles.buttonParent, styles.spacer]}>
+                <Ripple
+                  rippleDuration={600}
+                  rippleColor={hslValue2}
+                  style={[styles.button, { backgroundColor: '#1b1b1b' }]}
+                >
+                  <View style={styles.btnIconParent}>
+                    <View style={styles.btnIcon}>
+                      <SkipIcon size={26} />
+                    </View>
+                  </View>
+                  <MyText size="md" customStyles={styles.buttonText}>
+                    Skip
+                  </MyText>
+                </Ripple>
+              </View>
+            </TouchableWithoutFeedback>
           </Container>
-          <View
-            style={{
-              width: '100%',
-              alignItems: 'flex-end',
-              paddingVertical: 15,
-            }}
-          >
-            <TouchableOpacity
-              onPress={SkipHandler}
-              activeOpacity={colors.activeOpacity}
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'flex-end',
-                alignItems: 'center',
-                paddingHorizontal: 15,
-                paddingVertical: 10,
-                opacity: 0.85,
-              }}
-            >
-              <MyText
-                size="md"
-                customStyles={{
-                  paddingRight: 2,
-                }}
-              >
-                Skip
-              </MyText>
-              <DropDownArrow
-                style={{ transform: [{ rotate: '270deg' }, { translateX: 1 }] }}
-                width={15}
-                fill={colors.white}
-              />
-            </TouchableOpacity>
-          </View>
         </Container>
       )}
     </SafeAreaView>
@@ -184,11 +174,11 @@ const ChooseAuthScreen = ({ navigation }: Auth2NavProps<'ChooseAuth'>) => {
 
 const styles = StyleSheet.create({
   buttonParent: {
-    paddingHorizontal: 15,
+    paddingHorizontal: 10,
   },
   button: {
     paddingHorizontal: 30,
-    paddingVertical: 12,
+    paddingVertical: 11,
     borderRadius: 6,
     width: '100%',
     justifyContent: 'center',

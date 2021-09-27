@@ -9,3 +9,5 @@
 8- Album Cover bug when refreshing and getting files other device have uploaded!
 9- PIN Code Authentication
 10- Reset Auth Method from Settings.
+11- Fix PIN Code Performance Issues.
+12- !!!! Auth2 Screen Don't allow users to go back from selected auth and set a new one.

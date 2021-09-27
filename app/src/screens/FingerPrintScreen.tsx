@@ -1,13 +1,15 @@
 import * as Constants from 'expo-constants'
 import * as LocalAuthentication from 'expo-local-authentication'
 import LottieView from 'lottie-react-native'
-import React, { useEffect, useRef } from 'react'
-import { Dimensions, View } from 'react-native'
+import React, { useEffect, useRef, useState } from 'react'
+import { Dimensions, StyleSheet, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useStoreActions, useStoreState } from '../@types/typedHooks'
 import { LockIcon } from '../components/icons/LockIcon'
-
-const FingerPrintLottie = require('../assets/lotties/fingerprint.json')
+import FingerPrintLottie from '../assets/lotties/fingerprint.json'
+import { MyText } from '../components/MyText'
+import { TouchableOpacity } from 'react-native-gesture-handler'
+import { MyButton } from '../components/MyButton'
 
 const { width } = Dimensions.get('window')
 
@@ -15,12 +17,15 @@ export const FingerPrintScreen = () => {
   const colors = useStoreState((state) => state.theme)
   const authenticate = useStoreActions((state) => state.authenticate)
   const animation = useRef<React.LegacyRef<LottieView>>(null)
+  const [cancelled, setCancelled] = useState(false)
 
   useEffect(() => {
     handleBiometricAuth()
   }, [])
 
   const handleBiometricAuth = async () => {
+    setTimeout(() => setCancelled(false), 300)
+
     const auth = await LocalAuthentication.authenticateAsync({
       promptMessage: 'Authenticate with Memos',
     })
@@ -28,9 +33,7 @@ export const FingerPrintScreen = () => {
     if (auth.success) {
       authenticate()
     } else {
-      setTimeout(() => {
-        handleBiometricAuth()
-      }, 1000)
+      setCancelled(true)
     }
   }
 
@@ -58,19 +61,32 @@ export const FingerPrintScreen = () => {
         </View>
         <View
           style={{
+            flex: 1,
             justifyContent: 'center',
             alignItems: 'center',
-            flex: 1,
           }}
         >
           <LottieView
             ref={animation}
             style={{
-              width: width * 1.5,
-              height: width * 1.5,
+              width: width * 1.4,
+              height: width * 1.4,
+              opacity: 0.8,
             }}
             source={FingerPrintLottie}
           />
+
+          {cancelled && (
+            <MyButton
+              customStyles={{
+                borderRadius: 10,
+              }}
+              btnStyles={{ paddingVertical: 12, borderRadius: 10 }}
+              bg={colors.primary}
+              onPress={handleBiometricAuth}
+              text="Try Again"
+            />
+          )}
         </View>
       </View>
     </SafeAreaView>

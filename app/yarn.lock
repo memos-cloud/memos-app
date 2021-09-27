@@ -4748,6 +4748,11 @@ expo-progress@^0.0.2:
   resolved "https://registry.npmjs.org/expo-progress/-/expo-progress-0.0.2.tgz"
   integrity sha512-RFd6aUxuZSH+ZhFeQB7Z6llnm8MZo7PmmgjoHeN5Hfvq1zc1gjQw0H4pCFcf3h6f08SXg32VMoaoi5A+D7Cs1A==
 
+expo-secure-store@~10.2.0:
+  version "10.2.0"
+  resolved "https://registry.yarnpkg.com/expo-secure-store/-/expo-secure-store-10.2.0.tgz#561dfea4d6b4d05a738643d80a15403ebe0e515d"
+  integrity sha512-yNahMY3qzEotAYdsE02ps4yGfDay2twasHfsI/7gJB9SrwXYFx5bJuCDk8uTo8jsm6psvDjO+9VMM2DSPHik2A==
+
 expo-sharing@~9.2.1:
   version "9.2.1"
   resolved "https://registry.npmjs.org/expo-sharing/-/expo-sharing-9.2.1.tgz"

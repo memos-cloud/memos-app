@@ -14,7 +14,6 @@ import { queryClient, store } from './src/state-management/stores'
 const PoppinsRegularFont = require('./src/assets/fonts/Poppins-Regular.ttf')
 const PoppinsBoldFont = require('./src/assets/fonts/Poppins-Bold.ttf')
 
-I18nManager.forceRTL(false)
 I18nManager.allowRTL(false)
 
 Sentry.init({
@@ -28,7 +27,7 @@ export default () => {
   })
 
   if (!fontsLoaded) {
-    return <AppLoading autoHideSplash />
+    return <AppLoading autoHideSplash={false} />
   }
 
   LogBox.ignoreLogs(['Setting a timer'])

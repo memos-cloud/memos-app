@@ -97,7 +97,7 @@ export const MyHeader: FC<Props> = memo(
           {!back && <MyText size="md">{title}</MyText>}
           {!back && (
             <View style={styles.imgParent}>
-              <Logo />
+              <Logo size={18} />
             </View>
           )}
           {back && HeaderRight && <HeaderRight />}

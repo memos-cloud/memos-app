@@ -14,6 +14,7 @@ import { PaintIcon } from '../components/icons/Paint'
 import { ResetIcon } from '../components/icons/ResetIcon'
 import { MyText } from '../components/MyText'
 import { themes } from '../config/themes'
+import * as SecureStore from 'expo-secure-store'
 
 const marginRightBetweenBoxes = 7
 const themeBoxSize =
@@ -26,8 +27,6 @@ const SettingsScreen: FC<HomeNavProps<'Settings'>> = () => {
   const deauthenticate = useStoreActions((actions) => actions.deauthenticate)
 
   const SelectTheme = ({ colors }: { colors: any }) => {
-    const shutupEslint = {}
-
     return (
       <View style={styles.themesParent}>
         {themes.map((types) => (
@@ -70,6 +69,7 @@ const SettingsScreen: FC<HomeNavProps<'Settings'>> = () => {
 
   const ResetLockHandler = async () => {
     await AsyncStorage.removeItem('auth2')
+    await SecureStore.deleteItemAsync('PIN')
     deauthenticate()
   }
 
@@ -116,7 +116,7 @@ const SettingsScreen: FC<HomeNavProps<'Settings'>> = () => {
               transform: [{ translateY: 1.5 }],
             }}
           >
-            Configure Lock
+            Reset Lock
           </MyText>
         </View>
       </TouchableOpacity>
