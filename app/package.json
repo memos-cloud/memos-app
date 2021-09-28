@@ -51,6 +51,7 @@
     "react-native": "~0.63.4",
     "react-native-awesome-gallery": "0.2.5",
     "react-native-expo-image-cache": "^4.1.0",
+    "react-native-flash-message": "^0.2.0",
     "react-native-gesture-handler": "~1.10.2",
     "react-native-get-random-values": "^1.7.0",
     "react-native-image-pan-zoom": "^2.1.12",
@@ -89,5 +90,5 @@
   },
   "private": true,
   "name": "app",
-  "version": "1.2.7"
+  "version": "1.2.8"
 }

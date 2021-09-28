@@ -1,6 +1,7 @@
 import * as FileSystem from 'expo-file-system'
 import { FileSystemSessionType, FileSystemUploadType } from 'expo-file-system'
 import { ToastAndroid } from 'react-native'
+import { showMessage } from 'react-native-flash-message'
 import { serverURL } from '../constants/serverURL'
 import { store } from '../state-management/stores'
 
@@ -33,12 +34,16 @@ export const uploadAssets = (
       } else {
         store.getActions().resetUploadProgress()
         if (data?.status === 429) {
-          ToastAndroid.show(
-            "You've Reached Your Quota Limit!",
-            ToastAndroid.SHORT,
-          )
+          showMessage({
+            message: "You've Reached Your Quota Limit!",
+            description: 'Go to your Profile Screen, check Usage.',
+            type: 'danger',
+          })
         } else {
-          ToastAndroid.show("Couldn't Upload Assets!", ToastAndroid.SHORT)
+          showMessage({
+            message: "Couldn't Upload Assets!",
+            type: 'danger',
+          })
         }
       }
     })

@@ -10,6 +10,7 @@ import FingerPrintLottie from '../assets/lotties/fingerprint.json'
 import { MyText } from '../components/MyText'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import { MyButton } from '../components/MyButton'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 const { width } = Dimensions.get('window')
 
@@ -31,6 +32,10 @@ export const FingerPrintScreen = () => {
     })
 
     if (auth.success) {
+      const isSetup = await AsyncStorage.getItem('fingerprintSetup')
+      if (!isSetup) {
+        await AsyncStorage.setItem('fingerprintSetup', 'true')
+      }
       authenticate()
     } else {
       setCancelled(true)

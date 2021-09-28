@@ -1,9 +1,10 @@
 import axios from 'axios'
 import { ToastAndroid } from 'react-native'
+import { showMessage } from 'react-native-flash-message'
 import { serverURL } from '../constants/serverURL'
 import { queryClient, store } from '../state-management/stores'
 
-export const getAlbums = async (skip?: number): Promise<any[]> => {
+export const getAlbums = async (skip?: number) => {
   const accessToken = store.getState().accessToken
 
   const config = {
@@ -13,13 +14,16 @@ export const getAlbums = async (skip?: number): Promise<any[]> => {
   try {
     const { data } = await axios.get(
       `${serverURL}/albums?take=10&skip=${skip || 0}`,
-      config
+      config,
     )
 
     queryClient.setQueryData('albums:hasMore', data.hasMore)
 
     return data.albums
   } catch (error) {
-    ToastAndroid.show("Couldn't Get Albums!", ToastAndroid.SHORT)
+    showMessage({
+      message: "Couldn't Get Albums!",
+      type: 'danger',
+    })
   }
 }

@@ -68,8 +68,12 @@ const SettingsScreen: FC<HomeNavProps<'Settings'>> = () => {
   }
 
   const ResetLockHandler = async () => {
+    // Clean Saved Setups
+    await AsyncStorage.removeItem('fingerprintSetup')
     await AsyncStorage.removeItem('auth2')
+    // Clean PIN Code if available
     await SecureStore.deleteItemAsync('PIN')
+
     deauthenticate()
   }
 

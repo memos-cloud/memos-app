@@ -1,12 +1,15 @@
 import { StoreProvider } from 'easy-peasy'
 import AppLoading from 'expo-app-loading'
+import * as Constants from 'expo-constants'
 import { useFonts } from 'expo-font'
 import { StatusBar } from 'expo-status-bar'
 import React from 'react'
-import { I18nManager, LogBox } from 'react-native'
+import { I18nManager, LogBox, StyleSheet } from 'react-native'
+import FlashMessage from 'react-native-flash-message'
 import 'react-native-get-random-values'
 import { QueryClientProvider } from 'react-query'
 import * as Sentry from 'sentry-expo'
+import { Fonts } from './src/@types/fonts'
 import Routes from './src/Routes'
 import { queryClient, store } from './src/state-management/stores'
 
@@ -37,7 +40,23 @@ export default () => {
       <StoreProvider store={store}>
         <StatusBar animated backgroundColor="transparent" style="light" />
         <Routes />
+        <FlashMessage
+          statusBarHeight={Constants.default.statusBarHeight}
+          position="top"
+          icon="warning"
+          color="black"
+          floating
+          titleStyle={styles.flashMessageStyles}
+          textStyle={styles.flashMessageStyles}
+        />
       </StoreProvider>
     </QueryClientProvider>
   )
 }
+
+const styles = StyleSheet.create({
+  flashMessageStyles: {
+    fontFamily: Fonts['Poppins-regular'],
+    transform: [{ translateY: 1.4 }],
+  },
+})

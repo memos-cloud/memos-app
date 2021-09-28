@@ -1,13 +1,9 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { useIsFocused } from '@react-navigation/core'
 import * as LocalAuthentication from 'expo-local-authentication'
+import * as SecureStore from 'expo-secure-store'
 import React, { useEffect, useState } from 'react'
-import {
-  ActivityIndicator,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-} from 'react-native'
+import { ActivityIndicator, StyleSheet, View } from 'react-native'
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler'
 import Ripple from 'react-native-material-ripple'
 import { SafeAreaView } from 'react-native-safe-area-context'
@@ -15,7 +11,6 @@ import { Auth2NavProps } from '../@types/NavProps'
 import { useStoreActions, useStoreState } from '../@types/typedHooks'
 import { Center } from '../components/Center'
 import Container from '../components/Container'
-import { DropDownArrow } from '../components/icons/DropDownArrow'
 import { FingerPrintIcon } from '../components/icons/FingerPrint'
 import { LockIcon } from '../components/icons/LockIcon'
 import { PINIcon } from '../components/icons/PINIcon'
@@ -27,6 +22,26 @@ const ChooseAuthScreen = ({ navigation }: Auth2NavProps<'ChooseAuth'>) => {
   const colors = useStoreState((state) => state.theme)
   const [checkingMethod, setCheckingMethod] = useState(true)
   const authenticate = useStoreActions((state) => state.authenticate)
+  const [supportBiometrics, setSupportBiometrics] = useState(true)
+  const [isSetup, isSetSetup] = useState(false)
+  const isFocused = useIsFocused()
+
+  useEffect(() => {
+    const checkIfAuthIsSetup = async () => {
+      if (isSetup) {
+        setCheckingMethod(true)
+        // Check Saved Method
+        const auth2 = await AsyncStorage.getItem('auth2')
+
+        if (auth2 === 'fingerprint') {
+          navigation.navigate('FingerPrint')
+        } else if (auth2 === 'PIN') {
+          navigation.navigate('PINCode')
+        }
+      }
+    }
+    if (isFocused) checkIfAuthIsSetup()
+  }, [isSetup, isFocused])
 
   useEffect(() => {
     const checkAuthMethodIfAvailable = async () => {
@@ -36,12 +51,16 @@ const ChooseAuthScreen = ({ navigation }: Auth2NavProps<'ChooseAuth'>) => {
       const savedBiometrics = await LocalAuthentication.isEnrolledAsync()
 
       if (!compatible || !savedBiometrics) {
-        navigation.navigate('PINCode')
-        return setTimeout(() => {
-          setCheckingMethod(false)
-        }, 1000)
+        setSupportBiometrics(false)
       }
 
+      // Check if any Auth Method Setup
+      const fingerPrintSetup = await AsyncStorage.getItem('fingerprintSetup')
+      const savedPINSetup = await SecureStore.getItemAsync('PIN')
+
+      if (fingerPrintSetup || savedPINSetup) {
+        isSetSetup(true)
+      }
       // Check Saved Method
       const auth2 = await AsyncStorage.getItem('auth2')
 
@@ -111,24 +130,26 @@ const ChooseAuthScreen = ({ navigation }: Auth2NavProps<'ChooseAuth'>) => {
               justifyContent: 'center',
             }}
           >
-            <TouchableWithoutFeedback onPress={FingerPrintHandler}>
-              <View style={[styles.buttonParent]}>
-                <Ripple
-                  rippleDuration={600}
-                  rippleColor={hslValue1}
-                  style={[styles.button, { backgroundColor: colors.primary }]}
-                >
-                  <View style={styles.btnIconParent}>
-                    <View style={styles.btnIcon}>
-                      <FingerPrintIcon size={32} />
+            {supportBiometrics && (
+              <TouchableWithoutFeedback onPress={FingerPrintHandler}>
+                <View style={[styles.buttonParent]}>
+                  <Ripple
+                    rippleDuration={600}
+                    rippleColor={hslValue1}
+                    style={[styles.button, { backgroundColor: colors.primary }]}
+                  >
+                    <View style={styles.btnIconParent}>
+                      <View style={styles.btnIcon}>
+                        <FingerPrintIcon size={32} />
+                      </View>
                     </View>
-                  </View>
-                  <MyText size="md" customStyles={styles.buttonText}>
-                    Fingerprint
-                  </MyText>
-                </Ripple>
-              </View>
-            </TouchableWithoutFeedback>
+                    <MyText size="md" customStyles={styles.buttonText}>
+                      Fingerprint
+                    </MyText>
+                  </Ripple>
+                </View>
+              </TouchableWithoutFeedback>
+            )}
             <TouchableWithoutFeedback onPress={PINHandler}>
               <View style={[styles.buttonParent, styles.spacer]}>
                 <Ripple

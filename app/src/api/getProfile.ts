@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { ToastAndroid } from 'react-native'
+import { showMessage } from 'react-native-flash-message'
 import { serverURL } from '../constants/serverURL'
 
 export const getProfile = async (accessToken: string) => {
@@ -11,7 +12,9 @@ export const getProfile = async (accessToken: string) => {
     const { data } = await axios.get(`${serverURL}/me`, config)
     return data
   } catch (error) {
-    console.log(error)
-    ToastAndroid.show("Couldn't Get Profile!", ToastAndroid.SHORT)
+    showMessage({
+      message: "Couldn't Get Profile!",
+      type: 'danger',
+    })
   }
 }

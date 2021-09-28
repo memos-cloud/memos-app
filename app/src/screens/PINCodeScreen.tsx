@@ -1,22 +1,26 @@
-import React, { memo, useEffect, useState } from 'react'
+import * as SecureStore from 'expo-secure-store'
+import LottieView from 'lottie-react-native'
+import React, { memo, useEffect, useRef, useState } from 'react'
 import {
-  ActivityIndicator,
   Dimensions,
   FlatList,
   ListRenderItemInfo,
   StyleSheet,
+  TouchableHighlight,
   View,
 } from 'react-native'
-import { TouchableWithoutFeedback } from 'react-native-gesture-handler'
+import { showMessage } from 'react-native-flash-message'
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from 'react-native-reanimated'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { v4 as uuidv4 } from 'uuid'
 import { useStoreActions, useStoreState } from '../@types/typedHooks'
-import { LockIcon } from '../components/icons/LockIcon'
+import UnlockLottie from '../assets/lotties/unlock.json'
 import { RemoveCharIcon } from '../components/icons/RemoveCharIcon'
 import { MyText } from '../components/MyText'
-import * as SecureStore from 'expo-secure-store'
-import { Center } from '../components/Center'
-import Container from '../components/Container'
 
 type state = 'Setup' | 'Confirm' | 'Enter'
 
@@ -38,6 +42,8 @@ export const PINCodeScreen = () => {
   const [savedPINCode, setSavedPINCode] = useState<string | null | undefined>(
     undefined,
   )
+  const lockAnimation = useRef<React.LegacyRef<LottieView>>(null)
+  const dotsOffset = useSharedValue(0)
 
   useEffect(() => {
     const checkSavedPIN = async () => {
@@ -57,11 +63,22 @@ export const PINCodeScreen = () => {
         setState('Confirm')
       } else if (state === 'Enter') {
         if (savedPINCode === PINCode) {
-          authenticate()
+          if (lockAnimation.current) {
+            lockAnimation.current.play()
+          }
+          setTimeout(() => {
+            authenticate()
+          }, 600)
         } else {
-          // Show a more beatiful error message instead
-          alert('WRONG PIN')
+          dotsOffset.value = withTiming(DotWidth + 2, { duration: 500 })
+          showMessage({
+            message: 'Wrong PIN Code',
+            type: 'danger',
+          })
+          // setTimeout(() => {
+          // dotsOffset.value = 0
           setPINCode('')
+          // }, 500)
         }
       }
     }
@@ -74,8 +91,10 @@ export const PINCodeScreen = () => {
           await SecureStore.setItemAsync('PIN', PINCode)
           authenticate()
         } else {
-          // Show a more beatiful error message instead
-          alert("Confirm PIN doesn't match")
+          showMessage({
+            message: "Confirm PIN doesn't match!",
+            type: 'danger',
+          })
 
           setConfirmPINCode('')
         }
@@ -101,15 +120,14 @@ export const PINCodeScreen = () => {
     ({ item, index }: ListRenderItemInfo<string | number>) => {
       return item === -1 ? (
         <View
-          style={[
-            styles.emptyNumber,
-            index % 3 !== 0 ? styles.paddingLeft : {},
-          ]}
+          style={[styles.emptyNumber, index % 3 !== 0 && styles.paddingLeft]}
         />
       ) : (
-        <TouchableWithoutFeedback
+        <TouchableHighlight
+          underlayColor="#181818"
+          delayPressOut={100}
           onPress={() => OnNumPressHandler(item)}
-          style={[styles.number, index % 3 !== 0 ? styles.paddingLeft : {}]}
+          style={[styles.number, index % 3 !== 0 && styles.paddingLeft]}
         >
           {item === 'delete' ? (
             <RemoveCharIcon size={30} />
@@ -123,28 +141,50 @@ export const PINCodeScreen = () => {
               {item}
             </MyText>
           )}
-        </TouchableWithoutFeedback>
+        </TouchableHighlight>
       )
     },
   )
+
+  const dotsAnimatedStyles = useAnimatedStyle(() => {
+    return { transform: [{ translateY: dotsOffset.value }] }
+  })
+
+  const Dots = memo(() => {
+    return (
+      <View style={styles.dots}>
+        {dotsArray.map((e, i) => {
+          return (
+            <Animated.View key={uuidv4()} style={[styles.dot]}>
+              {i + 1 <=
+                (state === 'Confirm' ? ConfirmPINCode : PINCode).length && (
+                <View style={[styles.active]} />
+              )}
+            </Animated.View>
+          )
+        })}
+      </View>
+    )
+  })
+
+  console.log(dotsOffset.value)
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: colors.black }}>
       {savedPINCode !== undefined && (
         <View style={styles.parent}>
           <View style={{ alignItems: 'center' }}>
-            <LockIcon size={28} />
+            <LottieView
+              ref={lockAnimation}
+              style={{
+                width: 45,
+                height: 45,
+                transform: [{ scaleY: -1 }],
+              }}
+              source={UnlockLottie}
+            />
             <MyText customStyles={styles.title}>{state} PIN Code</MyText>
-            <View style={styles.dots}>
-              {dotsArray.map((e, i) => (
-                <View key={uuidv4()} style={[styles.dot]}>
-                  {i + 1 <=
-                    (state === 'Confirm' ? ConfirmPINCode : PINCode).length && (
-                    <View style={styles.active} />
-                  )}
-                </View>
-              ))}
-            </View>
+            <Dots />
           </View>
           <View style={{ height: NumberWidth * 4 + PadSpacing * 3 }}>
             <FlatList
@@ -172,7 +212,7 @@ const styles = StyleSheet.create({
     marginHorizontal: NumberWidth / 2,
   },
   title: {
-    marginTop: 18,
+    marginTop: 8,
     fontSize: 20,
     marginBottom: 36,
   },

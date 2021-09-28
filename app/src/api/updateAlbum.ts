@@ -1,11 +1,12 @@
 import axios from 'axios'
 import { ToastAndroid } from 'react-native'
+import { showMessage } from 'react-native-flash-message'
 import { serverURL } from '../constants/serverURL'
 import { store } from '../state-management/stores'
 
 export const updateAlbum = async (
   { name, AlbumFileId }: { name?: string; AlbumFileId?: string },
-  albumId: string
+  albumId: string,
 ) => {
   const accessToken = store.getState().accessToken
 
@@ -17,11 +18,14 @@ export const updateAlbum = async (
     const res = await axios.put(
       `${serverURL}/albums/${albumId}`,
       { name, AlbumFileId },
-      config
+      config,
     )
 
     return res.data
   } catch (error) {
-    ToastAndroid.show("Couldn't Update Album!", ToastAndroid.SHORT)
+    showMessage({
+      message: "Couldn't Update Album!",
+      type: 'danger',
+    })
   }
 }

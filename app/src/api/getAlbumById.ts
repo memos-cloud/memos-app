@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { ToastAndroid } from 'react-native'
+import { showMessage } from 'react-native-flash-message'
 import { serverURL } from '../constants/serverURL'
 import { store } from '../state-management/stores'
 
@@ -15,6 +16,9 @@ export const getAlbumById = async (id: string) => {
 
     return data
   } catch (error) {
-    ToastAndroid.show("Couldn't Get Album Data!", ToastAndroid.SHORT)
+    showMessage({
+      message: "Couldn't Get Album Data!",
+      type: 'danger',
+    })
   }
 }

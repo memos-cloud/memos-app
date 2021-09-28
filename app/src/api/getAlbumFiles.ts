@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { ToastAndroid } from 'react-native'
+import { showMessage } from 'react-native-flash-message'
 import { serverURL } from '../constants/serverURL'
 import { queryClient, store } from '../state-management/stores'
 
@@ -13,7 +14,7 @@ export const getAlbumFiles = async (albumId: string, skip?: number) => {
   try {
     const { data } = await axios.get(
       `${serverURL}/albums/${albumId}/files?take=30&skip=${skip}`,
-      config
+      config,
     )
 
     queryClient.setQueryData(`albumFiles:${albumId}:hasMore`, data.hasMore)
@@ -23,6 +24,9 @@ export const getAlbumFiles = async (albumId: string, skip?: number) => {
     }
     return [{ placeholder: 'addFiles' }, ...data.files]
   } catch (error) {
-    ToastAndroid.show("Couldn't Get Album Files!", ToastAndroid.SHORT)
+    showMessage({
+      message: "Couldn't Get Album Files!",
+      type: 'danger',
+    })
   }
 }

@@ -1,6 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import axios from 'axios'
 import { ToastAndroid } from 'react-native'
+import { showMessage } from 'react-native-flash-message'
 import { serverURL } from '../constants/serverURL'
 import { store } from '../state-management/stores'
 
@@ -17,6 +18,9 @@ export const createAlbum = async (name: string) => {
 
     return data
   } catch (error) {
-    ToastAndroid.show("Couldn't Create a new Album!", ToastAndroid.SHORT)
+    showMessage({
+      message: "Couldn't Create a new Album!",
+      type: 'danger',
+    })
   }
 }

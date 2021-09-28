@@ -12,20 +12,6 @@ export type themes =
   | 'maroon'
   | 'darkTeal'
 
-// export const themes = [
-//   { orange: '#FF4C29' },
-//   { purble: '#7B29FF' },
-//   { pink: '#FF29F6' },
-//   { pink2: '#FAAFFF' },
-//   { coral: '#FF7B7B' },
-//   { green: '#16C79A' },
-//   { teal: '#00C1D4' },
-//   { yellow: '#FFB344' },
-//   { beige: '#FFC288' },
-//   { peach: '#FA9579' },
-//   { maroon: '#970747' },
-// ]
-
 export const themes = [
   {
     type: 'Electronic',
