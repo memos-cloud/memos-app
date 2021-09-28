@@ -13,6 +13,7 @@
       "barStyle": "light-content",
       "backgroundColor": "#0F0F0F"
     },
+    "userInterfaceStyle": "light",
     "splash": {
       "image": "./src/assets/images/splash.png",
       "resizeMode": "contain",

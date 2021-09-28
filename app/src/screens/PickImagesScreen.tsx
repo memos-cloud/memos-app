@@ -17,23 +17,31 @@ interface GetAssetsProps {
   after?: string
 }
 const getAssets = async ({ first, albumId, after }: GetAssetsProps) => {
-  const granted = await askingForFilesPermission()
+  try {
+    const granted = await askingForFilesPermission()
 
-  if (!granted) {
-    return []
+    if (!granted) {
+      return []
+    }
+    const options: MediaLibrary.AssetsOptions = {
+      first: first || 100,
+      sortBy: 'creationTime',
+      after,
+      mediaType: [MediaLibrary.MediaType.video, MediaLibrary.MediaType.photo],
+    }
+
+    if (albumId !== 'kmdsam7138d1@E!2ioejwjdauds') options.album = albumId
+
+    const data = await MediaLibrary.getAssetsAsync(options)
+
+    if (!data.assets) {
+      throw new Error(JSON.stringify(data, null, 2))
+    }
+
+    return data.assets
+  } catch (error) {
+    throw error
   }
-  const options: MediaLibrary.AssetsOptions = {
-    first: first || 100,
-    sortBy: 'default',
-    after,
-    mediaType: [MediaLibrary.MediaType.video, MediaLibrary.MediaType.photo],
-  }
-
-  if (albumId !== 'kmdsam7138d1@E!2ioejwjdauds') options.album = albumId
-
-  const data = await MediaLibrary.getAssetsAsync(options)
-
-  return data.assets
 }
 
 const PickImages = ({
