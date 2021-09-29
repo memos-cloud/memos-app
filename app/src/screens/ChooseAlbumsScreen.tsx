@@ -6,6 +6,7 @@ import { AppNavProps } from '../@types/NavProps'
 import { useStoreState } from '../@types/typedHooks'
 import { AlbumRenderItem } from '../components/ChooseAlbum'
 import Container from '../components/Container'
+import { AllPhotosId } from '../constants/serverURL'
 import { askingForFilesPermission } from '../utils/getFilesPermision'
 
 const getDeviceAlbums = async () => {
@@ -22,7 +23,7 @@ const getDeviceAlbums = async () => {
     sortBy: 'creationTime',
   })
   const allAlbums = {
-    id: 'kmdsam7138d1@E!2ioejwjdauds',
+    id: AllPhotosId,
     assetCount: firstAsset.totalCount,
     albumCover: firstAsset.assets[0],
     endTime: 999999999,
@@ -61,8 +62,7 @@ export const ChooseAlbumsScreen = ({
 
   const setAlbums = (item: any) => () => {
     navigation.navigate('AddFiles', {
-      deviceAlbumId:
-        item.title === 'All Photos' ? 'kmdsam7138d1@E!2ioejwjdauds' : item.id,
+      deviceAlbumId: item.title === 'All Photos' ? AllPhotosId : item.id,
       albumTitle: item.title,
       albumId: params.albumId,
     })

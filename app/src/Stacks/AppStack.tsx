@@ -12,6 +12,7 @@ import React, { useEffect } from 'react'
 import { AppStackParamList } from '../@types/StackParamList'
 import { useStoreState } from '../@types/typedHooks'
 import { MyHeader } from '../components/Header'
+import { AllPhotosId } from '../constants/serverURL'
 import AlbumFilesScreen from '../screens/AlbumFilesScreen'
 import { AssetsPreviewScreen } from '../screens/AssetsPreviewScreen'
 import { ChooseAlbumsScreen } from '../screens/ChooseAlbumsScreen'
@@ -100,9 +101,9 @@ export const AppStack = ({}) => {
       <StatusBar
         animated={true}
         backgroundColor={'transparent'}
-        style='light'
+        style="light"
       />
-      <Stack.Navigator initialRouteName='HomeTabs'>
+      <Stack.Navigator initialRouteName="HomeTabs">
         <Stack.Group
           screenOptions={{
             cardOverlayEnabled: true,
@@ -124,16 +125,16 @@ export const AppStack = ({}) => {
           }}
         >
           <Stack.Screen
-            name='HomeTabs'
+            name="HomeTabs"
             options={{ title: 'Albums' }}
             component={HomeAndSettingsTabs}
           />
-          <Stack.Screen name='ProfileScreen' component={ProfileScreen} />
-          <Stack.Screen name='AlbumFiles' component={AlbumFilesScreen} />
-          <Stack.Screen name='NewAlbum' component={CreateOrEditAlbumScreen} />
+          <Stack.Screen name="ProfileScreen" component={ProfileScreen} />
+          <Stack.Screen name="AlbumFiles" component={AlbumFilesScreen} />
+          <Stack.Screen name="NewAlbum" component={CreateOrEditAlbumScreen} />
           <Stack.Screen
-            initialParams={{ albumId: 'kmdsam7138d1@E!2ioejwjdauds' }}
-            name='AddFiles'
+            initialParams={{ albumId: AllPhotosId }}
+            name="AddFiles"
             component={PickImages}
           />
         </Stack.Group>
@@ -152,7 +153,7 @@ export const AppStack = ({}) => {
         >
           <Stack.Screen
             options={{ title: 'Choose Album' }}
-            name='ChooseAlbumsScreen'
+            name="ChooseAlbumsScreen"
             component={ChooseAlbumsScreen}
           />
         </Stack.Group>
@@ -162,10 +163,10 @@ export const AppStack = ({}) => {
             presentation: 'transparentModal',
           }}
         >
-          <Stack.Screen name='AssetsPreview' component={AssetsPreviewScreen} />
+          <Stack.Screen name="AssetsPreview" component={AssetsPreviewScreen} />
 
           <Stack.Screen
-            name='ConfirmationModal'
+            name="ConfirmationModal"
             component={ConfirmationModalScreen}
           />
         </Stack.Group>

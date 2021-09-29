@@ -11,3 +11,4 @@
 10- Reset Auth Method from Settings.
 11- Fix PIN Code Performance Issues.
 12- !!!! Auth2 Screen Don't allow users to go back from selected auth and set a new one.
+13- Hide Loader from Choose Assets Page when reaching no more assets.

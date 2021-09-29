@@ -68,7 +68,7 @@ export const PINCodeScreen = () => {
           }
           setTimeout(() => {
             authenticate()
-          }, 600)
+          }, 500)
         } else {
           dotsOffset.value = withTiming(DotWidth + 2, { duration: 500 })
           showMessage({

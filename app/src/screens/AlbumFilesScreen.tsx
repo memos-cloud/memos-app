@@ -25,13 +25,14 @@ import { RefreshControlComponent } from '../components/RefreshControl'
 import { SmoothFastImage } from '../components/SmoothFastImage'
 import { v4 as uuidv4 } from 'uuid'
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import { AllPhotosId } from '../constants/serverURL'
 
 const fileWidth = Dimensions.get('window').width / 4 - 7 * 2
 
 const MemoizedAlbumFile = memo(
   ({ addFilesHandler }: { addFilesHandler: any }) => {
     return <AddFiles width={fileWidth} addFilesHandler={addFilesHandler} />
-  }
+  },
 )
 
 const AlbumFilesScreen = ({ navigation, route }: AppNavProps<'AlbumFiles'>) => {
@@ -49,7 +50,7 @@ const AlbumFilesScreen = ({ navigation, route }: AppNavProps<'AlbumFiles'>) => {
   const { data, isLoading, error } = useQuery(
     `albumFiles:${albumId}`,
     () => getAlbumFiles(albumId),
-    { staleTime: 1000 * 60 * 10 }
+    { staleTime: 1000 * 60 * 10 },
   )
 
   const onRefresh = async () => {
@@ -67,7 +68,7 @@ const AlbumFilesScreen = ({ navigation, route }: AppNavProps<'AlbumFiles'>) => {
     queryClient.setQueryData(`albums`, newAlbums)
     queryClient.setQueryData(
       `albumFiles:${albumId}`,
-      await getAlbumFiles(albumId)
+      await getAlbumFiles(albumId),
     )
     setRefreshing(false)
   }
@@ -75,7 +76,7 @@ const AlbumFilesScreen = ({ navigation, route }: AppNavProps<'AlbumFiles'>) => {
   const addFilesHandler = () => {
     navigation.navigate('AddFiles', {
       albumId: route.params.id,
-      deviceAlbumId: 'kmdsam7138d1@E!2ioejwjdauds',
+      deviceAlbumId: AllPhotosId,
     })
   }
   const colors = useStoreState((state) => state.theme)
@@ -102,12 +103,12 @@ const AlbumFilesScreen = ({ navigation, route }: AppNavProps<'AlbumFiles'>) => {
 
               ToastAndroid.show(
                 'Album Cover set to Default',
-                ToastAndroid.SHORT
+                ToastAndroid.SHORT,
               )
 
               await AsyncStorage.setItem(
                 `album:${albumId}:albumCover`,
-                'default'
+                'default',
               )
 
               const newAlbums = fetchedAlbums!.map((e: any) => {
@@ -131,7 +132,7 @@ const AlbumFilesScreen = ({ navigation, route }: AppNavProps<'AlbumFiles'>) => {
               })
               break
           }
-        }
+        },
       )
     }
   }
@@ -197,7 +198,7 @@ const AlbumFilesScreen = ({ navigation, route }: AppNavProps<'AlbumFiles'>) => {
               customStyles={{
                 maxWidth: '85%',
               }}
-              size='lg'
+              size="lg"
             >
               {albumData.album.name}
             </MyText>
@@ -243,7 +244,7 @@ const AlbumFilesScreen = ({ navigation, route }: AppNavProps<'AlbumFiles'>) => {
                 ...Array(
                   4 - ((data || []).length % 4) !== 4
                     ? 4 - ((data || []).length % 4)
-                    : 0
+                    : 0,
                 ),
               ].map(() => ({
                 fileURL: 'empty',
@@ -258,7 +259,7 @@ const AlbumFilesScreen = ({ navigation, route }: AppNavProps<'AlbumFiles'>) => {
         hasMore ? (
           <ActivityIndicator
             style={{ paddingVertical: 8 }}
-            size='small'
+            size="small"
             color={colors.primary}
           />
         ) : undefined

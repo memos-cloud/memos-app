@@ -21,6 +21,7 @@ I18nManager.allowRTL(false)
 
 Sentry.init({
   dsn: 'https://acfd7902ab8740fcacce9c7ceec3729c@o1003933.ingest.sentry.io/5964826',
+  enableInExpoDevelopment: true,
 })
 
 export default () => {

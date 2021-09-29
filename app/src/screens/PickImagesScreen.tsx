@@ -8,6 +8,7 @@ import { useStoreState } from '../@types/typedHooks'
 import { AssetsList } from '../components/AssetsList'
 import Container from '../components/Container'
 import { askingForFilesPermission } from '../utils/getFilesPermision'
+import * as Sentry from 'sentry-expo'
 
 const widthAndHeight = (Dimensions.get('window').width - 10 * 4) / 3
 
@@ -35,12 +36,12 @@ const getAssets = async ({ first, albumId, after }: GetAssetsProps) => {
     const data = await MediaLibrary.getAssetsAsync(options)
 
     if (!data.assets) {
-      throw new Error(JSON.stringify(data, null, 2))
+      Sentry.Native.captureException(JSON.stringify(data, null, 2))
     }
 
     return data.assets
   } catch (error) {
-    throw error
+    Sentry.Native.captureException(JSON.stringify(error, null, 2))
   }
 }
 
