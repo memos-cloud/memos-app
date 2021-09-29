@@ -9,6 +9,7 @@ import { AssetsList } from '../components/AssetsList'
 import Container from '../components/Container'
 import { askingForFilesPermission } from '../utils/getFilesPermision'
 import * as Sentry from 'sentry-expo'
+import { AllPhotosId } from '../constants/serverURL'
 
 const widthAndHeight = (Dimensions.get('window').width - 10 * 4) / 3
 
@@ -31,7 +32,7 @@ const getAssets = async ({ first, albumId, after }: GetAssetsProps) => {
       mediaType: [MediaLibrary.MediaType.video, MediaLibrary.MediaType.photo],
     }
 
-    if (albumId !== 'kmdsam7138d1@E!2ioejwjdauds') options.album = albumId
+    if (albumId !== AllPhotosId) options.album = albumId
 
     const data = await MediaLibrary.getAssetsAsync(options)
 
