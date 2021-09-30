@@ -19,31 +19,23 @@ interface GetAssetsProps {
   after?: string
 }
 const getAssets = async ({ first, albumId, after }: GetAssetsProps) => {
-  try {
-    const granted = await askingForFilesPermission()
+  const granted = await askingForFilesPermission()
 
-    if (!granted) {
-      return []
-    }
-    const options: MediaLibrary.AssetsOptions = {
-      first: first || 100,
-      sortBy: 'creationTime',
-      after,
-      mediaType: [MediaLibrary.MediaType.video, MediaLibrary.MediaType.photo],
-    }
-
-    if (albumId !== AllPhotosId) options.album = albumId
-
-    const data = await MediaLibrary.getAssetsAsync(options)
-
-    if (!data.assets) {
-      Sentry.Native.captureException(JSON.stringify(data, null, 2))
-    }
-
-    return data.assets
-  } catch (error) {
-    Sentry.Native.captureException(JSON.stringify(error, null, 2))
+  if (!granted) {
+    return []
   }
+  const options: MediaLibrary.AssetsOptions = {
+    first: first || 100,
+    sortBy: 'creationTime',
+    after,
+    mediaType: [MediaLibrary.MediaType.video, MediaLibrary.MediaType.photo],
+  }
+
+  if (albumId !== AllPhotosId) options.album = albumId
+
+  const data = await MediaLibrary.getAssetsAsync(options)
+
+  return data.assets
 }
 
 const PickImages = ({

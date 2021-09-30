@@ -7,8 +7,8 @@
 6- // --Done-- // Generating the ObjectId on the frontend and send it to the server for the assets (to solve when deleting a file that is generated on the frontend.
 7- // --Done-- // Deleting Assets doesn't update the usage properly.
 8- Album Cover bug when refreshing and getting files other device have uploaded!
-9- PIN Code Authentication
-10- Reset Auth Method from Settings.
-11- Fix PIN Code Performance Issues.
+9- // --Done-- // PIN Code Authentication
+10- // --Done-- // Reset Auth Method from Settings.
+11- // --Skip for now-- // Fix PIN Code Performance Issues.
 12- !!!! Auth2 Screen Don't allow users to go back from selected auth and set a new one.
 13- Hide Loader from Choose Assets Page when reaching no more assets.

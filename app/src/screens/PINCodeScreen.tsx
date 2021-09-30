@@ -10,17 +10,14 @@ import {
   View,
 } from 'react-native'
 import { showMessage } from 'react-native-flash-message'
-import Animated, {
-  useAnimatedStyle,
-  useSharedValue,
-  withTiming,
-} from 'react-native-reanimated'
+import Animated from 'react-native-reanimated'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { v4 as uuidv4 } from 'uuid'
 import { useStoreActions, useStoreState } from '../@types/typedHooks'
 import UnlockLottie from '../assets/lotties/unlock.json'
 import { RemoveCharIcon } from '../components/icons/RemoveCharIcon'
 import { MyText } from '../components/MyText'
+import { usePersistState } from '../Hooks/usePersistState'
 
 type state = 'Setup' | 'Confirm' | 'Enter'
 
@@ -32,6 +29,9 @@ const PadSpacing = 13
 const NumberWidth = width / 4 - PadSpacing / 2
 const Pads = [1, 2, 3, 4, 5, 6, 7, 8, 9, -1, 0, 'delete']
 const dotsArray = new Array(DotsNum).fill(0)
+const MAX_WRONG_PIN_TIMES = 5
+const SECOND = 1000
+const MAX_TRIES_WAIT_SEC = 60
 
 export const PINCodeScreen = () => {
   const colors = useStoreState((state) => state.theme)
@@ -43,7 +43,39 @@ export const PINCodeScreen = () => {
     undefined,
   )
   const lockAnimation = useRef<React.LegacyRef<LottieView>>(null)
-  const dotsOffset = useSharedValue(0)
+  const [wrongPINTimes, setWrongPINTimes] = useState(0)
+  const [disablePIN, setDisablePIN] = useState(false)
+  const [timer, setTimer] = usePersistState(0, 'timer')
+
+  useEffect(() => {
+    if (wrongPINTimes >= MAX_WRONG_PIN_TIMES) {
+      setTimer(MAX_TRIES_WAIT_SEC)
+    }
+  }, [wrongPINTimes])
+
+  useEffect(() => {
+    if (timer) {
+      if (!disablePIN) setDisablePIN(true)
+
+      setTimeout(() => {
+        setTimer(timer! - 1)
+      }, SECOND)
+
+      const decrementedTimer = timer - 1
+      showMessage({
+        message: `Max Tries Reached wait ${decrementedTimer} seconds!`,
+        type: 'danger',
+        autoHide: decrementedTimer === 0,
+        hideOnPress: false,
+        animated: timer === MAX_TRIES_WAIT_SEC,
+      })
+    } else {
+      if (disablePIN === true) {
+        setWrongPINTimes(MAX_WRONG_PIN_TIMES - 2)
+      }
+      setDisablePIN(false)
+    }
+  }, [timer])
 
   useEffect(() => {
     const checkSavedPIN = async () => {
@@ -63,6 +95,7 @@ export const PINCodeScreen = () => {
         setState('Confirm')
       } else if (state === 'Enter') {
         if (savedPINCode === PINCode) {
+          setWrongPINTimes(0)
           if (lockAnimation.current) {
             lockAnimation.current.play()
           }
@@ -70,15 +103,12 @@ export const PINCodeScreen = () => {
             authenticate()
           }, 500)
         } else {
-          dotsOffset.value = withTiming(DotWidth + 2, { duration: 500 })
           showMessage({
             message: 'Wrong PIN Code',
             type: 'danger',
           })
-          // setTimeout(() => {
-          // dotsOffset.value = 0
           setPINCode('')
-          // }, 500)
+          setWrongPINTimes(wrongPINTimes + 1)
         }
       }
     }
@@ -105,6 +135,9 @@ export const PINCodeScreen = () => {
   }, [ConfirmPINCode])
 
   const OnNumPressHandler = (item: string | number) => {
+    if (disablePIN) {
+      return
+    }
     const code = state === 'Confirm' ? ConfirmPINCode : PINCode
     const setCode = state === 'Confirm' ? setConfirmPINCode : setPINCode
 
@@ -124,7 +157,7 @@ export const PINCodeScreen = () => {
         />
       ) : (
         <TouchableHighlight
-          underlayColor="#181818"
+          underlayColor={disablePIN ? 'transparent' : '#181818'}
           delayPressOut={100}
           onPress={() => OnNumPressHandler(item)}
           style={[styles.number, index % 3 !== 0 && styles.paddingLeft]}
@@ -146,10 +179,6 @@ export const PINCodeScreen = () => {
     },
   )
 
-  const dotsAnimatedStyles = useAnimatedStyle(() => {
-    return { transform: [{ translateY: dotsOffset.value }] }
-  })
-
   const Dots = memo(() => {
     return (
       <View style={styles.dots}>
@@ -166,8 +195,6 @@ export const PINCodeScreen = () => {
       </View>
     )
   })
-
-  console.log(dotsOffset.value)
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: colors.black }}>
@@ -247,12 +274,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: NumberWidth / 2,
-    marginBottom: PadSpacing,
+    marginBottom: PadSpacing / 2,
   },
   emptyNumber: {
     width: NumberWidth,
     height: NumberWidth,
-    marginBottom: PadSpacing,
+    marginBottom: PadSpacing / 2,
   },
   paddingLeft: {
     marginLeft: PadSpacing,

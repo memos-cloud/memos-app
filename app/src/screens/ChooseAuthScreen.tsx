@@ -112,7 +112,7 @@ const ChooseAuthScreen = ({ navigation }: Auth2NavProps<'ChooseAuth'>) => {
         </Container>
       ) : (
         <Container customStyles={{ alignItems: 'center', paddingTop: 50 }}>
-          <LockIcon size={45} />
+          <LockIcon size={38} />
           <MyText
             customStyles={{
               textAlign: 'center',
@@ -181,7 +181,7 @@ const ChooseAuthScreen = ({ navigation }: Auth2NavProps<'ChooseAuth'>) => {
                     </View>
                   </View>
                   <MyText size="md" customStyles={styles.buttonText}>
-                    Skip
+                    No Lock
                   </MyText>
                 </Ripple>
               </View>
