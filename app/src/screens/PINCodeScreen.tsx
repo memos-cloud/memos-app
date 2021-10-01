@@ -142,10 +142,15 @@ export const PINCodeScreen = () => {
     const setCode = state === 'Confirm' ? setConfirmPINCode : setPINCode
 
     if (item !== 'delete' && code.length < 4) {
-      setCode(code + item)
+      setCode((code) => {
+        return code + item
+      })
     } else if (item === 'delete' && code.length) {
-      const editedPINCode = code.slice(0, -1)
-      setCode(editedPINCode)
+      setCode((code) => {
+        const editedPINCode = code.slice(0, -1)
+
+        return editedPINCode
+      })
     }
   }
 
@@ -158,7 +163,6 @@ export const PINCodeScreen = () => {
       ) : (
         <TouchableHighlight
           underlayColor={disablePIN ? 'transparent' : '#181818'}
-          delayPressOut={100}
           onPress={() => OnNumPressHandler(item)}
           style={[styles.number, index % 3 !== 0 && styles.paddingLeft]}
         >
