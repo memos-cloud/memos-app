@@ -101,7 +101,7 @@ export const PINCodeScreen = () => {
           }
           setTimeout(() => {
             authenticate()
-          }, 500)
+          }, 600)
         } else {
           showMessage({
             message: 'Wrong PIN Code',

@@ -23,6 +23,11 @@ import { DropDownArrow } from './icons/DropDownArrow'
 import { MyText } from './MyText'
 import { PickImage } from './PickImage'
 
+interface GetAssetsProps {
+  first?: number
+  albumId: string
+  after?: string
+}
 interface Props {
   navigation: StackNavigationProp<AppStackParamList, 'AddFiles'>
   albumId: string
@@ -47,11 +52,12 @@ interface Props {
   openModal: any
   goBack: any
   albumTitle: string
-  getAssets: (props: {
-    first?: number
-    albumId: string
-    after?: any
-  }) => Promise<MediaLibrary.Asset[] | undefined>
+  hasMore: boolean
+  getAssets: ({
+    first,
+    albumId,
+    after,
+  }: GetAssetsProps) => Promise<MediaLibrary.PagedInfo<MediaLibrary.Asset>[]>
 }
 
 const AssetsFlatList = ({
@@ -64,6 +70,7 @@ const AssetsFlatList = ({
   deviceAlbumId,
   navigation,
   getAssets,
+  hasMore,
 }: Props) => {
   const queryClient = useQueryClient()
   const [selected, setSelected] = useState<string[]>([])
@@ -191,16 +198,22 @@ const AssetsFlatList = ({
   const colors = useStoreState((state) => state.theme)
 
   const onEndReachHandler = async () => {
-    const newAssets = await getAssets({
+    const data = await getAssets({
       albumId: deviceAlbumId,
       after: assets.length.toString(),
     })
 
-    queryClient.setQueryData(['DeviceAssets', deviceAlbumId], () => [
-      ...assets,
-      ...(newAssets || []),
-    ])
+    data.assets = [...assets, ...data.assets]
+
+    queryClient.setQueryData(['DeviceAssets', deviceAlbumId], data)
   }
+
+  const flatListRef = useRef()
+
+  useEffect(() => {
+    if (flatListRef.current)
+      flatListRef.current.scrollToOffset({ animated: true, offset: 0 })
+  }, [deviceAlbumId])
 
   return (
     <>
@@ -294,6 +307,7 @@ const AssetsFlatList = ({
         </View>
       </SafeAreaView>
       <FlatList
+        ref={flatListRef}
         contentContainerStyle={{
           minHeight: '100%',
         }}
@@ -318,11 +332,13 @@ const AssetsFlatList = ({
         keyExtractor={(item) => item!.id}
         data={assets}
         ListFooterComponent={
-          <ActivityIndicator
-            style={{ padding: 20 }}
-            size="small"
-            color={colors.primary}
-          />
+          hasMore ? (
+            <ActivityIndicator
+              style={{ padding: 20 }}
+              size="small"
+              color={colors.primary}
+            />
+          ) : null
         }
       />
     </>

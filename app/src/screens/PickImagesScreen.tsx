@@ -1,6 +1,6 @@
 import * as Constants from 'expo-constants'
 import * as MediaLibrary from 'expo-media-library'
-import React from 'react'
+import React, { useEffect, useRef } from 'react'
 import { ActivityIndicator, Dimensions } from 'react-native'
 import { useQuery } from 'react-query'
 import { AppNavProps } from '../@types/NavProps'
@@ -35,16 +35,19 @@ const getAssets = async ({ first, albumId, after }: GetAssetsProps) => {
 
   const data = await MediaLibrary.getAssetsAsync(options)
 
-  return data.assets
+  return data
 }
 
 const PickImages = ({
   navigation,
   route: { params },
 }: AppNavProps<'AddFiles'>) => {
-  const { data: assets, isLoading: assetsLoading } = useQuery(
+  const { data, isLoading: assetsLoading } = useQuery(
     ['DeviceAssets', params.deviceAlbumId],
-    () => getAssets({ albumId: params.deviceAlbumId }),
+    () =>
+      getAssets({
+        albumId: params.deviceAlbumId,
+      }),
     {
       staleTime: 0,
     },
@@ -63,7 +66,7 @@ const PickImages = ({
           color={colors.primary}
         />
       )}
-      {assets && (
+      {data && (
         <AssetsList
           albumTitle={params?.albumTitle ? params?.albumTitle : 'All Photos'}
           albumId={params?.albumId}
@@ -75,9 +78,12 @@ const PickImages = ({
           }}
           goBack={() => navigation.goBack()}
           navigation={navigation}
-          assets={assets}
+          assets={(data as MediaLibrary.PagedInfo<MediaLibrary.Asset>).assets}
+          hasMore={
+            (data as MediaLibrary.PagedInfo<MediaLibrary.Asset>).hasNextPage
+          }
           widthAndHeight={widthAndHeight}
-          getAssets={getAssets}
+          getAssets={getAssets as any}
         />
       )}
     </Container>
