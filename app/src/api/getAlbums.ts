@@ -25,5 +25,6 @@ export const getAlbums = async (skip?: number) => {
       message: "Couldn't Get Albums!",
       type: 'danger',
     })
+    return []
   }
 }

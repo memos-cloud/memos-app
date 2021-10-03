@@ -28,5 +28,6 @@ export const getAlbumFiles = async (albumId: string, skip?: number) => {
       message: "Couldn't Get Album Files!",
       type: 'danger',
     })
+    return []
   }
 }

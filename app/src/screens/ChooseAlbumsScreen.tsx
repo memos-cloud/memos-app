@@ -43,9 +43,7 @@ const getDeviceAlbums = async () => {
       albumCover: albumCover ? albumCover.assets[0] : null,
     }
   })
-  const newAlbums = (await Promise.all(albumsWithCovers)).filter(
-    (e) => e.albumCover,
-  )
+  const newAlbums = await Promise.all(albumsWithCovers)
 
   return [allAlbums, ...newAlbums]
 }

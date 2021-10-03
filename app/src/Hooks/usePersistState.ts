@@ -20,7 +20,16 @@ export const usePersistState = <T>(value: T, key: string) => {
             new Date(),
             parseISO(saved.date as any),
           )
-          setState((saved.state > 0 ? saved.state - diff : 0) as any)
+          const timerStateValue = () => {
+            if (saved.state > 0) {
+              if (saved.state - diff > 0) {
+                return saved.state - diff
+              }
+              return 0
+            }
+            return 0
+          }
+          setState(timerStateValue() as any)
         } else {
           setState(saved.state)
         }
