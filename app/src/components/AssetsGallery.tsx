@@ -43,7 +43,7 @@ export const AssetsGallery: FC<Props> = memo(
 
         const checkImage = async () => {
           const { exists } = await FileSystem.getInfoAsync(
-            imgInfo.item.deviceFileUrl
+            imgInfo.item.deviceFileUrl,
           )
 
           setLoadFromDisk(exists)
@@ -73,21 +73,21 @@ export const AssetsGallery: FC<Props> = memo(
               <PureImage
                 onLoad={onLoad}
                 style={{ flex: 1 }}
-                resizeMode='contain'
+                resizeMode="contain"
                 source={{ uri: imgInfo.item.deviceFileUrl }}
               />
             ) : (
               <Image
                 onLoad={onLoad}
                 style={{ flex: 1 }}
-                resizeMode='contain'
+                resizeMode="contain"
                 transitionDuration={0}
                 uri={imgInfo.item.fileURL}
               />
             )}
           </View>
         )
-      }
+      },
     )
 
     const PreviewVideo = memo(
@@ -99,16 +99,18 @@ export const AssetsGallery: FC<Props> = memo(
             source={{
               uri: imgInfo.item.deviceFileUrl,
             }}
-            resizeMode='contain'
+            resizeMode="contain"
             onPlaybackStatusUpdate={(status) => {
-              if ((status as any).didJustFinish) {
-                return setVideoStatus(() => ({ ...status, positionMillis: 0 }))
+              if ((status as any).isPlaying) {
+                if ((status as any).didJustFinish) {
+                  return setVideoStatus({ ...status, positionMillis: 0 })
+                }
+                setVideoStatus(status)
               }
-              setVideoStatus(() => status)
             }}
           />
         )
-      }
+      },
     )
 
     const renderItem = (imgInfo: RenderItemInfo<any>) => {
@@ -148,5 +150,5 @@ export const AssetsGallery: FC<Props> = memo(
         }}
       />
     )
-  }
+  },
 )

@@ -58,7 +58,7 @@ const downloadAsset = async ({
   if (!remoteUrl) {
     return ToastAndroid.show(
       'Pull to Refresh The Album Files Screen First!',
-      ToastAndroid.BOTTOM
+      ToastAndroid.BOTTOM,
     )
   }
   askingForFilesPermission()
@@ -67,7 +67,7 @@ const downloadAsset = async ({
   const ext = '.' + mimetype.replace('image/', '').replace('video/', '')
 
   const { exists } = await FileSystem.getInfoAsync(
-    FileSystem.documentDirectory + hashedUrl + ext
+    FileSystem.documentDirectory + hashedUrl + ext,
   )
   const { exists: exists2 } = await FileSystem.getInfoAsync(localUri)
 
@@ -77,7 +77,7 @@ const downloadAsset = async ({
 
   const downloadedImage = await FileSystem.downloadAsync(
     remoteUrl,
-    FileSystem.documentDirectory + hashedUrl + ext
+    FileSystem.documentDirectory + hashedUrl + ext,
   )
 
   await MediaLibrary.saveToLibraryAsync(downloadedImage.uri)
@@ -211,7 +211,7 @@ export const AssetsPreviewScreen = ({
   const getDate = () => {
     const diffInDays = differenceInDays(
       new Date(),
-      parseISO(assets[currentIndex].createdAt)
+      parseISO(assets[currentIndex].createdAt),
     )
     switch (diffInDays) {
       case 0:
@@ -249,7 +249,7 @@ export const AssetsPreviewScreen = ({
           </TouchableOpacity>
           <View style={styles.date}>
             <MyText
-              size='sm'
+              size="sm"
               customStyles={{
                 transform: [{ translateY: 2 }],
               }}
@@ -290,10 +290,15 @@ export const AssetsPreviewScreen = ({
               <TouchableOpacity
                 activeOpacity={colors.activeOpacity}
                 style={{
-                  paddingHorizontal: 5,
+                  paddingHorizontal: 10,
                   paddingVertical: 10,
                 }}
                 onPress={async () => {
+                  setVideoStatus({
+                    ...(videoStatus || []),
+                    isPlaying: !videoStatus.isPlaying,
+                  })
+
                   videoStatus.isPlaying
                     ? await (videoRef.current as any)?.pauseAsync()
                     : await (videoRef.current as any)?.playAsync()
@@ -306,34 +311,39 @@ export const AssetsPreviewScreen = ({
                 )}
               </TouchableOpacity>
               <Slider
-                style={{ flex: 1, height: 35 }}
+                style={{
+                  flex: 1,
+                  height: 35,
+                }}
                 minimumValue={0}
                 value={videoStatus?.positionMillis}
                 onSlidingStart={async () => {
-                  ;(videoRef.current as any)?.pauseAsync()
+                  await (videoRef.current as any)?.pauseAsync()
                 }}
-                onValueChange={async (value) => {
-                  ;(videoRef.current as any).setPositionAsync(value)
-                }}
-                onSlidingComplete={async () => {
-                  ;(videoRef.current as any)?.playAsync()
+                onSlidingComplete={async (value) => {
+                  await (videoRef.current as any).setPositionAsync(value)
+                  setVideoStatus({
+                    ...(videoStatus || []),
+                    positionMillis: value,
+                    isPlaying: true,
+                  })
+                  await (videoRef.current as any)?.playAsync()
                 }}
                 maximumValue={(videoStatus as any)?.durationMillis}
                 minimumTrackTintColor={colors.primary}
                 thumbTintColor={colors.primary}
                 maximumTrackTintColor={colors.white}
-                step={250}
               />
 
               <TouchableOpacity
                 style={{
-                  paddingHorizontal: 5,
+                  paddingHorizontal: 10,
                   paddingVertical: 10,
                 }}
                 activeOpacity={colors.activeOpacity}
                 onPress={async () => {
                   await (videoRef.current as any)?.setIsMutedAsync(
-                    !(videoStatus as any).isMuted
+                    !(videoStatus as any).isMuted,
                   )
                 }}
               >
@@ -391,7 +401,7 @@ export const AssetsPreviewScreen = ({
               >
                 {e.icon}
                 <MyText
-                  size='2xs'
+                  size="2xs"
                   customStyles={{ paddingTop: 1.5, opacity: 0.8 }}
                 >
                   {e.label}
