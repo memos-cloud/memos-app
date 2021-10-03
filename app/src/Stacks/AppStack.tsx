@@ -113,7 +113,7 @@ export const AppStack = ({}) => {
               navigation,
               options: { headerRight, title },
             }) =>
-              name !== 'AddFiles' ? (
+              name !== 'AddFiles' && name !== 'HomeTabs' ? (
                 <MyHeader
                   title={title || name}
                   back={back}
@@ -126,7 +126,11 @@ export const AppStack = ({}) => {
         >
           <Stack.Screen
             name="HomeTabs"
-            options={{ title: 'Albums' }}
+            options={({ route }) => {
+              return {
+                title: route.name === 'HomeTabs' ? 'Albums' : route.name,
+              }
+            }}
             component={HomeAndSettingsTabs}
           />
           <Stack.Screen name="ProfileScreen" component={ProfileScreen} />

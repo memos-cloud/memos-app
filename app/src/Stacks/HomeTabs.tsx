@@ -21,7 +21,6 @@ export const HomeAndSettingsTabs = () => (
   <Tab.Navigator
     safeAreaInsets={{ bottom: 4 }}
     screenOptions={({ route }) => ({
-      headerShown: false,
       tabBarShowLabel: false,
       tabBarStyle: {
         backgroundColor: colors.secondary,
@@ -59,30 +58,33 @@ export const HomeAndSettingsTabs = () => (
           return <SettingsOutlineIcon />
         }
       },
-
       tabBarActiveTintColor: colors.primary,
       tabBarInactiveTintColor: colors.white,
     })}
   >
     <Tab.Screen
       options={{
-        headerShown: false,
+        header: ({ route: { name }, navigation, options: { headerRight } }) => (
+          <MyHeader
+            title={name}
+            navigation={navigation}
+            headerRight={headerRight}
+          />
+        ),
       }}
-      name='Albums'
+      name="Albums"
       component={AlbumsScreen}
     />
     <Tab.Screen
-      name='Settings'
+      name="Settings"
       options={{
-        header: ({ route: { name }, navigation, options: { headerRight } }) =>
-          name !== 'AddFiles' ? (
-            <MyHeader
-              title={name}
-              back={undefined}
-              navigation={navigation}
-              headerRight={headerRight}
-            />
-          ) : null,
+        header: ({ route: { name }, navigation, options: { headerRight } }) => (
+          <MyHeader
+            title={name}
+            navigation={navigation}
+            headerRight={headerRight}
+          />
+        ),
       }}
       component={SettingsScreen}
     />

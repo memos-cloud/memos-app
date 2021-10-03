@@ -4,7 +4,7 @@
     "slug": "memos",
     "description": "Memos is a mobile application that is built with ReactNative and NestJS and will be available for Android and IOS stores. Users Files are very secure and can't be lost, They are hosted on an AWS S3 Bucket. Memos is like any other cloud storage, but It provides a very special UI that makes storing and syncing your Images/Videos more enjoyable and very user friendly.",
     "scheme": "memos-rn",
-    "version": "1.3.5",
+    "version": "1.3.6",
     "sdkVersion": "42.0.0",
     "orientation": "portrait",
     "icon": "./src/assets/images/icon.png",
@@ -26,11 +26,11 @@
     "ios": {
       "bundleIdentifier": "com.yassineldeeb.memosapp",
       "supportsTablet": true,
-      "buildNumber": "1.3.5"
+      "buildNumber": "1.3.6"
     },
     "android": {
       "package": "com.yassineldeeb.memosapp",
-      "versionCode": 420010125,
+      "versionCode": 420010126,
       "adaptiveIcon": {
         "foregroundImage": "./src/assets/images/adaptive-icon.png",
         "backgroundColor": "#0F0F0F"

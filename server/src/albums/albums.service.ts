@@ -1,7 +1,8 @@
 import { HttpException, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
-import { FilterQuery, Model } from 'mongoose'
 import * as mongoose from 'mongoose'
+import { FilterQuery, Model } from 'mongoose'
+import * as sharp from 'sharp'
 import { deleteFiles } from 'src/aws/deleteFiles'
 import { getFile } from 'src/aws/getFiles'
 import { uploadFile } from 'src/aws/uploadFile'
@@ -13,7 +14,6 @@ import {
   DeleteAlbumFilesDto,
   UpdateAlbumDto,
 } from './dto/albums.dto'
-import * as sharp from 'sharp'
 
 @Injectable()
 export class AlbumsService {
@@ -291,6 +291,10 @@ export class AlbumsService {
       throw new HttpException("You've Reached Your Quota Limit!", 429)
     }
 
+    await this.userModel.findByIdAndUpdate(userId, {
+      $inc: { usage: filesSize },
+    })
+
     const uploadAlbumFiles = async () => {
       const albumFiles: {
         _id: mongoose.Types.ObjectId
@@ -332,13 +336,15 @@ export class AlbumsService {
       return albumFiles
     }
 
-    const albumFiles = await uploadAlbumFiles()
-
+    let albumFiles
+    try {
+      albumFiles = await uploadAlbumFiles()
+    } catch (err) {
+      await this.userModel.findByIdAndUpdate(userId, {
+        $inc: { usage: -filesSize },
+      })
+    }
     await this.fileModel.insertMany(albumFiles)
-
-    await this.userModel.findByIdAndUpdate(userId, {
-      $inc: { usage: filesSize },
-    })
 
     return {
       ok: true,
