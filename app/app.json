@@ -26,11 +26,11 @@
     "ios": {
       "bundleIdentifier": "com.yassineldeeb.memosapp",
       "supportsTablet": true,
-      "buildNumber": "1.3.8"
+      "buildNumber": "1.3.9"
     },
     "android": {
       "package": "com.yassineldeeb.memosapp",
-      "versionCode": 420010128,
+      "versionCode": 420010129,
       "adaptiveIcon": {
         "foregroundImage": "./src/assets/images/adaptive-icon.png",
         "backgroundColor": "#0F0F0F"
