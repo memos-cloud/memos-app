@@ -34,7 +34,7 @@ const MemoizedAlbumFile = memo(
   },
 )
 
-const FiveMinutes = 1000 * 60 * 5
+const TenMinutes = 1000 * 60 * 10
 const AlbumFilesScreen = ({
   navigation,
   route,
@@ -53,7 +53,7 @@ const AlbumFilesScreen = ({
   const { data, isLoading, error } = useQuery(
     `albumFiles:${albumId}`,
     () => getAlbumFiles(albumId),
-    { staleTime: FiveMinutes },
+    { staleTime: TenMinutes },
   )
 
   const onRefresh = async () => {

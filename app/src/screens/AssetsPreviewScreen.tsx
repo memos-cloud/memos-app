@@ -9,13 +9,14 @@ import * as MediaLibrary from 'expo-media-library'
 import * as Sharing from 'expo-sharing'
 import React, { useRef, useState } from 'react'
 import { StyleSheet, ToastAndroid, View } from 'react-native'
-import { useQueryClient } from 'react-query'
+import { useQuery, useQueryClient } from 'react-query'
 import shorthash from 'shorthash'
 import { v4 as uuidv4 } from 'uuid'
 import { Fonts } from '../@types/fonts'
 import { AppNavProps } from '../@types/NavProps'
 import { AppStackParamList } from '../@types/StackParamList'
 import { useStoreState } from '../@types/typedHooks'
+import { getAlbumFiles } from '../api/getAlbumFiles'
 import { updateAlbum } from '../api/updateAlbum'
 import { AssetsGallery } from '../components/AssetsGallery'
 import { AlbumIcon } from '../components/icons/AlbumIcon'
@@ -199,12 +200,12 @@ export const AssetsPreviewScreen = ({
   route: { params },
 }: AppNavProps<'AssetsPreview'>) => {
   const [assetHeadersShown, setAssetHeadersShown] = useState(true)
-  const queryClient = useQueryClient()
-  const assets = (
-    queryClient.getQueryData(`albumFiles:${params.albumId}`) as any[]
-  ).filter((asset) => {
-    return asset.fileURL !== 'empty' && !asset?.placeholder
-  })
+
+  const { data: assets } = useQuery(
+    `albumFiles:${params.albumId}`,
+    () => getAlbumFiles(params.albumId),
+    { staleTime: Infinity },
+  )
 
   const colors = useStoreState((state) => state.theme)
 
@@ -213,7 +214,7 @@ export const AssetsPreviewScreen = ({
   const getDate = () => {
     const diffInDays = differenceInDays(
       new Date(),
-      parseISO(assets[currentIndex].createdAt),
+      parseISO(assets[currentIndex + 1].createdAt),
     )
     switch (diffInDays) {
       case 0:
@@ -221,7 +222,10 @@ export const AssetsPreviewScreen = ({
       case 1:
         return 'Yesterday'
       default:
-        return format(parseISO(assets[currentIndex].createdAt), 'MMMM d, yyyy')
+        return format(
+          parseISO(assets[currentIndex + 1].createdAt),
+          'MMMM d, yyyy',
+        )
     }
   }
   const [videoStatus, setVideoStatus] = useState<any>({})
@@ -257,7 +261,7 @@ export const AssetsPreviewScreen = ({
                 transform: [{ translateY: -2 }],
               }}
             >
-              {format(parseISO(assets[currentIndex].createdAt), 'p')}
+              {format(parseISO(assets[currentIndex + 1].createdAt), 'p')}
             </MyText>
           </View>
         </View>
@@ -270,107 +274,108 @@ export const AssetsPreviewScreen = ({
             { flexDirection: 'column' },
           ]}
         >
-          {assets[currentIndex].mimetype.includes('video/') && !videoIsLoading && (
-            <View
-              style={[
-                styles.videoControls,
-                {
-                  paddingLeft: 0,
-                  backgroundColor: 'rgba(24, 24, 24, 0.75)',
-                },
-              ]}
-            >
-              <TouchableOpacity
-                activeOpacity={colors.activeOpacity}
-                style={{
-                  paddingHorizontal: 10,
-                  paddingVertical: 20,
-                  paddingLeft: 20,
-                }}
-                onPress={() => {
-                  setVideoStatus({
-                    ...(videoStatus || []),
-                    isPlaying: !videoStatus.isPlaying,
-                  })
-
-                  videoStatus.isPlaying
-                    ? (videoRef.current as any)?.pauseAsync()
-                    : (videoRef.current as any)?.playAsync()
-                }}
+          {assets[currentIndex + 1].mimetype.includes('video/') &&
+            !videoIsLoading && (
+              <View
+                style={[
+                  styles.videoControls,
+                  {
+                    paddingLeft: 0,
+                    backgroundColor: 'rgba(24, 24, 24, 0.75)',
+                  },
+                ]}
               >
-                {videoStatus.isPlaying ? (
-                  <PauseIcon size={15} />
-                ) : (
-                  <PlayIcon size={15} />
-                )}
-              </TouchableOpacity>
-              <Slider
-                style={{
-                  flex: 1,
-                  height: 35,
-                }}
-                minimumValue={0}
-                value={videoStatus?.positionMillis}
-                onSlidingStart={async () => {
-                  await (videoRef.current as any)?.pauseAsync()
-                }}
-                onValueChange={(value) => {
-                  setVideoSlideDuration(Math.floor(value / 1000))
-                }}
-                onSlidingComplete={async (value) => {
-                  setVideoSlideDuration(null)
-                  await (videoRef.current as any).setPositionAsync(value)
-                  await (videoRef.current as any)?.playAsync()
-                }}
-                maximumValue={(videoStatus as any)?.durationMillis}
-                minimumTrackTintColor={colors.primary}
-                thumbTintColor={colors.primary}
-                maximumTrackTintColor={colors.white}
-              />
-              {videoSlideDuration !== null && (
-                <View
+                <TouchableOpacity
+                  activeOpacity={colors.activeOpacity}
                   style={{
-                    position: 'absolute',
-                    top: '-200%',
-                    left: 0,
-                    right: 0,
-                    bottom: 0,
-                    justifyContent: 'center',
-                    alignItems: 'center',
+                    paddingHorizontal: 10,
+                    paddingVertical: 20,
+                    paddingLeft: 20,
+                  }}
+                  onPress={() => {
+                    setVideoStatus({
+                      ...(videoStatus || []),
+                      isPlaying: !videoStatus.isPlaying,
+                    })
+
+                    videoStatus.isPlaying
+                      ? (videoRef.current as any)?.pauseAsync()
+                      : (videoRef.current as any)?.playAsync()
                   }}
                 >
-                  <MyText
-                    customStyles={{ fontFamily: Fonts['Poppins-bold'] }}
-                    size="lg"
+                  {videoStatus.isPlaying ? (
+                    <PauseIcon size={15} />
+                  ) : (
+                    <PlayIcon size={15} />
+                  )}
+                </TouchableOpacity>
+                <Slider
+                  style={{
+                    flex: 1,
+                    height: 35,
+                  }}
+                  minimumValue={0}
+                  value={videoStatus?.positionMillis}
+                  onSlidingStart={async () => {
+                    await (videoRef.current as any)?.pauseAsync()
+                  }}
+                  onValueChange={(value) => {
+                    setVideoSlideDuration(Math.floor(value / 1000))
+                  }}
+                  onSlidingComplete={async (value) => {
+                    setVideoSlideDuration(null)
+                    await (videoRef.current as any).setPositionAsync(value)
+                    await (videoRef.current as any)?.playAsync()
+                  }}
+                  maximumValue={(videoStatus as any)?.durationMillis}
+                  minimumTrackTintColor={colors.primary}
+                  thumbTintColor={colors.primary}
+                  maximumTrackTintColor={colors.white}
+                />
+                {videoSlideDuration !== null && (
+                  <View
+                    style={{
+                      position: 'absolute',
+                      top: '-200%',
+                      left: 0,
+                      right: 0,
+                      bottom: 0,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    }}
                   >
-                    {formatVideoDuration(videoSlideDuration)}/
-                    {formatVideoDuration(
-                      (videoStatus as any)?.durationMillis / 1000,
-                    )}
-                  </MyText>
-                </View>
-              )}
-              <TouchableOpacity
-                style={{
-                  paddingHorizontal: 10,
-                  paddingVertical: 20,
-                  paddingRight: 20,
-                }}
-                activeOpacity={colors.activeOpacity}
-                onPress={async () => {
-                  await (videoRef.current as any)?.setIsMutedAsync(
-                    !(videoStatus as any).isMuted,
-                  )
-                }}
-              >
-                {(videoStatus as any)?.isMuted ? (
-                  <MuteIcon size={17} />
-                ) : (
-                  <VolumeIcon size={17} />
+                    <MyText
+                      customStyles={{ fontFamily: Fonts['Poppins-bold'] }}
+                      size="lg"
+                    >
+                      {formatVideoDuration(videoSlideDuration)}/
+                      {formatVideoDuration(
+                        (videoStatus as any)?.durationMillis / 1000,
+                      )}
+                    </MyText>
+                  </View>
                 )}
-              </TouchableOpacity>
-            </View>
-          )}
+                <TouchableOpacity
+                  style={{
+                    paddingHorizontal: 10,
+                    paddingVertical: 20,
+                    paddingRight: 20,
+                  }}
+                  activeOpacity={colors.activeOpacity}
+                  onPress={async () => {
+                    await (videoRef.current as any)?.setIsMutedAsync(
+                      !(videoStatus as any).isMuted,
+                    )
+                  }}
+                >
+                  {(videoStatus as any)?.isMuted ? (
+                    <MuteIcon size={17} />
+                  ) : (
+                    <VolumeIcon size={17} />
+                  )}
+                </TouchableOpacity>
+              </View>
+            )}
           <View
             style={{
               flexDirection: 'row',
@@ -390,23 +395,23 @@ export const AssetsPreviewScreen = ({
                     (e.label === 'Share' || e.label === 'Download')
                   ) {
                     e.action({
-                      remoteUrl: assets[currentIndex].fileURL,
-                      localUri: assets[currentIndex].deviceFileUrl,
-                      mimetype: assets[currentIndex].mimetype,
+                      remoteUrl: assets[currentIndex + 1].fileURL,
+                      localUri: assets[currentIndex + 1].deviceFileUrl,
+                      mimetype: assets[currentIndex + 1].mimetype,
                     } as any)
                   } else if (e.label === 'Delete') {
                     e.action({
-                      mimetype: assets[currentIndex].mimetype,
+                      mimetype: assets[currentIndex + 1].mimetype,
                       albumId: params.albumId,
-                      assetId: assets[currentIndex].id,
+                      assetId: assets[currentIndex + 1].id,
                       navigation,
                     } as any)
                   } else if (e.label === 'Album Cover') {
                     e.action({
                       albumId: params.albumId,
-                      AlbumFileId: assets[currentIndex].id,
-                      localUri: assets[currentIndex].deviceFileUrl,
-                      remoteUrl: assets[currentIndex].fileURL,
+                      AlbumFileId: assets[currentIndex + 1].id,
+                      localUri: assets[currentIndex + 1].deviceFileUrl,
+                      remoteUrl: assets[currentIndex + 1].fileURL,
                     } as any)
                   }
                 }}

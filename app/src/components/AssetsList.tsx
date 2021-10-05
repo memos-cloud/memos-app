@@ -119,7 +119,7 @@ const AssetsFlatList = ({
           const objectID = new ObjectID().toHexString()
           const asset: any = assets.find((e) => e?.id === id)
           newFiles.push(asset)
-          uploadAssets(albumId, asset.uri, objectID, asset.duration)
+          uploadAssets(albumId, asset.uri, objectID, asset.duration, asset.id)
           assetsIds.push(objectID)
         })
 
@@ -170,7 +170,7 @@ const AssetsFlatList = ({
             id: assetsIds[i],
             mimetype: asset.mediaType === 'photo' ? 'image/png' : 'video/mp3',
             deviceFileUrl: asset.uri,
-            duration: asset.duration,
+            duration: asset.mediaType === 'photo' ? undefined : asset.duration,
             createdAt: new Date().toISOString(),
           })),
           ...albumFiles.filter((e: any) => !e.placeholder),

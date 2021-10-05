@@ -138,8 +138,6 @@ export class AlbumsService {
 
     const data = await Promise.all(getFilePromises)
 
-    console.log(data)
-
     return { files: data, hasMore: !!(filesCount > (skip || 0) + (take || 0)) }
   }
 
@@ -256,7 +254,6 @@ export class AlbumsService {
     fileId: string,
     duration?: number,
   ) {
-    console.log(duration)
     if (!files) {
       throw new HttpException('Files are required to Upload them.', 400)
     }

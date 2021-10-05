@@ -16,8 +16,10 @@ import Gallery, {
   RenderItemInfo,
 } from 'react-native-awesome-gallery'
 import { Image } from 'react-native-expo-image-cache'
-import { useQueryClient } from 'react-query'
+import { useQuery, useQueryClient } from 'react-query'
 import { useStoreActions, useStoreState } from '../@types/typedHooks'
+import { getAlbumFiles } from '../api/getAlbumFiles'
+import { store } from '../state-management/stores'
 import { Center } from './Center'
 
 const PreviewImage = memo(({ imgInfo }: { imgInfo: RenderItemInfo<any> }) => {
@@ -175,10 +177,6 @@ const RenderItem = memo(
     }
 
     if (info.index !== index) {
-      // if (videoRef.current) {
-      //   ;(videoRef.current as any).setPositionAsync(0)
-      //   ;(videoRef.current as any)?.pauseAsync()
-      // }
       return <VideoIsLoading style={{}} />
     }
     return (
@@ -214,14 +212,13 @@ export const AssetsGallery: FC<Props> = memo(
     setVideoIsLoading,
   }) => {
     const setAssetIndex = useStoreActions((actions) => actions.setAssetIndex)
-    const queryClient = useQueryClient()
     const [index, setIndex] = useState(params.index)
 
-    const assets = (
-      queryClient.getQueryData(`albumFiles:${params.albumId}`) as any[]
-    ).filter((asset) => {
-      return asset.fileURL !== 'empty' && !asset?.placeholder
-    })
+    const { data: assets } = useQuery(
+      `albumFiles:${params.albumId}`,
+      () => getAlbumFiles(params.albumId),
+      { staleTime: Infinity },
+    )
 
     const galleryRef = useRef<GalleryRef>(null)
 
@@ -247,23 +244,26 @@ export const AssetsGallery: FC<Props> = memo(
         )}
         emptySpaceWidth={15}
         initialIndex={params.index}
-        data={assets}
+        data={assets.filter((asset: any) => {
+          return asset.fileURL !== 'empty' && !asset?.placeholder
+        })}
         disableVerticalSwipe={true}
         onIndexChange={(i) => {
           setTimeout(() => galleryRef.current?.reset(), 500)
           setCurrentIndex(i)
 
           if (
-            assets[i]?.mimetype.includes('video/') ||
-            assets[i - 1]?.mimetype.includes('video/')
+            assets[i + 1]?.mimetype?.includes('video/') ||
+            assets[i]?.mimetype?.includes('video/')
           ) {
             setTimeout(() => {
               setIndex(i)
             }, 500)
           }
+
           setTimeout(() => {
             setAssetIndex(i + 1)
-          }, 500)
+          }, 300)
         }}
       />
     )
