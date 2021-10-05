@@ -22,10 +22,10 @@ export type AppStackParamList = {
     actionType: 'logout' | 'deleteAlbum' | 'deleteFiles'
     deleteId?: string
   }
-  EditAlbum: { albumId: string }
-  AlbumFiles: { id: string }
-  NewAlbum: { albumName: string; albumId: string } | undefined
-  AddFiles: { deviceAlbumId: string; albumTitle?: string; albumId: string }
+  'Edit Album': { albumId: string }
+  'Album Files': { id: string }
+  'New Album': { albumName: string; albumId: string } | undefined
+  'Add Files': { deviceAlbumId: string; albumTitle?: string; albumId: string }
   ChooseAlbumsScreen: { albumId: string }
-  ProfileScreen: undefined
+  Profile: undefined
 }

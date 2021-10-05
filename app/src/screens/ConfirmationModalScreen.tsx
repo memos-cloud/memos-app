@@ -38,7 +38,7 @@ export const ConfirmationModalScreen = ({
       const albums = (queryClient.getQueryData('albums') as any[]).filter(
         (e) => {
           return e.album.id !== params.deleteId
-        }
+        },
       )
       queryClient.setQueryData('albums', albums)
       setActionLoading(false)
@@ -70,7 +70,7 @@ export const ConfirmationModalScreen = ({
               return foundAlbum
             }
             return album
-          })
+          }),
         )
       } else if (foundAlbum.albumCover.id === assetId) {
         await AsyncStorage.setItem(`album:${albumId}:albumCover`, 'default')
@@ -89,7 +89,7 @@ export const ConfirmationModalScreen = ({
       }
 
       setActionLoading(false)
-      navigation.navigate('AlbumFiles', { id: albumId })
+      navigation.navigate('Album Files', { id: albumId })
     }
   }
 
@@ -121,7 +121,7 @@ export const ConfirmationModalScreen = ({
           }}
         >
           <MyText
-            size='md'
+            size="md"
             customStyles={{
               fontFamily: Fonts['Poppins-bold'],
               textAlign: 'center',
@@ -166,7 +166,7 @@ export const ConfirmationModalScreen = ({
                     justifyContent: 'center',
                     alignItems: 'center',
                   }}
-                  size='small'
+                  size="small"
                   color={colors.white}
                 />
               )}

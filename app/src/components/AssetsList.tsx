@@ -29,7 +29,7 @@ interface GetAssetsProps {
   after?: string
 }
 interface Props {
-  navigation: StackNavigationProp<AppStackParamList, 'AddFiles'>
+  navigation: StackNavigationProp<AppStackParamList, 'Add Files'>
   albumId: string
   deviceAlbumId: string
   widthAndHeight: number
@@ -119,7 +119,7 @@ const AssetsFlatList = ({
           const objectID = new ObjectID().toHexString()
           const asset: any = assets.find((e) => e?.id === id)
           newFiles.push(asset)
-          uploadAssets(albumId, asset.uri, objectID)
+          uploadAssets(albumId, asset.uri, objectID, asset.duration)
           assetsIds.push(objectID)
         })
 
@@ -170,6 +170,7 @@ const AssetsFlatList = ({
             id: assetsIds[i],
             mimetype: asset.mediaType === 'photo' ? 'image/png' : 'video/mp3',
             deviceFileUrl: asset.uri,
+            duration: asset.duration,
             createdAt: new Date().toISOString(),
           })),
           ...albumFiles.filter((e: any) => !e.placeholder),
@@ -177,7 +178,7 @@ const AssetsFlatList = ({
 
         queryClient.setQueryData(`albumFiles:${albumId}`, newAlbumFiles)
 
-        navigation.navigate('AlbumFiles', { id: albumId })
+        navigation.navigate('Album Files', { id: albumId })
 
         setTimeout(() => {
           setUploadLoading(false)

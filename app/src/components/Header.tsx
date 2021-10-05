@@ -73,7 +73,10 @@ export const MyHeader: FC<Props> = memo(
                 }}
                 activeOpacity={colors.activeOpacity}
                 onPress={() => {
-                  if (back.title !== 'NewAlbum' && back.title !== 'EditAlbum') {
+                  if (
+                    back.title !== 'New Album' &&
+                    back.title !== 'Edit Album'
+                  ) {
                     navigation.goBack()
                   } else {
                     navigation.navigate('Albums')
@@ -104,7 +107,7 @@ export const MyHeader: FC<Props> = memo(
           {!back && profile && (
             <Profile
               profilePic={profile?.profilePic}
-              goToProfile={() => navigation.navigate('ProfileScreen')}
+              goToProfile={() => navigation.navigate('Profile')}
             />
           )}
           {!back && !profile && (

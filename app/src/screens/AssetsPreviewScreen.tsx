@@ -1,16 +1,18 @@
 import { TouchableOpacity } from '@gorhom/bottom-sheet'
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import Slider from '@react-native-community/slider'
 import { StackNavigationProp } from '@react-navigation/stack'
 import { differenceInDays, format, parseISO } from 'date-fns'
 import * as Constants from 'expo-constants'
 import * as FileSystem from 'expo-file-system'
 import * as MediaLibrary from 'expo-media-library'
 import * as Sharing from 'expo-sharing'
-import React, { useEffect, useRef, useState } from 'react'
-import { Button, StyleSheet, ToastAndroid, View } from 'react-native'
+import React, { useRef, useState } from 'react'
+import { StyleSheet, ToastAndroid, View } from 'react-native'
 import { useQueryClient } from 'react-query'
 import shorthash from 'shorthash'
 import { v4 as uuidv4 } from 'uuid'
+import { Fonts } from '../@types/fonts'
 import { AppNavProps } from '../@types/NavProps'
 import { AppStackParamList } from '../@types/StackParamList'
 import { useStoreState } from '../@types/typedHooks'
@@ -27,8 +29,8 @@ import { ShareIcon } from '../components/icons/ShareIcon'
 import { VolumeIcon } from '../components/icons/VolumeIcon'
 import { MyText } from '../components/MyText'
 import { queryClient } from '../state-management/stores'
+import { formatVideoDuration } from '../utils/formatVideoDuration'
 import { askingForFilesPermission } from '../utils/getFilesPermision'
-import Slider from '@react-native-community/slider'
 
 interface downloadAsset {
   remoteUrl: string
@@ -206,7 +208,7 @@ export const AssetsPreviewScreen = ({
 
   const colors = useStoreState((state) => state.theme)
 
-  const [currentIndex, setCurrentIndex] = useState(params.index - 1)
+  const [currentIndex, setCurrentIndex] = useState(params.index)
 
   const getDate = () => {
     const diffInDays = differenceInDays(
@@ -224,18 +226,10 @@ export const AssetsPreviewScreen = ({
   }
   const [videoStatus, setVideoStatus] = useState<any>({})
   const videoRef = useRef(null)
-
-  useEffect(() => {
-    const videoEnded = async () => {
-      if ((videoStatus as any).didJustFinish) {
-        await (videoRef.current as any).setPositionAsync(0)
-        await (videoRef.current as any)?.pauseAsync()
-      }
-    }
-    if (videoRef.current && videoStatus) {
-      videoEnded()
-    }
-  }, [videoRef, videoStatus])
+  const [videoIsLoading, setVideoIsLoading] = useState(true)
+  const [videoSlideDuration, setVideoSlideDuration] = useState<number | null>(
+    null,
+  )
 
   return (
     <View style={styles.container}>
@@ -276,13 +270,12 @@ export const AssetsPreviewScreen = ({
             { flexDirection: 'column' },
           ]}
         >
-          {assets[currentIndex].mimetype.includes('video/') && (
+          {assets[currentIndex].mimetype.includes('video/') && !videoIsLoading && (
             <View
               style={[
                 styles.videoControls,
                 {
-                  paddingHorizontal: 20,
-                  paddingLeft: 20,
+                  paddingLeft: 0,
                   backgroundColor: 'rgba(24, 24, 24, 0.75)',
                 },
               ]}
@@ -291,17 +284,18 @@ export const AssetsPreviewScreen = ({
                 activeOpacity={colors.activeOpacity}
                 style={{
                   paddingHorizontal: 10,
-                  paddingVertical: 10,
+                  paddingVertical: 20,
+                  paddingLeft: 20,
                 }}
-                onPress={async () => {
+                onPress={() => {
                   setVideoStatus({
                     ...(videoStatus || []),
                     isPlaying: !videoStatus.isPlaying,
                   })
 
                   videoStatus.isPlaying
-                    ? await (videoRef.current as any)?.pauseAsync()
-                    : await (videoRef.current as any)?.playAsync()
+                    ? (videoRef.current as any)?.pauseAsync()
+                    : (videoRef.current as any)?.playAsync()
                 }}
               >
                 {videoStatus.isPlaying ? (
@@ -320,13 +314,12 @@ export const AssetsPreviewScreen = ({
                 onSlidingStart={async () => {
                   await (videoRef.current as any)?.pauseAsync()
                 }}
+                onValueChange={(value) => {
+                  setVideoSlideDuration(Math.floor(value / 1000))
+                }}
                 onSlidingComplete={async (value) => {
+                  setVideoSlideDuration(null)
                   await (videoRef.current as any).setPositionAsync(value)
-                  setVideoStatus({
-                    ...(videoStatus || []),
-                    positionMillis: value,
-                    isPlaying: true,
-                  })
                   await (videoRef.current as any)?.playAsync()
                 }}
                 maximumValue={(videoStatus as any)?.durationMillis}
@@ -334,11 +327,34 @@ export const AssetsPreviewScreen = ({
                 thumbTintColor={colors.primary}
                 maximumTrackTintColor={colors.white}
               />
-
+              {videoSlideDuration !== null && (
+                <View
+                  style={{
+                    position: 'absolute',
+                    top: '-200%',
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}
+                >
+                  <MyText
+                    customStyles={{ fontFamily: Fonts['Poppins-bold'] }}
+                    size="lg"
+                  >
+                    {formatVideoDuration(videoSlideDuration)}/
+                    {formatVideoDuration(
+                      (videoStatus as any)?.durationMillis / 1000,
+                    )}
+                  </MyText>
+                </View>
+              )}
               <TouchableOpacity
                 style={{
                   paddingHorizontal: 10,
-                  paddingVertical: 10,
+                  paddingVertical: 20,
+                  paddingRight: 20,
                 }}
                 activeOpacity={colors.activeOpacity}
                 onPress={async () => {
@@ -355,7 +371,6 @@ export const AssetsPreviewScreen = ({
               </TouchableOpacity>
             </View>
           )}
-
           <View
             style={{
               flexDirection: 'row',
@@ -411,9 +426,9 @@ export const AssetsPreviewScreen = ({
           </View>
         </View>
       )}
-
       <AssetsGallery
         setVideoStatus={setVideoStatus}
+        setVideoIsLoading={setVideoIsLoading}
         videoRef={videoRef}
         params={params}
         setAssetHeadersShown={setAssetHeadersShown}
@@ -469,6 +484,5 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 5,
-    paddingVertical: 10,
   },
 })

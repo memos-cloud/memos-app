@@ -48,7 +48,7 @@ const Album: FC<Props> = ({
       style={[styles.touchable, styles.parent]}
       activeOpacity={colors.activeOpacity}
       onPress={() => {
-        if (navigation) navigation.navigate('AlbumFiles', { id })
+        if (navigation) navigation.navigate('Album Files', { id })
       }}
     >
       <View
@@ -86,7 +86,7 @@ const Album: FC<Props> = ({
                 {name}
               </MyText>
               <MyText
-                size='xs'
+                size="xs"
                 customStyles={{ opacity: 0.57, color: colors.white }}
               >
                 {format(parseISO(createdAt), 'p yyyy-MM-dd')}

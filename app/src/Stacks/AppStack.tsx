@@ -10,7 +10,7 @@ import * as Permissions from 'expo-permissions'
 import { StatusBar } from 'expo-status-bar'
 import React, { useEffect } from 'react'
 import { AppStackParamList } from '../@types/StackParamList'
-import { useStoreState } from '../@types/typedHooks'
+import { useStoreActions, useStoreState } from '../@types/typedHooks'
 import { MyHeader } from '../components/Header'
 import { AllPhotosId } from '../constants/serverURL'
 import AlbumFilesScreen from '../screens/AlbumFilesScreen'
@@ -25,6 +25,7 @@ const Stack = createStackNavigator<AppStackParamList>()
 
 export const AppStack = ({}) => {
   const colors = useStoreState((state) => state.theme)
+  const setAssetIndex = useStoreActions((actions) => actions.setAssetIndex)
 
   const MyTheme: Theme = {
     dark: true,
@@ -113,7 +114,7 @@ export const AppStack = ({}) => {
               navigation,
               options: { headerRight, title },
             }) =>
-              name !== 'AddFiles' && name !== 'HomeTabs' ? (
+              name !== 'Add Files' && name !== 'HomeTabs' ? (
                 <MyHeader
                   title={title || name}
                   back={back}
@@ -126,6 +127,11 @@ export const AppStack = ({}) => {
         >
           <Stack.Screen
             name="HomeTabs"
+            listeners={{
+              focus: () => {
+                setAssetIndex(0)
+              },
+            }}
             options={({ route }) => {
               return {
                 title: route.name === 'HomeTabs' ? 'Albums' : route.name,
@@ -133,12 +139,12 @@ export const AppStack = ({}) => {
             }}
             component={HomeAndSettingsTabs}
           />
-          <Stack.Screen name="ProfileScreen" component={ProfileScreen} />
-          <Stack.Screen name="AlbumFiles" component={AlbumFilesScreen} />
-          <Stack.Screen name="NewAlbum" component={CreateOrEditAlbumScreen} />
+          <Stack.Screen name="Profile" component={ProfileScreen} />
+          <Stack.Screen name="Album Files" component={AlbumFilesScreen} />
+          <Stack.Screen name="New Album" component={CreateOrEditAlbumScreen} />
           <Stack.Screen
             initialParams={{ albumId: AllPhotosId }}
-            name="AddFiles"
+            name="Add Files"
             component={PickImages}
           />
         </Stack.Group>

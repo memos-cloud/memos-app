@@ -40,6 +40,10 @@ const store = createStore<StoreModel>({
   authenticated: false,
   profile: null,
   theme: colors,
+  assetIndex: 0,
+  setAssetIndex: action((state, index) => {
+    state.assetIndex = index
+  }),
   authenticate: action((state) => {
     state.authenticated = true
   }),

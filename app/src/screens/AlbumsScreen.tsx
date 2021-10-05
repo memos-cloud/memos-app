@@ -1,5 +1,5 @@
 import { useScrollToTop } from '@react-navigation/native'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useRef, useState } from 'react'
 import { ActivityIndicator, FlatList, ScrollView } from 'react-native'
 import { useQuery, useQueryClient } from 'react-query'
 import { AppNavProps } from '../@types/NavProps'
@@ -26,14 +26,6 @@ const AlbumsScreen = ({ navigation }: Props) => {
     queryClient.setQueryData('albums', await getAlbums())
     setRefreshing(false)
   }
-
-  useEffect(() => {
-    if (refreshing) {
-      setRefreshing(true)
-    } else {
-      setRefreshing(false)
-    }
-  }, [isLoading])
 
   const flatListRef = useRef(null)
 
@@ -80,7 +72,7 @@ const AlbumsScreen = ({ navigation }: Props) => {
                 borderColor: colors.primary,
               }}
               text="Create New Album"
-              onPress={() => navigation.navigate('NewAlbum')}
+              onPress={() => navigation.navigate('New Album')}
               bg={colors.black}
               color={colors.primary}
             />
@@ -132,7 +124,7 @@ const AlbumsScreen = ({ navigation }: Props) => {
                 }}
                 text="Create New Album"
                 bg={colors.primary}
-                onPress={() => navigation.navigate('NewAlbum')}
+                onPress={() => navigation.navigate('New Album')}
               />
             </Center>
           </ScrollView>

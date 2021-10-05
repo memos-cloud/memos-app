@@ -138,6 +138,8 @@ export class AlbumsService {
 
     const data = await Promise.all(getFilePromises)
 
+    console.log(data)
+
     return { files: data, hasMore: !!(filesCount > (skip || 0) + (take || 0)) }
   }
 
@@ -252,7 +254,9 @@ export class AlbumsService {
     user: UserDocument,
     deviceFileUrl: string,
     fileId: string,
+    duration?: number,
   ) {
+    console.log(duration)
     if (!files) {
       throw new HttpException('Files are required to Upload them.', 400)
     }
@@ -304,6 +308,7 @@ export class AlbumsService {
         size: number
         mimetype: string
         deviceFileUrl: string
+        duration: number
       }[] = []
 
       const promises = files.map(async (file, i) => {
@@ -321,6 +326,7 @@ export class AlbumsService {
           size: sizeInMB(Buffer.byteLength(buffers[i])),
           mimetype: file.mimetype,
           deviceFileUrl,
+          duration,
         })
 
         return uploadFile({
@@ -343,6 +349,7 @@ export class AlbumsService {
       await this.userModel.findByIdAndUpdate(userId, {
         $inc: { usage: -filesSize },
       })
+      throw new HttpException("Can't Upload Assets", 500)
     }
     await this.fileModel.insertMany(albumFiles)
 

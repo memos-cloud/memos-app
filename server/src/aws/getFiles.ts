@@ -20,5 +20,6 @@ export const getFile = async ({ key, file }: uploadFileArgs) => {
       Expires: 60 * 10,
     }),
     deviceFileUrl: file.deviceFileUrl,
+    duration: file.duration,
   }
 }

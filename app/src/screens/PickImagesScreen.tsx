@@ -41,7 +41,7 @@ const getAssets = async ({ first, albumId, after }: GetAssetsProps) => {
 const PickImages = ({
   navigation,
   route: { params },
-}: AppNavProps<'AddFiles'>) => {
+}: AppNavProps<'Add Files'>) => {
   const { data, isLoading: assetsLoading } = useQuery(
     ['DeviceAssets', params.deviceAlbumId],
     () =>

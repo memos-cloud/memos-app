@@ -1,5 +1,5 @@
 import { TouchableOpacity } from '@gorhom/bottom-sheet'
-import React, { FC, memo, useEffect, useRef, useState } from 'react'
+import React, { memo, useEffect, useRef, useState } from 'react'
 import {
   Dimensions,
   findNodeHandle,
@@ -11,7 +11,7 @@ import {
   ActivityIndicator,
 } from 'react-native'
 import { useQuery, useQueryClient } from 'react-query'
-import { AppNavProps, HomeNavProps } from '../@types/NavProps'
+import { AppNavProps } from '../@types/NavProps'
 import { useStoreState } from '../@types/typedHooks'
 import { getAlbumById } from '../api/getAlbumById'
 import { getAlbumFiles } from '../api/getAlbumFiles'
@@ -23,7 +23,6 @@ import { ThreeDots } from '../components/icons/ThreeDots'
 import { MyText } from '../components/MyText'
 import { RefreshControlComponent } from '../components/RefreshControl'
 import { SmoothFastImage } from '../components/SmoothFastImage'
-import { v4 as uuidv4 } from 'uuid'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { AllPhotosId } from '../constants/serverURL'
 
@@ -35,7 +34,11 @@ const MemoizedAlbumFile = memo(
   },
 )
 
-const AlbumFilesScreen = ({ navigation, route }: AppNavProps<'AlbumFiles'>) => {
+const FiveMinutes = 1000 * 60 * 5
+const AlbumFilesScreen = ({
+  navigation,
+  route,
+}: AppNavProps<'Album Files'>) => {
   const queryClient = useQueryClient()
   const [refreshing, setRefreshing] = useState(false)
   const { data: fetchedAlbums } = useQuery('albums', () => getAlbums())
@@ -50,7 +53,7 @@ const AlbumFilesScreen = ({ navigation, route }: AppNavProps<'AlbumFiles'>) => {
   const { data, isLoading, error } = useQuery(
     `albumFiles:${albumId}`,
     () => getAlbumFiles(albumId),
-    { staleTime: 1000 * 60 * 10 },
+    { staleTime: FiveMinutes },
   )
 
   const onRefresh = async () => {
@@ -74,7 +77,7 @@ const AlbumFilesScreen = ({ navigation, route }: AppNavProps<'AlbumFiles'>) => {
   }
 
   const addFilesHandler = () => {
-    navigation.navigate('AddFiles', {
+    navigation.navigate('Add Files', {
       albumId: route.params.id,
       deviceAlbumId: AllPhotosId,
     })
@@ -92,7 +95,7 @@ const AlbumFilesScreen = ({ navigation, route }: AppNavProps<'AlbumFiles'>) => {
         async (item, index) => {
           switch (index) {
             case 0:
-              navigation.navigate('NewAlbum', {
+              navigation.navigate('New Album', {
                 albumName: albumData.album.name,
                 albumId: albumData.album.id,
               })
@@ -166,10 +169,33 @@ const AlbumFilesScreen = ({ navigation, route }: AppNavProps<'AlbumFiles'>) => {
     }
   }
 
+  const assetsListRef = useRef(null)
+  const assetIndex = useStoreState((state) => state.assetIndex)
+  const [headerHeight, setHeaderHeight] = useState(0)
+
+  useEffect(() => {
+    if (assetsListRef.current) {
+      const fileHeight = fileWidth
+      const fileMarginBottom = 7
+      const assetsNumInRow = 4
+      const completeRows = Math.floor(assetIndex / assetsNumInRow)
+
+      assetsListRef.current?.scrollToOffset({
+        animated: false,
+        offset:
+          completeRows * fileHeight +
+          headerHeight +
+          completeRows * fileMarginBottom -
+          fileMarginBottom,
+      })
+    }
+  }, [assetsListRef, assetIndex])
+
   return (
     <FlatList
+      ref={assetsListRef}
       ListHeaderComponent={
-        <>
+        <View onLayout={(e) => setHeaderHeight(e.nativeEvent.layout.height)}>
           <View
             style={{
               backgroundColor: !albumData.albumCover
@@ -203,7 +229,7 @@ const AlbumFilesScreen = ({ navigation, route }: AppNavProps<'AlbumFiles'>) => {
               {albumData.album.name}
             </MyText>
           </View>
-        </>
+        </View>
       }
       refreshControl={
         <RefreshControlComponent
@@ -225,12 +251,12 @@ const AlbumFilesScreen = ({ navigation, route }: AppNavProps<'AlbumFiles'>) => {
         }
         return (
           <AlbumFile
-            previewHandler={() =>
+            previewHandler={() => {
               navigation.navigate('AssetsPreview', {
                 albumId: route.params.id,
-                index,
+                index: index - 1,
               })
-            }
+            }}
             item={item}
             width={fileWidth}
           />
@@ -254,7 +280,7 @@ const AlbumFilesScreen = ({ navigation, route }: AppNavProps<'AlbumFiles'>) => {
       }
       keyExtractor={(item) => item.id}
       onEndReached={onEndReachHandler}
-      onEndReachedThreshold={1}
+      onEndReachedThreshold={0.4}
       ListFooterComponent={
         hasMore ? (
           <ActivityIndicator

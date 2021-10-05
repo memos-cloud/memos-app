@@ -19,7 +19,7 @@ import { SmoothFastImage } from '../components/SmoothFastImage'
 const profilePicSize = 150
 const progressBarWidth = Dimensions.get('window').width - 40
 
-export const ProfileScreen = ({ navigation }: AppNavProps<'ProfileScreen'>) => {
+export const ProfileScreen = ({ navigation }: AppNavProps<'Profile'>) => {
   const [refreshing, setRefreshing] = useState(false)
   const profileData = useStoreState((state) => state.profile)
 

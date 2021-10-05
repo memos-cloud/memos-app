@@ -1,4 +1,3 @@
-import { addSeconds, format } from 'date-fns'
 import * as MediaLibrary from 'expo-media-library'
 import _ from 'lodash'
 import React, { FC, memo } from 'react'
@@ -7,11 +6,7 @@ import { TouchableWithoutFeedback } from 'react-native-gesture-handler'
 import { Fonts } from '../@types/fonts'
 import { useStoreState } from '../@types/typedHooks'
 import { MyText } from './MyText'
-
-function formattedTime(seconds: number) {
-  var helperDate = addSeconds(new Date(0), seconds)
-  return format(helperDate, 'm:ss')
-}
+import { formatVideoDuration } from '../utils/formatVideoDuration'
 
 interface Props {
   item: MediaLibrary.Asset
@@ -76,7 +71,7 @@ const PickImage: FC<Props> = ({
 
       {item.mediaType === 'video' && (
         <MyText customStyles={styles.videoText}>
-          {formattedTime(item.duration)}
+          {formatVideoDuration(item.duration)}
         </MyText>
       )}
     </TouchableWithoutFeedback>

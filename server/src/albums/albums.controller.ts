@@ -86,6 +86,7 @@ export class AlbumsController {
       req.user,
       req.headers.devicefileurl,
       req.headers.fileid,
+      req.headers.duration,
     )
   }
 

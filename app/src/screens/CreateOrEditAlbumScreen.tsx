@@ -48,7 +48,7 @@ export const CreateOrEditAlbumScreen: FC<AppNavProps<'NewAlbum'>> = ({
       if (params?.albumName) {
         await updateAlbum({ name }, params.albumId)
         const foundAlbum = albums.find(
-          ({ album }: any) => album.id === params.albumId
+          ({ album }: any) => album.id === params.albumId,
         )
 
         foundAlbum.album.name = name
@@ -62,7 +62,7 @@ export const CreateOrEditAlbumScreen: FC<AppNavProps<'NewAlbum'>> = ({
               return foundAlbum
             }
             return album
-          })
+          }),
         )
         albumId = params.albumId
       } else {
@@ -77,7 +77,7 @@ export const CreateOrEditAlbumScreen: FC<AppNavProps<'NewAlbum'>> = ({
 
       setLoading(false)
 
-      navigation.navigate('AlbumFiles', { id: albumId })
+      navigation.navigate('Album Files', { id: albumId })
     }
   }
 
@@ -149,7 +149,7 @@ export const CreateOrEditAlbumScreen: FC<AppNavProps<'NewAlbum'>> = ({
                             top: '-17%',
                           },
                         ]}
-                        size='small'
+                        size="small"
                         color={colors.white}
                       />
                     )}

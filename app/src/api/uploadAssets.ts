@@ -9,6 +9,7 @@ export const uploadAssets = (
   albumId: string,
   filePath: string,
   objectID: string,
+  duration: number,
 ) => {
   const { accessToken } = store.getState()
   const uploadTo = `${serverURL}/albums/${albumId}/upload`
@@ -20,6 +21,7 @@ export const uploadAssets = (
       Authorization: `Bearer ${accessToken}`,
       devicefileurl: filePath,
       fileId: objectID,
+      duration: duration > 0 ? duration.toString() : undefined,
     },
     httpMethod: 'POST',
     sessionType: FileSystemSessionType.BACKGROUND,

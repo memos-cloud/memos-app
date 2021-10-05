@@ -59,7 +59,7 @@ export const ChooseAlbumsScreen = ({
   )
 
   const setAlbums = (item: any) => () => {
-    navigation.navigate('AddFiles', {
+    navigation.navigate('Add Files', {
       deviceAlbumId: item.title === 'All Photos' ? AllPhotosId : item.id,
       albumTitle: item.title,
       albumId: params.albumId,

@@ -18,8 +18,10 @@ interface Theme {
 export interface StoreModel {
   accessToken: accessToken
   profile: any
+  assetIndex: number
   authenticated: boolean
   uploadProgress: { uploaded: number; filesCount: number }
+  setAssetIndex: Action<StoreModel, number>
   startUpload: Action<StoreModel, number>
   authenticate: Action<StoreModel>
   deauthenticate: Action<StoreModel>

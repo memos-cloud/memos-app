@@ -17,6 +17,9 @@ export class File {
   @Prop({ required: true })
   mimetype: string
 
+  @Prop()
+  duration?: number
+
   @Prop({ required: true })
   size: number
 
