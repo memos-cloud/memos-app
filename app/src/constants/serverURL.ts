@@ -6,3 +6,5 @@ export const serverURL =
     : 'https://memos-rn.herokuapp.com'
 
 export const AllPhotosId = v4()
+
+export const DOWNLOADS_ALBUM_NAME = 'Memos'

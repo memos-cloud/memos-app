@@ -127,7 +127,8 @@ const SettingsScreen: FC<HomeNavProps<'Settings'>> = () => {
             }}
             size="xs"
           >
-            Delete Assets from Device after Uploading
+            Delete Assets from Device after Uploading them (some devices can't
+            use this feature unfortunately)
           </MyText>
           <Switch
             trackColor={{

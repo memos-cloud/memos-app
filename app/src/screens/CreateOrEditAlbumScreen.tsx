@@ -17,7 +17,7 @@ import Input from '../components/Input'
 import { MyButton } from '../components/MyButton'
 import { useKeyboardHeight } from '../Hooks/useKeyboardHeight'
 
-export const CreateOrEditAlbumScreen: FC<AppNavProps<'NewAlbum'>> = ({
+export const CreateOrEditAlbumScreen: FC<AppNavProps<'New Album'>> = ({
   navigation,
   route: { params },
 }) => {

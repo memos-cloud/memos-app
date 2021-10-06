@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage'
 import * as Progress from 'expo-progress'
 import React, { FC, memo, useEffect } from 'react'
 import { StyleSheet, ToastAndroid, TouchableOpacity, View } from 'react-native'
@@ -7,6 +8,10 @@ import { ArrowIcon } from './icons/Arrow'
 import { Logo } from './Logo'
 import { MyText } from './MyText'
 import { Profile } from './Profile'
+import * as MediaLibrary from 'expo-media-library'
+import { getAlbumById } from '../api/getAlbumById'
+import { queryClient, store } from '../state-management/stores'
+import { getAlbumFiles } from '../api/getAlbumFiles'
 
 interface Props {
   title: string
@@ -17,6 +22,58 @@ interface Props {
     | undefined
   navigation: any
   headerRight?: any
+}
+
+const deleteAssets = async (albumId: string, filesIds: string[]) => {
+  const stored = await AsyncStorage.getItem('deleteAssetsAfterUpload')
+  const deleteAsset = stored ? JSON.parse(stored).state : false
+
+  if (deleteAsset) {
+    await MediaLibrary.deleteAssetsAsync(filesIds)
+
+    // Update Album and It's Files
+    const newAlbum = await getAlbumById(albumId)
+    newAlbum.album.id = newAlbum.album._id
+    delete newAlbum.album._id
+
+    const albums = queryClient.getQueryData('albums') as any[]
+    const newAlbums = (albums || []).map((albumData: any) => {
+      if (albumId === albumData.album.id) {
+        return newAlbum
+      }
+      return albumData
+    })
+
+    queryClient.setQueryData(`albums`, newAlbums)
+    queryClient.setQueryData(
+      `albumFiles:${albumId}`,
+      await getAlbumFiles(albumId),
+    )
+  }
+}
+const deleteAssetsIfOptionIsEnabled = async () => {
+  const stored = await AsyncStorage.getItem('deleteAssetsAfterUpload')
+  const deleteAsset = stored ? JSON.parse(stored).state : false
+
+  if (!deleteAsset) {
+    return
+  }
+  const uploadProgressFiles = store.getState().uploadProgressFiles
+  const formatted: any = {}
+
+  uploadProgressFiles.map((e) => {
+    if (!formatted[e.albumId]) {
+      formatted[e.albumId] = [e.id]
+    } else {
+      formatted[e.albumId] = [...formatted[e.albumId], e.id]
+    }
+  })
+
+  for (const albumId in formatted) {
+    deleteAssets(albumId, formatted[albumId])
+  }
+
+  store.getActions().resetUploadProgressFiles()
 }
 
 export const MyHeader: FC<Props> = memo(
@@ -35,6 +92,9 @@ export const MyHeader: FC<Props> = memo(
         uploadProgress.filesCount === uploadProgress.uploaded
       ) {
         ToastAndroid.show('Files Uploaded Successfully!', ToastAndroid.SHORT)
+
+        deleteAssetsIfOptionIsEnabled()
+
         setTimeout(() => {
           resetUploadProgress()
         }, 1000)

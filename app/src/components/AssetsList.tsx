@@ -229,7 +229,7 @@ const AssetsFlatList = ({
       <SafeAreaView
         style={{
           backgroundColor: colors.secondary,
-          borderWidth: 1,
+          borderBottomWidth: 1,
           borderBottomColor: colors.borderColor,
           paddingTop: Constants.default.statusBarHeight,
         }}

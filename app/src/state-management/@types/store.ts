@@ -20,7 +20,10 @@ export interface StoreModel {
   profile: any
   assetIndex: number
   authenticated: boolean
+  uploadProgressFiles: { id: string; albumId: string }[]
   uploadProgress: { uploaded: number; filesCount: number }
+  updateUploadProgressFiles: Action<StoreModel, { id: string; albumId: string }>
+  resetUploadProgressFiles: Action<StoreModel>
   setAssetIndex: Action<StoreModel, number>
   startUpload: Action<StoreModel, number>
   authenticate: Action<StoreModel>

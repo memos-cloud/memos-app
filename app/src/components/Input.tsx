@@ -23,7 +23,7 @@ export default function Input({
 
   return (
     <View style={styles.parent}>
-      <MyText size='md' customStyles={styles.label}>
+      <MyText size="md" customStyles={styles.label}>
         {label} :
       </MyText>
       <TextInput

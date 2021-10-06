@@ -8,7 +8,6 @@ import { useStoreState } from '../@types/typedHooks'
 import { AssetsList } from '../components/AssetsList'
 import Container from '../components/Container'
 import { askingForFilesPermission } from '../utils/getFilesPermision'
-import * as Sentry from 'sentry-expo'
 import { AllPhotosId } from '../constants/serverURL'
 
 const widthAndHeight = (Dimensions.get('window').width - 10 * 4) / 3

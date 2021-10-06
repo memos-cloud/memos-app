@@ -41,6 +41,14 @@ const store = createStore<StoreModel>({
   profile: null,
   theme: colors,
   assetIndex: 0,
+  uploadProgressFiles: [],
+  uploadProgress: { filesCount: 0, uploaded: 0 },
+  updateUploadProgressFiles: action((state, payload) => {
+    state.uploadProgressFiles = [...state.uploadProgressFiles, payload]
+  }),
+  resetUploadProgressFiles: action((state) => {
+    state.uploadProgressFiles = []
+  }),
   setAssetIndex: action((state, index) => {
     state.assetIndex = index
   }),
@@ -50,7 +58,6 @@ const store = createStore<StoreModel>({
   deauthenticate: action((state) => {
     state.authenticated = false
   }),
-  uploadProgress: { filesCount: 0, uploaded: 0 },
   startUpload: action((state, payload) => {
     state.uploadProgress = {
       ...state.uploadProgress,

@@ -2353,6 +2353,11 @@
   resolved "https://registry.npmjs.org/@types/prop-types/-/prop-types-15.7.4.tgz"
   integrity sha512-rZ5drC/jWjrArrS8BR6SIr4cWpW09RNTYt9AMZo3Jwwif+iacXAqgVjm0B0Bv/S1jhDXKHqRVNCbACkJ89RAnQ==
 
+"@types/react-native-base64@^0.2.0":
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/@types/react-native-base64/-/react-native-base64-0.2.0.tgz#c934e7c3cd549d4613bbfa7929a6845ab07a20af"
+  integrity sha512-5kUtS7Kf8Xl4zEwbqLITEuQReQTby4UOGfnsEeBFJEVmUfT+ygOv/Qmv0v6El0iV1eDhXS+/0i7CGR9d3/nRSA==
+
 "@types/react-native-material-ripple@^0.9.2":
   version "0.9.2"
   resolved "https://registry.npmjs.org/@types/react-native-material-ripple/-/react-native-material-ripple-0.9.2.tgz"
@@ -7977,6 +7982,11 @@ react-native-awesome-gallery@0.2.5:
   integrity sha512-dB3ZPmj/BPie8oq1YWvZcfZaTroVMnOjcriLyvFOC4FWO6kyGIPyK2vNtvaPf4bly4JpKlro+4PkC/wHXTVAlQ==
   dependencies:
     react-native-redash "^16.0.8"
+
+react-native-base64@^0.2.1:
+  version "0.2.1"
+  resolved "https://registry.yarnpkg.com/react-native-base64/-/react-native-base64-0.2.1.tgz#3d0e73a649c4c0129f7b7695d3912456aebae847"
+  integrity sha512-eHgt/MA8y5ZF0aHfZ1aTPcIkDWxza9AaEk4GcpIX+ZYfZ04RcaNahO+527KR7J44/mD3efYfM23O2C1N44ByWA==
 
 react-native-expo-image-cache@^4.1.0:
   version "4.1.0"

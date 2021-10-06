@@ -1,8 +1,7 @@
-import AsyncStorage from '@react-native-async-storage/async-storage'
 import * as FileSystem from 'expo-file-system'
-import * as MediaLibrary from 'expo-media-library'
 import { FileSystemSessionType, FileSystemUploadType } from 'expo-file-system'
 import { ToastAndroid } from 'react-native'
+import base64 from 'react-native-base64'
 import { showMessage } from 'react-native-flash-message'
 import { serverURL } from '../constants/serverURL'
 import { store } from '../state-management/stores'
@@ -22,7 +21,7 @@ export const uploadAssets = async (
     fieldName: 'Files',
     headers: {
       Authorization: `Bearer ${accessToken}`,
-      devicefileurl: filePath,
+      devicefileurl: base64.encode(filePath),
       fileId: objectID,
       duration: duration > 0 ? duration.toString() : undefined,
     },
@@ -31,20 +30,17 @@ export const uploadAssets = async (
   })
     .catch(() => {
       store.getActions().resetUploadProgress()
+      store.getActions().resetUploadProgressFiles()
+
       ToastAndroid.show("Couldn't Upload Assets!", ToastAndroid.SHORT)
     })
     .then(async (data) => {
       if ([201, 200].includes(data?.status)) {
-        // const stored = await AsyncStorage.getItem('deleteAssetsAfterUpload')
-        // const deleteAsset = stored ? JSON.parse(stored).state : false
-
         store.getActions().fileUploaded()
-
-        // if (deleteAsset) {
-        //   await MediaLibrary.deleteAssetsAsync([fileId])
-        // }
+        store.getActions().updateUploadProgressFiles({ albumId, id: fileId })
       } else {
         store.getActions().resetUploadProgress()
+        store.getActions().resetUploadProgressFiles()
         if (data?.status === 429) {
           showMessage({
             message: "You've Reached Your Quota Limit!",

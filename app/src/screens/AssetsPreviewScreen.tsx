@@ -9,7 +9,7 @@ import * as MediaLibrary from 'expo-media-library'
 import * as Sharing from 'expo-sharing'
 import React, { useRef, useState } from 'react'
 import { StyleSheet, ToastAndroid, View } from 'react-native'
-import { useQuery, useQueryClient } from 'react-query'
+import { useQuery } from 'react-query'
 import shorthash from 'shorthash'
 import { v4 as uuidv4 } from 'uuid'
 import { Fonts } from '../@types/fonts'
@@ -29,6 +29,7 @@ import { PlayIcon } from '../components/icons/PlayIcon'
 import { ShareIcon } from '../components/icons/ShareIcon'
 import { VolumeIcon } from '../components/icons/VolumeIcon'
 import { MyText } from '../components/MyText'
+import { DOWNLOADS_ALBUM_NAME } from '../constants/serverURL'
 import { queryClient } from '../state-management/stores'
 import { formatVideoDuration } from '../utils/formatVideoDuration'
 import { askingForFilesPermission } from '../utils/getFilesPermision'
@@ -70,7 +71,7 @@ const downloadAsset = async ({
   const ext = '.' + mimetype.replace('image/', '').replace('video/', '')
 
   const { exists } = await FileSystem.getInfoAsync(
-    FileSystem.documentDirectory + hashedUrl + ext,
+    FileSystem.documentDirectory + DOWNLOADS_ALBUM_NAME + '/' + hashedUrl + ext,
   )
   const { exists: exists2 } = await FileSystem.getInfoAsync(localUri)
 
@@ -78,14 +79,21 @@ const downloadAsset = async ({
     return ToastAndroid.show('Image is already on device!', ToastAndroid.BOTTOM)
   }
 
+  const album = await MediaLibrary.getAlbumAsync(DOWNLOADS_ALBUM_NAME)
+
   const downloadedImage = await FileSystem.downloadAsync(
     remoteUrl,
     FileSystem.documentDirectory + hashedUrl + ext,
   )
+  const asset = await MediaLibrary.createAssetAsync(downloadedImage.uri)
 
-  await MediaLibrary.saveToLibraryAsync(downloadedImage.uri)
+  if (!album) {
+    await MediaLibrary.createAlbumAsync(DOWNLOADS_ALBUM_NAME, asset, false)
+  } else {
+    await MediaLibrary.addAssetsToAlbumAsync([asset], album, false)
+  }
 
-  ToastAndroid.show('Saved Image!', ToastAndroid.BOTTOM)
+  ToastAndroid.show('Saved Successfully!', ToastAndroid.BOTTOM)
 }
 
 const shareAsset = async ({ localUri, remoteUrl, mimetype }: downloadAsset) => {
