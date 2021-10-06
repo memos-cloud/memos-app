@@ -322,7 +322,7 @@ export class AlbumsService {
           owner: userId,
           size: sizeInMB(Buffer.byteLength(buffers[i])),
           mimetype: file.mimetype,
-          deviceFileUrl,
+          deviceFileUrl: Buffer.from(deviceFileUrl, 'base64').toString('utf8'),
           duration,
         })
 
