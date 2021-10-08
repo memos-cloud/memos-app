@@ -32,6 +32,29 @@ jobs:
           cd ./app
           expo build:android --non-interactive --type app-bundle
 
+  Build-for-IOS:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 14.x
+      - uses: expo/expo-github-action@v5
+        with:
+          expo-version: 4.11.0
+          expo-username: ${{ secrets.EXPO_USERNAME }}
+          expo-password: ${{ secrets.EXPO_PASSWORD }}
+
+      - name: Install deps
+        run: |
+          cd ./app
+          yarn install
+
+      - name: Build IOS APP Bundle
+        run: |
+          cd ./app
+          expo build:ios --non-interactive --type simulator
+
   Push-to-Playstore:
     needs: [Build-for-android]
     runs-on: macos-latest
