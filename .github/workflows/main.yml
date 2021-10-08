@@ -53,7 +53,7 @@ jobs:
       - name: Build IOS APP Bundle
         run: |
           cd ./app
-          expo build:ios --non-interactive --type simulator
+          expo build:ios --non-interactive --type archive
 
   Push-to-Playstore:
     needs: [Build-for-android]
