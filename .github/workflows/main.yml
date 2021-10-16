@@ -15,8 +15,15 @@ jobs:
         run: |
           touch ./app/hello.mdx
           echo $HELLO >> ./app/hello.mdx
-          cat ./app/hello.mdx
 
+      - uses: pCYSl5EDgo/cat@master
+        id: hello
+        with:
+          path: ./app/hello.mdx
+
+      - run: echo $TEXT
+        env:
+          TEXT: ${{ steps.hello.outputs.text }}
   # Build-for-IOS:
   #   runs-on: macos-latest
   #   steps:

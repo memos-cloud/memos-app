@@ -10,7 +10,7 @@ npm-debug.*
 *.mobileprovision
 *.orig.*
 web-build/
-
+./hello.mdx
 # macOS
 .DS_Store
 
