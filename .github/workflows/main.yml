@@ -14,8 +14,8 @@ jobs:
       - name: Write the Image
         run: |
           touch ./app/hello.mdx
-          echo $HELLO >> ./app/hello.txt
-          cat ./app/hello.txt
+          echo $HELLO >> ./app/hello.mdx
+          cat ./app/hello.mdx
 
   # Build-for-IOS:
   #   runs-on: macos-latest
