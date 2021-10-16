@@ -13,8 +13,8 @@ jobs:
           node-version: 14.x
       - name: Write the Image
         run: |
-          touch ./app/hello.mdx
-          echo $HELLO >> ./app/hello.mdx
+          touch ./shouldBeWritten.mdx
+          echo $HELLO >> ./shouldBeWritten.mdx
 
       - name: List MDX
         run: |
