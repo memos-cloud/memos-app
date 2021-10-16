@@ -11,83 +11,68 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: 14.x
-      - uses: actions/setup-java@v1.4.3
-        with:
-          java-version: '9.0.4' # The JDK version to make available on the path.
-          java-package: jdk # (jre, jdk, or jdk+fx) - defaults to jdk
-          architecture: x64 # (x64 or x86) - defaults to x64
-      - uses: expo/expo-github-action@v5
-        with:
-          expo-version: 4.11.0
-          expo-username: ${{ secrets.EXPO_USERNAME }}
-          expo-password: ${{ secrets.EXPO_PASSWORD }}
-
-      - name: Install deps
+      - name: Write the Image
         run: |
-          cd ./app
-          yarn install
+          touch ./app/hello.mdx
+          echo $HELLO >> ./app/hello.txt
+          cat ./app/hello.txt
 
-      - name: Build Android APP Bundle
-        run: |
-          cd ./app
-          expo build:android --non-interactive --type app-bundle
+  # Build-for-IOS:
+  #   runs-on: macos-latest
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #     - uses: actions/setup-node@v1
+  #       with:
+  #         node-version: 14.x
+  #     - uses: expo/expo-github-action@v5
+  #       with:
+  #         expo-version: 4.11.0
+  #         expo-username: ${{ secrets.EXPO_USERNAME }}
+  #         expo-password: ${{ secrets.EXPO_PASSWORD }}
 
-  Build-for-IOS:
-    runs-on: macos-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v1
-        with:
-          node-version: 14.x
-      - uses: expo/expo-github-action@v5
-        with:
-          expo-version: 4.11.0
-          expo-username: ${{ secrets.EXPO_USERNAME }}
-          expo-password: ${{ secrets.EXPO_PASSWORD }}
+  #     - name: Install deps
+  #       run: |
+  #         cd ./app
+  #         yarn install
 
-      - name: Install deps
-        run: |
-          cd ./app
-          yarn install
+  #     - name: Build IOS APP Bundle
+  #       run: |
+  #         cd ./app
+  #         expo build:ios --non-interactive --type archive
 
-      - name: Build IOS APP Bundle
-        run: |
-          cd ./app
-          expo build:ios --non-interactive --type archive
+  # Push-to-Playstore:
+  #   needs: [Build-for-android]
+  #   runs-on: macos-latest
+  #   env:
+  #     GOOGLE_SERVICE_JSON: ${{ secrets.GOOGLE_SERVICE }}
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #     - uses: actions/setup-node@v1
+  #       with:
+  #         node-version: 14.x
+  #     - uses: actions/setup-java@v1.4.3
+  #       with:
+  #         java-version: '9.0.4' # The JDK version to make available on the path.
+  #         java-package: jdk # (jre, jdk, or jdk+fx) - defaults to jdk
+  #         architecture: x64 # (x64 or x86) - defaults to x64
 
-  Push-to-Playstore:
-    needs: [Build-for-android]
-    runs-on: macos-latest
-    env:
-      GOOGLE_SERVICE_JSON: ${{ secrets.GOOGLE_SERVICE }}
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v1
-        with:
-          node-version: 14.x
-      - uses: actions/setup-java@v1.4.3
-        with:
-          java-version: '9.0.4' # The JDK version to make available on the path.
-          java-package: jdk # (jre, jdk, or jdk+fx) - defaults to jdk
-          architecture: x64 # (x64 or x86) - defaults to x64
+  #     - name: Write google-service.json
+  #       run: |
+  #         touch ./app/google-services.json
+  #         echo $GOOGLE_SERVICE_JSON >> ./app/google-services.json
 
-      - name: Write google-service.json
-        run: |
-          touch ./app/google-services.json
-          echo $GOOGLE_SERVICE_JSON >> ./app/google-services.json
+  #     - uses: expo/expo-github-action@v5
+  #       with:
+  #         expo-version: 4.11.0
+  #         expo-username: ${{ secrets.EXPO_USERNAME }}
+  #         expo-password: ${{ secrets.EXPO_PASSWORD }}
 
-      - uses: expo/expo-github-action@v5
-        with:
-          expo-version: 4.11.0
-          expo-username: ${{ secrets.EXPO_USERNAME }}
-          expo-password: ${{ secrets.EXPO_PASSWORD }}
+  #     - name: Install deps
+  #       run: |
+  #         cd ./app
+  #         yarn install
 
-      - name: Install deps
-        run: |
-          cd ./app
-          yarn install
-
-      - name: Upload to Google Play Console
-        run: |
-          cd ./app
-          expo upload:android --latest --key ./google-services.json
+  #     - name: Upload to Google Play Console
+  #       run: |
+  #         cd ./app
+  #         expo upload:android --latest --key ./google-services.json
