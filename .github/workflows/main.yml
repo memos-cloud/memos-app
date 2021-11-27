@@ -56,4 +56,4 @@ jobs:
       - name: Upload to Google Play Console
         run: |
           cd ./app
-          npx eas submit -p android --latest
+          npx eas-cli submit -p android --latest
