@@ -29,7 +29,7 @@ jobs:
       - name: Build Android APK Bundle
         run: |
           cd ./app
-          eas build --platform android --non-interactive
+          npx eas-cli build --platform android --non-interactive
 
   Push-to-Playstore:
     needs: [Build-for-android]
