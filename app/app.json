@@ -13,6 +13,7 @@
       "barStyle": "light-content",
       "backgroundColor": "#0F0F0F"
     },
+    "jsEngine": "hermes",
     "userInterfaceStyle": "light",
     "splash": {
       "image": "./src/assets/images/splash.png",
@@ -22,9 +23,7 @@
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "bundleIdentifier": "com.yassineldeeb.memosapp",
       "supportsTablet": true,
@@ -51,8 +50,6 @@
         }
       ]
     },
-    "plugins": [
-      "expo-system-ui"
-    ]
+    "plugins": ["expo-system-ui"]
   }
 }
