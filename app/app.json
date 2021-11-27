@@ -32,6 +32,10 @@
     "android": {
       "package": "com.yassineldeeb.memosapp",
       "versionCode": 420010132,
+      "adaptiveIcon": {
+        "foregroundImage": "./src/assets/images/adaptive-icon.png",
+        "backgroundColor": "#0F0F0F"
+      },
       "softwareKeyboardLayoutMode": "pan",
       "userInterfaceStyle": "light"
     },
