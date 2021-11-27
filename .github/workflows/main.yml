@@ -26,7 +26,8 @@ jobs:
         run: |
           cd ./app
           yarn install
-      - name: Build Android APK Bundle
+
+      - name: Build Android App Bundle
         run: |
           cd ./app
           npx eas-cli build --platform android --non-interactive
