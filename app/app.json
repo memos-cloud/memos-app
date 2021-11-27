@@ -22,7 +22,9 @@
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "bundleIdentifier": "com.yassineldeeb.memosapp",
       "supportsTablet": true,
@@ -48,6 +50,9 @@
           "file": "sentry-expo/upload-sourcemaps"
         }
       ]
-    }
+    },
+    "plugins": [
+      "expo-system-ui"
+    ]
   }
 }

@@ -11,71 +11,59 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: 14.x
-      - name: Write the Image
+      - uses: actions/setup-java@v1.4.3
+        with:
+          java-version: '9.0.4'
+          java-package: jdk
+          architecture: x64
+      - uses: expo/expo-github-action@v5
+        with:
+          expo-version: 4.11.0
+          expo-username: ${{ secrets.EXPO_USERNAME }}
+          expo-password: ${{ secrets.EXPO_PASSWORD }}
+
+      - name: Install deps
         run: |
-          touch ./shouldBeWritten.mdx
-          echo $HELLO >> ./shouldBeWritten.mdx
-
-      - name: List MDX
+          cd ./app
+          yarn install
+      - name: Build Android APK Bundle
         run: |
-          ls -all
+          cd ./app
+          eas build --platform android --non-interactive
 
-  # Build-for-IOS:
-  #   runs-on: macos-latest
-  #   steps:
-  #     - uses: actions/checkout@v2
-  #     - uses: actions/setup-node@v1
-  #       with:
-  #         node-version: 14.x
-  #     - uses: expo/expo-github-action@v5
-  #       with:
-  #         expo-version: 4.11.0
-  #         expo-username: ${{ secrets.EXPO_USERNAME }}
-  #         expo-password: ${{ secrets.EXPO_PASSWORD }}
+  Push-to-Playstore:
+    needs: [Build-for-android]
+    runs-on: macos-latest
+    env:
+      GOOGLE_SERVICE_JSON: ${{ secrets.GOOGLE_SERVICE }}
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 14.x
+      - uses: actions/setup-java@v1.4.3
+        with:
+          java-version: '9.0.4' # The JDK version to make available on the path.
+          java-package: jdk # (jre, jdk, or jdk+fx) - defaults to jdk
+          architecture: x64 # (x64 or x86) - defaults to x64
 
-  #     - name: Install deps
-  #       run: |
-  #         cd ./app
-  #         yarn install
+      - name: Write google-service.json
+        run: |
+          touch ./app/google-services.json
+          echo $GOOGLE_SERVICE_JSON >> ./app/google-services.json
 
-  #     - name: Build IOS APP Bundle
-  #       run: |
-  #         cd ./app
-  #         expo build:ios --non-interactive --type archive
+      - uses: expo/expo-github-action@v5
+        with:
+          expo-version: 4.11.0
+          expo-username: ${{ secrets.EXPO_USERNAME }}
+          expo-password: ${{ secrets.EXPO_PASSWORD }}
 
-  # Push-to-Playstore:
-  #   needs: [Build-for-android]
-  #   runs-on: macos-latest
-  #   env:
-  #     GOOGLE_SERVICE_JSON: ${{ secrets.GOOGLE_SERVICE }}
-  #   steps:
-  #     - uses: actions/checkout@v2
-  #     - uses: actions/setup-node@v1
-  #       with:
-  #         node-version: 14.x
-  #     - uses: actions/setup-java@v1.4.3
-  #       with:
-  #         java-version: '9.0.4' # The JDK version to make available on the path.
-  #         java-package: jdk # (jre, jdk, or jdk+fx) - defaults to jdk
-  #         architecture: x64 # (x64 or x86) - defaults to x64
+      - name: Install deps
+        run: |
+          cd ./app
+          yarn install
 
-  #     - name: Write google-service.json
-  #       run: |
-  #         touch ./app/google-services.json
-  #         echo $GOOGLE_SERVICE_JSON >> ./app/google-services.json
-
-  #     - uses: expo/expo-github-action@v5
-  #       with:
-  #         expo-version: 4.11.0
-  #         expo-username: ${{ secrets.EXPO_USERNAME }}
-  #         expo-password: ${{ secrets.EXPO_PASSWORD }}
-
-  #     - name: Install deps
-  #       run: |
-  #         cd ./app
-  #         yarn install
-
-  #     - name: Upload to Google Play Console
-  #       run: |
-  #         cd ./app
-  #         expo upload:android --latest --key ./google-services.json
+      - name: Upload to Google Play Console
+        run: |
+          cd ./app
+          expo upload:android --latest --key ./google-services.json
