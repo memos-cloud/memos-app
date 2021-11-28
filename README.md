@@ -18,6 +18,10 @@ Memos is like any other cloud storage, but It provides a very special UI that ma
 ## Features
 
 - Making Albums with descriptive Name and Cover Image.
+- Themes to personalize how the app looks.
+- Albums and Assets are synced across your different devices.
+- Lock Screen that uses FingerPrint or a PIN Code.
+- Option to delete assets from your phone after they're uploaded successfully so that they don't take unnecessary space on your phone.
 - Storing Images/Videos for each Album.
 - Up to 250MB for Free Tier Users (I'm 17 yo, my wallet can't afford more than this for each user🙃).
 
