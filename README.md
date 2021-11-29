@@ -15,6 +15,8 @@ Memos is a mobile application that is built with React Native and NestJS and is 
 Users Files are very secure and can't be lost, They are hosted on an AWS S3 Bucket.
 Memos is like any other cloud storage, but It provides a very special UI that makes storing and syncing your Images/Videos more enjoyable and very user friendly.
 
+![Screenshots](https://i.ibb.co/jVKsnrN/screens.png)
+
 ## Features
 
 - Making Albums with descriptive Name and Cover Image.
