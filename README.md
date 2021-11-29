@@ -1,4 +1,4 @@
-<div align="center">
+<div alig"center">
     <h1>Memos</h1>
     <p align="center"><img width="250px" src="/AppLogo.png"/></p>
     <div align="center">
@@ -7,6 +7,7 @@
         <img src="https://img.shields.io/badge/AWS-%23FF9900.svg?style=for-the-badge&logo=amazon-aws&logoColor=white" />
     </div>
 </div>
+
 
 # Cloud Storage For Your Best Moments
 
@@ -26,6 +27,7 @@ Memos is like any other cloud storage, but It provides a very special UI that ma
 - Option to delete assets from your phone after they're uploaded successfully so that they don't take unnecessary space on your phone.
 - Storing Images/Videos for each Album.
 - Up to 250MB for Free Tier Users (I'm 17 yo, my wallet can't afford more than this for each user🙃).
+
 
 ## Why the app logo looks like a Lightning?
 
