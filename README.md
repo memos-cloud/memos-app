@@ -20,7 +20,7 @@ Memos is like any other cloud storage, but It provides a very special UI that ma
 
 ## Features
 
-- 🆓 with no Ads 🙅‍♂️.
+- Free with no Ads 🙅‍♂️.
 - Making Albums with descriptive Name and Cover Image.
 - Themes to personalize how the app looks.
 - Albums and Assets are synced across your different devices.
