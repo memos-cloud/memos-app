@@ -9,7 +9,7 @@ import Animated, {
 } from 'react-native-reanimated'
 import { useQueryClient } from 'react-query'
 import { AppNavProps } from '../@types/NavProps'
-import { useStoreState } from '../@types/typedHooks'
+import { useStoreState } from '../state-management/typedHooks'
 import { createAlbum } from '../api/createAlbum'
 import { updateAlbum } from '../api/updateAlbum'
 import Container from '../components/Container'

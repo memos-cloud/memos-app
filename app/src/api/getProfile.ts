@@ -1,5 +1,4 @@
 import axios from 'axios'
-import { ToastAndroid } from 'react-native'
 import { showMessage } from 'react-native-flash-message'
 import { serverURL } from '../constants/serverURL'
 

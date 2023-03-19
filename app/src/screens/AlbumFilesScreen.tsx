@@ -12,7 +12,7 @@ import {
 } from 'react-native'
 import { useQuery, useQueryClient } from 'react-query'
 import { AppNavProps } from '../@types/NavProps'
-import { useStoreState } from '../@types/typedHooks'
+import { useStoreState } from '../state-management/typedHooks'
 import { getAlbumById } from '../api/getAlbumById'
 import { getAlbumFiles } from '../api/getAlbumFiles'
 import { getAlbums } from '../api/getAlbums'
@@ -50,7 +50,7 @@ const AlbumFilesScreen = ({
     ? []
     : fetchedAlbums.find(({ album }: any) => album.id === albumId)
 
-  const { data, isLoading, error } = useQuery(
+  const { data, isLoading } = useQuery(
     `albumFiles:${albumId}`,
     () => getAlbumFiles(albumId),
     { staleTime: TenMinutes },

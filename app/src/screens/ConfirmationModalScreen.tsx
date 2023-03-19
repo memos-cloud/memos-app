@@ -3,10 +3,10 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import React, { useMemo, useRef } from 'react'
 import { useState } from 'react'
 import { ActivityIndicator, StyleSheet, View } from 'react-native'
-import { useQueryClient } from 'react-query'
+import { useMutation, useQueryClient } from 'react-query'
 import { Fonts } from '../@types/fonts'
 import { AppNavProps, HomeNavProps } from '../@types/NavProps'
-import { useStoreActions, useStoreState } from '../@types/typedHooks'
+import { useStoreActions, useStoreState } from '../state-management/typedHooks'
 import { deleteAlbum } from '../api/deleteAlbum'
 import { deleteAssets } from '../api/deleteAsset'
 import { MyButton } from '../components/MyButton'
@@ -17,6 +17,10 @@ export const ConfirmationModalScreen = ({
   route: { params },
 }: AppNavProps<'ConfirmationModal'>) => {
   const queryClient = useQueryClient()
+  const deleteAlbumMutation = useMutation((albumId: string) =>
+    deleteAlbum(albumId),
+  )
+
   const colors = useStoreState((state) => state.theme)
   const bottomSheetRef = useRef<BottomSheet>(null)
 
@@ -34,7 +38,9 @@ export const ConfirmationModalScreen = ({
     }
     if (params.actionType === 'deleteAlbum' && params.deleteId) {
       setActionLoading(true)
-      await deleteAlbum(params.deleteId)
+
+      await deleteAlbumMutation.mutateAsync(params.deleteId)
+
       const albums = (queryClient.getQueryData('albums') as any[]).filter(
         (e) => {
           return e.album.id !== params.deleteId

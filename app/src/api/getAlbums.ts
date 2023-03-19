@@ -1,8 +1,7 @@
 import axios from 'axios'
-import { ToastAndroid } from 'react-native'
 import { showMessage } from 'react-native-flash-message'
 import { serverURL } from '../constants/serverURL'
-import { queryClient, store } from '../state-management/stores'
+import { queryClient, store } from '../state-management'
 
 export const getAlbums = async (skip?: number) => {
   const accessToken = store.getState().accessToken

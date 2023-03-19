@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
 import { RefreshControl } from 'react-native'
-import { useStoreState } from '../@types/typedHooks'
+import { useStoreState } from '../state-management/typedHooks'
 
 interface Props {
   refreshing: boolean

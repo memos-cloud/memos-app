@@ -4,7 +4,7 @@ import { LinearGradient } from 'expo-linear-gradient'
 import React, { FC } from 'react'
 import { StyleSheet, TouchableOpacity, View } from 'react-native'
 import { AppStackParamList } from '../@types/StackParamList'
-import { useStoreState } from '../@types/typedHooks'
+import { useStoreState } from '../state-management/typedHooks'
 import { MyText } from './MyText'
 import { SmoothFastImage } from './SmoothFastImage'
 

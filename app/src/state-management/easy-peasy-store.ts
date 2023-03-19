@@ -1,41 +1,14 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { action, createStore, thunk } from 'easy-peasy'
-import { AppState } from 'react-native'
-import { focusManager, QueryClient } from 'react-query'
-import { createAsyncStoragePersistor } from 'react-query/createAsyncStoragePersistor-experimental'
-import { persistQueryClient } from 'react-query/persistQueryClient-experimental'
 import { getProfile } from '../api/getProfile'
 import { colors } from '../config/colors'
 import { themes } from '../config/themes'
-import { StoreModel } from './@types/store'
-
-// React Query
-const day = 1000 * 60 * 60 * 24
-const fiveMinutes = 1000 * 60 * 5
-export const queryClient = new QueryClient({
-  defaultOptions: { queries: { staleTime: day, cacheTime: fiveMinutes } },
-})
-
-focusManager.setEventListener((handleFocus: any) => {
-  AppState.addEventListener('change', handleFocus)
-
-  return () => {
-    AppState.removeEventListener('change', handleFocus)
-  }
-})
-
-const asyncStoragePersistor = createAsyncStoragePersistor({
-  storage: AsyncStorage,
-})
-
-persistQueryClient({
-  queryClient,
-  persistor: asyncStoragePersistor,
-  maxAge: day,
-})
+import { Store } from './@types/easy-peasy-store'
+import { queryClient } from './react-query-store'
 
 // Easy Peasy
-const store = createStore<StoreModel>({
+const store = createStore<Store>({
+  // State
   accessToken: null,
   authenticated: false,
   profile: null,
@@ -43,6 +16,8 @@ const store = createStore<StoreModel>({
   assetIndex: 0,
   uploadProgressFiles: [],
   uploadProgress: { filesCount: 0, uploaded: 0 },
+
+  // Actions
   updateUploadProgressFiles: action((state, payload) => {
     state.uploadProgressFiles = [...state.uploadProgressFiles, payload]
   }),
@@ -87,7 +62,7 @@ const store = createStore<StoreModel>({
         primary: (selectedTheme as any)[Object.keys(selectedTheme!)[0]],
       }
   }),
-  saveTheme: thunk(async (actions, theme) => {
+  saveTheme: thunk(async (_actions, theme) => {
     await AsyncStorage.setItem('theme', JSON.stringify(theme))
   }),
   getTheme: thunk(async (actions) => {

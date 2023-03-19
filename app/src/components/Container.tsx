@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
 import { StyleProp, StyleSheet, View, ViewStyle } from 'react-native'
-import { useStoreState } from '../@types/typedHooks'
+import { useStoreState } from '../state-management/typedHooks'
 
 interface Props {
   customStyles?: StyleProp<ViewStyle>

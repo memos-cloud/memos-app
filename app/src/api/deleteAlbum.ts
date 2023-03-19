@@ -1,8 +1,7 @@
 import axios from 'axios'
-import { ToastAndroid } from 'react-native'
 import { showMessage } from 'react-native-flash-message'
 import { serverURL } from '../constants/serverURL'
-import { store } from '../state-management/stores'
+import { store } from '../state-management'
 
 export const deleteAlbum = async (albumId: string) => {
   const accessToken = store.getState().accessToken

@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { showMessage } from 'react-native-flash-message'
 import { serverURL } from '../constants/serverURL'
-import { queryClient, store } from '../state-management/stores'
+import { queryClient, store } from '../state-management'
 
 export const getAlbumFiles = async (albumId: string, skip?: number) => {
   const accessToken = store.getState().accessToken

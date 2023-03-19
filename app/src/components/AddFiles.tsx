@@ -1,6 +1,6 @@
 import React from 'react'
 import { TouchableOpacity } from 'react-native'
-import { useStoreState } from '../@types/typedHooks'
+import { useStoreState } from '../state-management/typedHooks'
 import { AddIcon } from './icons/AddIcon'
 import { MyText } from './MyText'
 
@@ -28,7 +28,7 @@ export const AddFiles = ({
       activeOpacity={colors.activeOpacity}
     >
       <AddIcon width={22} />
-      <MyText customStyles={{ marginTop: 3 }} size='2xs'>
+      <MyText customStyles={{ marginTop: 3 }} size="2xs">
         add Files
       </MyText>
     </TouchableOpacity>

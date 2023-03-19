@@ -1,7 +1,7 @@
 import React from 'react'
 import { memo } from 'react'
 import { Image, TouchableOpacity, View } from 'react-native'
-import { useStoreState } from '../@types/typedHooks'
+import { useStoreState } from '../state-management/typedHooks'
 import { MyText } from './MyText'
 
 interface Props {

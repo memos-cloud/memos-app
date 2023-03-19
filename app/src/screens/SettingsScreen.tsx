@@ -9,7 +9,7 @@ import {
   Switch,
 } from 'react-native'
 import { HomeNavProps } from '../@types/NavProps'
-import { useStoreActions, useStoreState } from '../@types/typedHooks'
+import { useStoreActions, useStoreState } from '../state-management/typedHooks'
 import { LockIcon } from '../components/icons/LockIcon'
 import { PaintIcon } from '../components/icons/Paint'
 import { ResetIcon } from '../components/icons/ResetIcon'
@@ -26,6 +26,7 @@ const themeBoxSize =
 
 const SettingsScreen: FC<HomeNavProps<'Settings'>> = () => {
   const colors = useStoreState((state) => state.theme)
+
   const changeTheme = useStoreActions((actions) => actions.changeTheme)
   const saveTheme = useStoreActions((actions) => actions.saveTheme)
   const deauthenticate = useStoreActions((actions) => actions.deauthenticate)

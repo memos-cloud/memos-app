@@ -1,9 +1,8 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import axios from 'axios'
-import { ToastAndroid } from 'react-native'
 import { showMessage } from 'react-native-flash-message'
 import { serverURL } from '../constants/serverURL'
-import { store } from '../state-management/stores'
+import { store } from '../state-management'
 
 export const createAlbum = async (name: string) => {
   const accessToken = store.getState().accessToken

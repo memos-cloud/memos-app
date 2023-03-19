@@ -1,7 +1,7 @@
 import React from 'react'
 import { StyleSheet, View, TextInput } from 'react-native'
 import { Fonts } from '../@types/fonts'
-import { useStoreState } from '../@types/typedHooks'
+import { useStoreState } from '../state-management/typedHooks'
 import { MyText } from './MyText'
 
 interface Props {

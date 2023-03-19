@@ -2,7 +2,7 @@ import React from 'react'
 import { FC } from 'react'
 import { GestureResponderEvent, View, ViewStyle } from 'react-native'
 import Ripple from 'react-native-material-ripple'
-import { useStoreState } from '../@types/typedHooks'
+import { useStoreState } from '../state-management/typedHooks'
 
 interface Props {
   tabWidth: number

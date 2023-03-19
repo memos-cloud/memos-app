@@ -1,6 +1,6 @@
 import React, { FC, useEffect } from 'react'
 import { AuthNavProps } from '../@types/NavProps'
-import { useStoreActions } from '../@types/typedHooks'
+import { useStoreActions } from '../state-management/typedHooks'
 import Container from '../components/Container'
 
 const SaveTokenScreen: FC<AuthNavProps<'SaveToken'>> = ({

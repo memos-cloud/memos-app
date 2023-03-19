@@ -16,10 +16,9 @@ import Gallery, {
   RenderItemInfo,
 } from 'react-native-awesome-gallery'
 import { Image } from 'react-native-expo-image-cache'
-import { useQuery, useQueryClient } from 'react-query'
-import { useStoreActions, useStoreState } from '../@types/typedHooks'
+import { useQuery } from 'react-query'
+import { useStoreActions, useStoreState } from '../state-management/typedHooks'
 import { getAlbumFiles } from '../api/getAlbumFiles'
-import { store } from '../state-management/stores'
 import { Center } from './Center'
 
 const PreviewImage = memo(({ imgInfo }: { imgInfo: RenderItemInfo<any> }) => {

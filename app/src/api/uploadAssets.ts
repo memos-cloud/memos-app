@@ -4,7 +4,7 @@ import { ToastAndroid } from 'react-native'
 import base64 from 'react-native-base64'
 import { showMessage } from 'react-native-flash-message'
 import { serverURL } from '../constants/serverURL'
-import { store } from '../state-management/stores'
+import { store } from '../state-management'
 
 export const uploadAssets = async (
   albumId: string,

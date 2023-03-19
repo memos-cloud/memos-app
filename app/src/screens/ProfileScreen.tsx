@@ -8,7 +8,7 @@ import {
   View,
 } from 'react-native'
 import { AppNavProps } from '../@types/NavProps'
-import { useStoreActions, useStoreState } from '../@types/typedHooks'
+import { useStoreActions, useStoreState } from '../state-management/typedHooks'
 import { getProfile } from '../api/getProfile'
 import Container from '../components/Container'
 import { LogoutIcon } from '../components/icons/LogoutIcon'

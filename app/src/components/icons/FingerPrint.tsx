@@ -1,6 +1,6 @@
 import React from 'react'
 import Svg, { ClipPath, Defs, G, Path, Rect } from 'react-native-svg'
-import { useStoreState } from '../../@types/typedHooks'
+import { useStoreState } from '../../state-management/typedHooks'
 
 export const FingerPrintIcon = ({ size }: { size: number }) => {
   const colors = useStoreState((state) => state.theme)

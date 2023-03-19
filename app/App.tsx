@@ -11,7 +11,7 @@ import { QueryClientProvider } from 'react-query'
 import * as Sentry from 'sentry-expo'
 import { Fonts } from './src/@types/fonts'
 import Routes from './src/Routes'
-import { queryClient, store } from './src/state-management/stores'
+import { queryClient, store } from './src/state-management/react-query-store'
 
 // Require Fonts
 const PoppinsRegularFont = require('./src/assets/fonts/Poppins-Regular.ttf')

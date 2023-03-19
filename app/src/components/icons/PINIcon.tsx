@@ -1,6 +1,6 @@
 import React from 'react'
 import Svg, { Path } from 'react-native-svg'
-import { useStoreState } from '../../@types/typedHooks'
+import { useStoreState } from '../../state-management/typedHooks'
 
 export const PINIcon = ({ size }: { size: number }) => {
   const colors = useStoreState((state) => state.theme)

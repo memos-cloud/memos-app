@@ -1,7 +1,7 @@
 import React, { FC } from 'react'
 import { Text, StyleSheet, StyleProp, TextStyle } from 'react-native'
 import { Fonts } from '../@types/fonts'
-import { useStoreState } from '../@types/typedHooks'
+import { useStoreState } from '../state-management/typedHooks'
 
 interface Props {
   size?: '2xs' | 'xs' | 'sm' | 'md' | 'lg'

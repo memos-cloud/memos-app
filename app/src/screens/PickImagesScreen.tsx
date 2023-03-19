@@ -1,10 +1,10 @@
 import * as Constants from 'expo-constants'
 import * as MediaLibrary from 'expo-media-library'
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect } from 'react'
 import { ActivityIndicator, Dimensions } from 'react-native'
 import { useQuery } from 'react-query'
 import { AppNavProps } from '../@types/NavProps'
-import { useStoreState } from '../@types/typedHooks'
+import { useStoreState } from '../state-management/typedHooks'
 import { AssetsList } from '../components/AssetsList'
 import Container from '../components/Container'
 import { askingForFilesPermission } from '../utils/getFilesPermision'
@@ -41,6 +41,7 @@ const PickImages = ({
   navigation,
   route: { params },
 }: AppNavProps<'Add Files'>) => {
+  // React Query
   const { data, isLoading: assetsLoading } = useQuery(
     ['DeviceAssets', params.deviceAlbumId],
     () =>
@@ -52,6 +53,7 @@ const PickImages = ({
     },
   )
 
+  // Easy Peasy
   const colors = useStoreState((state) => state.theme)
 
   return (

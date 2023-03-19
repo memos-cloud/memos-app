@@ -4,7 +4,7 @@ import React, { FC, memo } from 'react'
 import { Image, StyleSheet, View } from 'react-native'
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler'
 import { Fonts } from '../@types/fonts'
-import { useStoreState } from '../@types/typedHooks'
+import { useStoreState } from '../state-management/typedHooks'
 import { MyText } from './MyText'
 import { formatVideoDuration } from '../utils/formatVideoDuration'
 

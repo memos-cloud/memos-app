@@ -16,7 +16,7 @@ import {
 } from 'react-native'
 import { useQueryClient } from 'react-query'
 import { AppStackParamList } from '../@types/StackParamList'
-import { useStoreActions, useStoreState } from '../@types/typedHooks'
+import { useStoreActions, useStoreState } from '../state-management/typedHooks'
 import { uploadAssets } from '../api/uploadAssets'
 import { ArrowIcon } from './icons/Arrow'
 import { DropDownArrow } from './icons/DropDownArrow'
